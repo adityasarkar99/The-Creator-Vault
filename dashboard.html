@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Vault - Dashboard</title>
     
+    <!-- Google Fonts & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Razorpay Standard Checkout Script Integration -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
         /* --- DESIGN SYSTEM & SYSTEM VARIABLES --- */
@@ -115,7 +119,6 @@
             box-shadow: var(--shadow-subtle);
         }
 
-        /* Animated Elegant Brand Header */
         .brand-container {
             display: flex;
             align-items: center;
@@ -146,7 +149,6 @@
             to { background-position: 200% center; }
         }
 
-        /* Search Bar Platform */
         .header-search-box {
             position: relative;
             width: 100%;
@@ -175,7 +177,6 @@
             background: var(--bg-card-solid);
         }
 
-        /* Utility Actions Right */
         .header-right-actions {
             display: flex;
             align-items: center;
@@ -221,7 +222,6 @@
             flex-grow: 1;
         }
 
-        /* Title Area */
         .page-header {
             margin-bottom: 32px;
         }
@@ -438,7 +438,6 @@
             border-color: var(--accent-brand);
         }
 
-        /* Locked Cover Mode */
         .category-card.is-locked::after {
             content: '';
             position: absolute;
@@ -553,7 +552,6 @@
         .setting-info label { font-size: 0.88rem; font-weight: 600; display: block; margin-bottom: 2px; }
         .setting-info p { font-size: 0.78rem; color: var(--text-muted); }
 
-        /* Custom System Controls */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -660,7 +658,6 @@
             position: absolute; bottom: 0; left: 0; height: 3px; width: 100%;
             transform-origin: left;
         }
-        /* Variations Configuration */
         .toast-item.success .toast-icon { color: #10b981; }
         .toast-item.success .toast-progress { background: #10b981; }
         .toast-item.error .toast-icon { color: #ef4444; }
@@ -725,10 +722,9 @@
         .footer-legal-links a { color: var(--text-muted); text-decoration: none; }
         .footer-legal-links a:hover { color: var(--text-main); }
 
-        /* --- MOBILE LAYOUT ADJUSTMENTS --- */
         @media (max-width: 768px) {
             .premium-header { padding: 14px 20px; }
-            .header-search-box { display: none; } /* Compact configuration hidden search on smaller viewports */
+            .header-search-box { display: none; }
             .dashboard-viewport { padding: 24px 16px; }
             .hero-banner { padding: 24px; }
             .footer-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -738,13 +734,16 @@
 </head>
 <body>
 
+    <!-- Full Screen Security Authentication Guard Overlay -->
     <div id="auth-guard-screen">
         <div class="spinner"></div>
         <div class="guard-text">Verifying Security Session...</div>
     </div>
 
+    <!-- Attenuator Filter Layer -->
     <div id="brightness-overlay"></div>
 
+    <!-- Sticky Platform Header Shell -->
     <header class="premium-header">
         <a class="brand-container" href="dashboard.html">
             <i class="fa-solid fa-shield-halved brand-icon"></i>
@@ -767,14 +766,17 @@
         </div>
     </header>
 
+    <!-- Main Dashboard Body Work Surface -->
     <main class="dashboard-viewport">
         <div class="page-header">
             <h1>Dashboard</h1>
             <p>Manage your premium digital resources from one secure place.</p>
         </div>
 
+        <!-- Dynamic User Core Status Anchor Point -->
         <div id="hero-banner-slot"></div>
 
+        <!-- Metric Statistics Grid Block -->
         <section class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-folder-tree"></i></div>
@@ -794,12 +796,14 @@
             </div>
         </section>
 
+        <!-- Managed Asset Collection Segment -->
         <section>
             <h2 class="section-subtitle">Premium Resource Inventories</h2>
             <div class="categories-grid" id="categories-injection-frame"></div>
         </section>
     </main>
 
+    <!-- Right Side Sliding User Core Environment Workspace Drawer -->
     <div class="drawer-overlay" id="drawer-bg-overlay"></div>
     <aside class="profile-drawer" id="account-profile-drawer">
         <div class="drawer-header">
@@ -816,6 +820,7 @@
                 <div class="drawer-date" id="drawer-created-date-label"></div>
             </div>
 
+            <!-- Customization Settings Module -->
             <div class="drawer-section">
                 <div class="drawer-section-title">Visual Layout Preferences</div>
                 <div class="setting-row">
@@ -834,6 +839,7 @@
                 </div>
             </div>
 
+            <!-- Notification Rules Section -->
             <div class="drawer-section">
                 <div class="drawer-section-title">Notification Pipeline Configurations</div>
                 <div class="setting-row">
@@ -868,6 +874,7 @@
                 </div>
             </div>
 
+            <!-- Security Action Interface Module -->
             <div class="drawer-section">
                 <div class="drawer-section-title">Privacy & Platform Security</div>
                 <button class="btn-drawer-secondary" id="action-password-reset">
@@ -883,8 +890,10 @@
         </div>
     </aside>
 
+    <!-- Global Application Toast Container System -->
     <div id="toast-box-mount"></div>
 
+    <!-- Complete Clean Enterprise Footprint Section -->
     <footer class="premium-footer">
         <div class="footer-grid">
             <div class="footer-brand-side">
@@ -922,13 +931,12 @@
         </div>
     </footer>
 
+    <!-- --- CORE INTERFACE LOGICAL ENGINE APPLICATION SCRIPT --- -->
     <script type="module">
-        // Import Target Modern CDNs Modular SDK Libraries
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Global Infrastructure Platform Connection Identification Configurations
         const firebaseConfig = {
             apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
             authDomain: "creators-vaults.firebaseapp.com",
@@ -939,16 +947,13 @@
             measurementId: "G-MM742MSP09"
         };
 
-        // Initialize Live Cluster Shared Connections
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Core App Context Storage Structures
         let currentAuthenticatedUser = null;
         let activeUserWorkspaceRecord = null;
 
-        // Static Asset Catalog Framework References
         const staticCategoryConfigurations = [
             { id: "softwares", icon: "fa-code", title: "Softwares", desc: "Production utility systems, pipeline components, and verified continuous development tools.", target: "softwares.html", count: "142 Packaged Assets" },
             { id: "mobile-apks", icon: "fa-android", title: "Mobile APKs", desc: "Premium development package environments, verified sandboxed applications, and portable tools.", target: "mobile-apks.html", count: "88 Secure Packages" },
@@ -1000,7 +1005,7 @@
             targetNode.addEventListener('transitionend', () => targetNode.remove());
         }
 
-        /* --- VISUAL INTERFACE CORE STATE MANIPULATIONS (THEME/ATTENUATOR) --- */
+        /* --- VISUAL INTERFACE CORE STATE MANIPULATIONS --- */
         const mainThemeTrigger = document.getElementById('theme-toggle-btn');
         const drawerThemeTrigger = document.getElementById('drawer-inline-theme-btn');
         const brightnessControlInput = document.getElementById('drawer-brightness-range');
@@ -1032,7 +1037,7 @@
         updateAttenuatorCoefficient(cachedBrightnessValue);
         brightnessControlInput.addEventListener('input', (event) => updateAttenuatorCoefficient(event.target.value));
 
-        /* --- SYSTEM SIDE DRAWER CONTROL LOGIC PANELS --- */
+        /* --- SYSTEM SIDE DRAWER CONTROL LOGIC --- */
         const openDrawerBtn = document.getElementById('drawer-open-btn');
         const closeDrawerBtn = document.getElementById('drawer-close-btn');
         const drawerOverlayBackdrop = document.getElementById('drawer-bg-overlay');
@@ -1051,7 +1056,7 @@
         closeDrawerBtn.addEventListener('click', () => modifyDrawerVisibilityState(false));
         drawerOverlayBackdrop.addEventListener('click', () => modifyDrawerVisibilityState(false));
 
-        /* --- LOCAL STORAGE TRACKING RUNTIMES FOR CONFIG NOTIFICATION CHANNELS --- */
+        /* --- NOTIFICATION PREFERENCES HANDLING --- */
         const trackingNotificationChannelMap = {
             products: document.getElementById('notif-products'),
             security: document.getElementById('notif-security'),
@@ -1067,14 +1072,68 @@
             });
         });
 
-        // Mock Platform Notification Interactivity Event
         document.getElementById('bell-notification-mock').addEventListener('click', () => {
             spawnPremiumToast('System Pipeline Active', 'No critical infrastructure alert notifications are pending in your account queue.', 'info');
         });
 
-        /* --- SECURE PAYMENT PROTOTYPE ROUTINE CALL ENTRY --- */
+        /* --- LIVE RAZORPAY PAYMENT SYSTEM INTEGRATION --- */
         window.startPayment = function() {
-            spawnPremiumToast('Razorpay Integration Pending', 'The commercial processing gateway routine is currently awaiting final API credential registration loops.', 'warning');
+            if (!currentAuthenticatedUser) {
+                spawnPremiumToast('Authentication Error', 'You must be signed in to perform this setup transaction.', 'error');
+                return;
+            }
+
+            // Options mapping structure config using the provided Test Key
+            const paymentOptions = {
+                "key": "rzp_test_SEmogRtkh8yrZ5", 
+                "amount": 19900, // INR 199.00 (represented in paise)
+                "currency": "INR",
+                "name": "Creators Vault",
+                "description": "Lifetime Vault Pro Access Purchase Bundle",
+                "image": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/shield-halved.svg",
+                "handler": async function (paymentResponse) {
+                    spawnPremiumToast('Payment Success', 'Verification received! Synchronizing secure database nodes...', 'success');
+                    
+                    try {
+                        const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
+                        await updateDoc(userDocRef, {
+                            paid: true,
+                            membershipName: "Vault Pro Lifetime",
+                            premiumActivationTimestamp: serverTimestamp(),
+                            razorpayPaymentId: paymentResponse.razorpay_payment_id
+                        });
+                        
+                        spawnPremiumToast('Account Upgraded', 'Your lifetime premium environment matrix has been successfully unlocked!', 'success');
+                        
+                        // Local runtime profile updates fallback update trigger
+                        if (activeUserWorkspaceRecord) {
+                            activeUserWorkspaceRecord.paid = true;
+                            activeUserWorkspaceRecord.membershipName = "Vault Pro Lifetime";
+                            manifestDashboardLayoutData(activeUserWorkspaceRecord);
+                        }
+                    } catch (dbUpdateError) {
+                        console.error("Firestore database status tier updates failure logs:", dbUpdateError);
+                        spawnPremiumToast('Database Sync Error', 'Payment confirmed but profile updating step failed. Contact operations team.', 'error');
+                    }
+                },
+                "prefill": {
+                    "email": currentAuthenticatedUser.email || ""
+                },
+                "theme": {
+                    "color": "#2563eb"
+                }
+            };
+
+            try {
+                const razorpayPaymentGatewayObject = new Razorpay(paymentOptions);
+                razorpayPaymentGatewayObject.on('payment.failed', function (failedResponse) {
+                    spawnPremiumToast('Transaction Aborted', failedResponse.error.description || 'The secure asset payment process was cancelled or refused.', 'error');
+                });
+                razorpayPaymentGatewayObject.open();
+            } catch (checkoutInitializationFault) {
+                console.error("Razorpay SDK launch breakdown tracking logic errors:", checkoutInitializationFault);
+                spawnPremiumToast('Gateway Framework Defect', 'Unable to resolve external payment scripts module components.', 'error');
+            }
         };
 
         /* --- MAIN VIEWPORT INJECTION AND GENERATION --- */
@@ -1083,7 +1142,6 @@
             const categoriesInjectionTarget = document.getElementById('categories-injection-frame');
             const isPremiumVerifiedUser = userRecord.paid === true;
 
-            // 1. Structural Hero Presentation Logic Selection Rule
             if (!isPremiumVerifiedUser) {
                 heroContainerTarget.innerHTML = `
                     <div class="hero-banner locked">
@@ -1116,7 +1174,6 @@
                 `;
             }
 
-            // 2. Structural Category Iteration & Injection Loop Execution Pass
             categoriesInjectionTarget.innerHTML = '';
             staticCategoryConfigurations.forEach(categoryNode => {
                 const functionalCardWrapper = document.createElement('div');
@@ -1146,7 +1203,6 @@
                 categoriesInjectionTarget.appendChild(functionalCardWrapper);
             });
 
-            // 3. User Detail Extraction To Settings Drawer Panel Targets
             document.getElementById('drawer-email-label').textContent = userRecord.email;
             document.getElementById('drawer-membership-label').textContent = userRecord.membershipName;
             
@@ -1167,7 +1223,7 @@
             }
         }
 
-        /* --- SELECTION SEARCH QUERY MANAGEMENT LOGIC MATRIX --- */
+        /* --- SELECTION SEARCH QUERY MANAGEMENT --- */
         document.getElementById('platform-search').addEventListener('input', (event) => {
             const normalQueryValue = event.target.value.toLowerCase().trim();
             const instantiatedCardNodes = document.querySelectorAll('.category-card');
@@ -1178,12 +1234,11 @@
             });
         });
 
-        /* --- AUTH PROTOCOL SECURITY MONITOR PIPELINE WATCHDOG SHIELD --- */
+        /* --- AUTH PROTOCOL SECURITY MONITOR PIPELINE --- */
         const globalAuthenticationGuardShield = document.getElementById('auth-guard-screen');
 
         onAuthStateChanged(auth, async (networkUserContext) => {
             if (!networkUserContext) {
-                // If token authorization validation logic encounters missing parameters, purge user trace completely
                 window.location.href = 'index.html';
                 return;
             }
@@ -1195,7 +1250,6 @@
                 const functionalSnapshot = await getDoc(operationalUserRecordReference);
 
                 if (!functionalSnapshot.exists()) {
-                    // Populate initial missing profile registration parameters mapping rules safely
                     const foundationalUserStructureValues = {
                         uid: networkUserContext.uid,
                         email: networkUserContext.email,
@@ -1208,15 +1262,12 @@
                     await setDoc(operationalUserRecordReference, foundationalUserStructureValues);
                     activeUserWorkspaceRecord = foundationalUserStructureValues;
                 } else {
-                    // Capture active profile state map records and append runtime connection timestamps logs
                     await updateDoc(operationalUserRecordReference, { lastLoginAt: serverTimestamp() });
                     activeUserWorkspaceRecord = functionalSnapshot.data();
                 }
 
-                // Render compiled viewport configuration structures to targets
                 manifestDashboardLayoutData(activeUserWorkspaceRecord);
                 
-                // Anmitate security loader curtains away from workspace
                 globalAuthenticationGuardShield.style.transition = 'opacity 0.35s ease';
                 globalAuthenticationGuardShield.style.opacity = '0';
                 setTimeout(() => globalAuthenticationGuardShield.style.display = 'none', 350);
@@ -1225,7 +1276,6 @@
                 console.error("Infrastructure Firestore operational read-write fault tracking log:", cloudDataClusterFailure);
                 spawnPremiumToast('Cloud Synchronization Failure', 'Failed to retrieve cloud data. Activating transient secure offline read-only fallback mode.', 'error');
                 
-                // Fallback architecture definition mapping rules to preserve UI structural utility
                 activeUserWorkspaceRecord = {
                     uid: networkUserContext.uid,
                     email: networkUserContext.email,
@@ -1238,7 +1288,7 @@
             }
         });
 
-        /* --- DRAWER TERMINAL ACTION EVENT HANDLER EXECUTION LOOPS --- */
+        /* --- DRAWER TERMINAL ACTION EVENT HANDLERS --- */
         document.getElementById('action-password-reset').addEventListener('click', async () => {
             if (!currentAuthenticatedUser || !currentAuthenticatedUser.email) return;
             try {
@@ -1253,7 +1303,7 @@
         document.getElementById('action-session-logout').addEventListener('click', async () => {
             try {
                 globalAuthenticationGuardShield.style.display = 'flex';
-                globalAuthenticationGuardShield.style.opacity = '1'; // Re-engage guard shield barrier layers immediately prior to logout
+                globalAuthenticationGuardShield.style.opacity = '1';
                 await signOut(auth);
             } catch (logoutOperationFault) {
                 console.error(logoutOperationFault);
