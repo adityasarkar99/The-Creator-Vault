@@ -1,274 +1,430 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Vault - Premium Digital Products Access</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CSS VARIABLES & RESET --- */
-        :root {
-            --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
-            --glass-bg: rgba(15, 23, 42, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.03);
-            --accent-primary: #6366f1;
-            --accent-hover: #4f46e5;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+        /* --- CORE DESIGN SYSTEM & VARIABLES --- */
+        :root, [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --border-color: #e2e8f0;
             
-            /* Toast Colors */
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-inverse: #ffffff;
+            
+            --accent-primary: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-subtle: #dbeafe;
+            
             --toast-success: #10b981;
             --toast-error: #ef4444;
             --toast-warning: #f59e0b;
             --toast-info: #3b82f6;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
         }
 
+        [data-theme="dark"] {
+            --bg-page: #0b0f19;
+            --bg-card: #131c2e;
+            --bg-input: #1e293b;
+            --border-color: #334155;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-inverse: #0f172a;
+            
+            --accent-primary: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-subtle: rgba(59, 130, 246, 0.15);
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- GLOBAL RESET & SMOOTH VISUALS --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
         body {
-            background: var(--bg-gradient);
+            background-color: var(--bg-page);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: relative;
             overflow-x: hidden;
-            padding: 20px;
         }
 
-        /* --- BACKGROUND ORBS --- */
-        .orb {
+        /* --- GLOBAL APPLICATION HEADER --- */
+        .app-header {
             position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: -1;
-            opacity: 0.4;
-        }
-        .orb-1 { top: 10%; left: 15%; background: #4f46e5; }
-        .orb-2 { bottom: 10%; right: 15%; background: #c084fc; }
-
-        /* --- MAIN CARD CONTAINER --- */
-        .auth-container {
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 460px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            background-image: linear-gradient(135deg, var(--glass-highlight), transparent);
-            transition: transform 0.3s ease;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            z-index: 10;
         }
 
-        /* --- BRANDING --- */
-        .brand-header {
-            text-align: center;
-            margin-bottom: 32px;
+        /* Premium Minimalist Theme Switcher Button */
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
         }
-        .brand-logo {
-            font-size: 2.5rem;
-            background: linear-gradient(to right, #a5b4fc, #6366f1, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .theme-toggle-btn:hover {
+            border-color: var(--accent-primary);
+        }
+        .theme-toggle-btn .fa-sun { display: none; }
+        [data-theme="dark"] .theme-toggle-btn .fa-moon { display: none; }
+        [data-theme="dark"] .theme-toggle-btn .fa-sun { display: inline-block; }
+
+        /* --- MAIN SPLIT LAYOUT GRID --- */
+        .main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* Left Side: Premium Structural Trust Column */
+        .brand-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 80px;
+            border-right: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-page), var(--bg-card));
+        }
+
+        .brand-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .brand-icon-box {
+            background: var(--accent-primary);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
             font-weight: 700;
-            letter-spacing: -0.05em;
-            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
         }
-        .brand-subtitle {
+
+        .brand-tagline {
+            font-size: 1.15rem;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            margin-bottom: 48px;
             font-weight: 400;
         }
 
-        /* --- FORMS DISPLAY LOGIC --- */
-        .auth-form {
+        /* SaaS Style Clean Trust Verification Matrices */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            max-width: 520px;
+        }
+
+        .trust-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .trust-icon {
+            background: var(--accent-subtle);
+            color: var(--accent-primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .trust-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .trust-content p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Right Side: Authentication Control Interface Card */
+        .auth-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 40px;
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        /* Navigation Authentication Modality Tabs */
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 28px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 12px 0;
+            cursor: pointer;
+            text-align: center;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-primary);
+        }
+
+        /* Modal / Segment Management State Switching */
+        .auth-segment {
             display: none;
         }
-        .auth-form.active {
+
+        .auth-segment.active {
             display: block;
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.25s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .form-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #ffffff;
+        /* --- CONTROL INPUT & STRUCTURAL ELEMENTS --- */
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        /* --- INPUT GROUPS --- */
-        .input-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .input-label {
+        .form-label {
             display: block;
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
-        .input-wrapper {
+
+        .input-container {
             position: relative;
             display: flex;
             align-items: center;
         }
-        .input-wrapper i.input-icon {
+
+        .input-icon-left {
             position: absolute;
-            left: 16px;
+            left: 14px;
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             pointer-events: none;
         }
-        .auth-input {
+
+        .form-input {
             width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: #ffffff;
+            padding: 12px 40px 12px 40px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
             font-size: 0.95rem;
             outline: none;
-            transition: all 0.2s ease;
         }
-        .auth-input:focus {
+
+        .form-input:focus {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
         }
-        .toggle-password {
+
+        .password-toggle {
             position: absolute;
-            right: 16px;
+            right: 14px;
             color: var(--text-muted);
             cursor: pointer;
             padding: 4px;
-            transition: color 0.2s;
         }
-        .toggle-password:hover {
-            color: #ffffff;
+        .password-toggle:hover {
+            color: var(--text-main);
         }
 
-        /* --- EXTRA OPTIONS --- */
-        .form-options {
+        .forgot-trigger-wrapper {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 24px;
+            margin-top: -12px;
+            margin-bottom: 20px;
         }
+
         .forgot-link {
-            color: var(--accent-primary);
             font-size: 0.85rem;
+            color: var(--accent-primary);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.2s;
             cursor: pointer;
         }
         .forgot-link:hover {
-            color: var(--accent-hover);
             text-decoration: underline;
         }
 
-        /* --- BUTTONS --- */
+        /* Action Submission Button Profiles */
         .btn-submit {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: var(--accent-primary);
+            color: white;
             border: none;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: var(--shadow-sm);
         }
+
         .btn-submit:hover {
             background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-        }
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-        .btn-submit:disabled {
-            background: rgba(99, 102, 241, 0.5);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
 
-        /* Loading Spinner */
+        /* Loading UI States Matrix */
         .spinner {
             display: none;
-            width: 20px;
-            height: 20px;
-            border: 2.5px solid rgba(255,255,255,0.3);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 0.8s linear infinite;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .btn-submit.loading .spinner {
-            display: block;
-        }
-        .btn-submit.loading .btn-text {
-            display: none;
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-submit.loading .spinner { display: block; }
+        .btn-submit.loading .btn-text { display: none; }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* Trust / Privacy Structural Footers */
+        .privacy-notice {
+            margin-top: 20px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
         }
 
-        /* --- TOGGLE FEEDS --- */
-        .form-footer {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        .switch-form-btn {
+        .back-to-login-btn {
+            background: none;
+            border: none;
             color: var(--accent-primary);
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 500;
             cursor: pointer;
-            text-decoration: none;
-            margin-left: 4px;
+            margin-top: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .switch-form-btn:hover {
-            color: var(--accent-hover);
+        .back-to-login-btn:hover {
             text-decoration: underline;
         }
 
-        /* --- BRAND FOOTER --- */
-        .site-footer {
-            margin-top: 40px;
+        /* --- IMMUTABLE SYSTEM WIDE FOOTER --- */
+        .app-footer {
+            width: 100%;
+            padding: 24px;
             text-align: center;
-            font-size: 0.8rem;
-            color: rgba(148, 163, 184, 0.6);
-            letter-spacing: 0.05em;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
         }
 
-        /* --- PREMIUM TOAST SYSTEM --- */
+        /* --- PREMIUM INDEPENDENT TOAST SYSTEM --- */
         #toast-container {
             position: fixed;
             top: 24px;
@@ -277,202 +433,252 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-width: 380px;
+            max-width: 360px;
             width: calc(100% - 48px);
         }
+
         .toast {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-left: 4px solid transparent;
-            padding: 16px 20px;
-            border-radius: 12px;
-            color: #ffffff;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-primary);
+            padding: 14px 18px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: flex-start;
-            gap: 14px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            gap: 12px;
             transform: translateX(120%);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             opacity: 0;
         }
+
         .toast.show {
             transform: translateX(0);
             opacity: 1;
         }
-        .toast.hide {
-            transform: translateX(120%);
-            opacity: 0;
-        }
-        .toast i.toast-icon {
-            font-size: 1.25rem;
+
+        .toast-icon {
+            font-size: 1.1rem;
             margin-top: 2px;
+            flex-shrink: 0;
         }
-        .toast-content {
+
+        .toast-body {
             flex-grow: 1;
         }
-        .toast-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 2px;
-        }
-        .toast-message {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+
+        .toast-msg {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            font-weight: 500;
             line-height: 1.4;
         }
+
         .toast-close {
             background: none;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             padding: 2px;
-            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .toast-close:hover {
-            color: #ffffff;
-        }
+        .toast-close:hover { color: var(--text-main); }
 
-        /* Toast Status Variants */
         .toast.success { border-left-color: var(--toast-success); }
-        .toast.success i.toast-icon { color: var(--toast-success); }
-        
+        .toast.success .toast-icon { color: var(--toast-success); }
         .toast.error { border-left-color: var(--toast-error); }
-        .toast.error i.toast-icon { color: var(--toast-error); }
-
+        .toast.error .toast-icon { color: var(--toast-error); }
         .toast.warning { border-left-color: var(--toast-warning); }
-        .toast.warning i.toast-icon { color: var(--toast-warning); }
-
+        .toast.warning .toast-icon { color: var(--toast-warning); }
         .toast.info { border-left-color: var(--toast-info); }
-        .toast.info i.toast-icon { color: var(--toast-info); }
+        .toast.info .toast-icon { color: var(--toast-info); }
 
-        /* --- RESPONSIVE FIXES --- */
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 30px 20px;
+        /* --- RESPONSIVE STRUCTURAL OVERRIDES --- */
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
             }
-            #toast-container {
-                top: 16px;
-                right: 16px;
-                width: calc(100% - 32px);
+            .brand-panel {
+                padding: 100px 40px 40px 40px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                align-items: center;
+                text-align: center;
+            }
+            .brand-logo-area { justify-content: center; }
+            .brand-tagline { margin-bottom: 32px; }
+            .trust-grid {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+            .auth-panel {
+                padding: 40px 20px 80px 20px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <header class="app-header">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+            <i class="fa-regular fa-moon"></i>
+            <i class="fa-regular fa-sun"></i>
+            <span id="theme-text">Dark Mode</span>
+        </button>
+    </header>
 
-    <div class="auth-container">
+    <main class="main-layout">
         
-        <div class="brand-header">
-            <div class="brand-logo">Creators Vault</div>
-            <div class="brand-subtitle">Premium Digital Products Access</div>
-        </div>
-
-        <form id="login-form" class="auth-form active" novalidate>
-            <h2 class="form-title">Sign In</h2>
+        <section class="brand-panel">
+            <div class="brand-logo-area">
+                <div class="brand-icon-box"><i class="fa-solid fa-vault"></i></div>
+                <h1 class="brand-title">Creators Vault</h1>
+            </div>
+            <p class="brand-tagline">Premium Digital Products Access</p>
             
-            <div class="input-group">
-                <label class="input-label">Email Address</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-envelope input-icon"></i>
-                    <input type="email" id="login-email" class="auth-input" placeholder="name@example.com" required>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="trust-content">
+                        <h4>Secure access validation</h4>
+                        <p>Enterprise grade isolation layer powered natively by Firebase Authentication infrastructure protocols.</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-infinity"></i></div>
+                    <div class="trust-content">
+                        <h4>Lifetime allocation access</h4>
+                        <p>Your cleared dynamic credentials guarantee continuous digital asset sync vectors post acquisition verification.</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="trust-content">
+                        <h4>Instant secure deployment</h4>
+                        <p>Immediate structural distribution pipelines handle all binary asset tracking links to your local station.</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="trust-content">
+                        <h4>Protected user environment</h4>
+                        <p>Encryption isolation protocols secure all local environment nodes internally across every session footprint.</p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="input-group">
-                <label class="input-label">Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-lock input-icon"></i>
-                    <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required>
-                    <i class="fa-regular fa-eye toggle-password"></i>
+        <section class="auth-panel">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    
+                    <div class="auth-tabs" id="auth-tabs-navigation">
+                        <button class="tab-btn active" data-target="login-segment">Sign In</button>
+                        <button class="tab-btn" data-target="register-segment">Register</button>
+                    </div>
+
+                    <div class="segments-container">
+                        
+                        <div class="auth-segment active" id="login-segment">
+                            <form id="login-form" novalidate>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-envelope input-icon-left"></i>
+                                        <input type="email" id="login-email" class="form-input" placeholder="name@domain.com" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Password</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-lock input-icon-left"></i>
+                                        <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+                                        <i class="fa-regular fa-eye password-toggle"></i>
+                                    </div>
+                                </div>
+                                <div class="forgot-trigger-wrapper">
+                                    <a class="forgot-link" id="trigger-forgot-view">Forgot Password?</a>
+                                </div>
+                                <button type="submit" class="btn-submit">
+                                    <span class="btn-text">Sign In</span>
+                                    <div class="spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="auth-segment" id="register-segment">
+                            <form id="register-form" novalidate>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-envelope input-icon-left"></i>
+                                        <input type="email" id="register-email" class="form-input" placeholder="name@domain.com" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Password</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-lock input-icon-left"></i>
+                                        <input type="password" id="register-password" class="form-input" placeholder="At least 6 characters" required>
+                                        <i class="fa-regular fa-eye password-toggle"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm Password</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-lock input-icon-left"></i>
+                                        <input type="password" id="register-confirm" class="form-input" placeholder="Confirm your password" required>
+                                        <i class="fa-regular fa-eye password-toggle"></i>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-submit">
+                                    <span class="btn-text">Create Account</span>
+                                    <div class="spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="auth-segment" id="forgot-segment">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 8px;">Recover Credentials</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">
+                                Enter your validated credentials account parameters link routing below. A verification reset command sequence will trigger instantly.
+                            </p>
+                            <form id="forgot-form" novalidate>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-container">
+                                        <i class="fa-regular fa-envelope input-icon-left"></i>
+                                        <input type="email" id="forgot-email" class="form-input" placeholder="name@domain.com" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-submit">
+                                    <span class="btn-text">Transmit Recovery Request</span>
+                                    <div class="spinner"></div>
+                                </button>
+                                <div style="text-align: center;">
+                                    <button type="button" class="back-to-login-btn" id="forgot-back-to-login">
+                                        <i class="fa-solid fa-arrow-left"></i> Back to login
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <div class="privacy-notice">
+                        <i class="fa-solid fa-lock" style="font-size:0.7rem; margin-right:4px;"></i> 
+                        Your login is protected. We never ask for unnecessary personal information.
+                    </div>
+
                 </div>
             </div>
+        </section>
+    </main>
 
-            <div class="form-options">
-                <a class="forgot-link" id="go-forgot">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <span class="btn-text">Sign In</span>
-                <div class="spinner"></div>
-            </button>
-
-            <div class="form-footer">
-                Don't have an account?<a class="switch-form-btn" id="go-register">Register</a>
-            </div>
-        </form>
-
-        <form id="register-form" class="auth-form" novalidate>
-            <h2 class="form-title">Create Account</h2>
-
-            <div class="input-group">
-                <label class="input-label">Email Address</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-envelope input-icon"></i>
-                    <input type="email" id="register-email" class="auth-input" placeholder="name@example.com" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label">Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-lock input-icon"></i>
-                    <input type="password" id="register-password" class="auth-input" placeholder="Minimum 6 characters" required>
-                    <i class="fa-regular fa-eye toggle-password"></i>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label">Confirm Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-lock input-icon"></i>
-                    <input type="password" id="register-confirm-password" class="auth-input" placeholder="Repeat password" required>
-                    <i class="fa-regular fa-eye toggle-password"></i>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <span class="btn-text">Create Account</span>
-                <div class="spinner"></div>
-            </button>
-
-            <div class="form-footer">
-                Already have an account?<a class="switch-form-btn" id="go-login">Sign In</a>
-            </div>
-        </form>
-
-        <form id="forgot-form" class="auth-form" novalidate>
-            <h2 class="form-title">Reset Password</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5;">
-                Enter your email address down below and we'll send you a secure dynamic link to reset your account credentials.
-            </p>
-
-            <div class="input-group">
-                <label class="input-label">Email Address</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-envelope input-icon"></i>
-                    <input type="email" id="forgot-email" class="auth-input" placeholder="name@example.com" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <span class="btn-text">Send Reset Link</span>
-                <div class="spinner"></div>
-            </button>
-
-            <div class="form-footer">
-                Back to secure<a class="switch-form-btn" id="forgot-back-login">Sign In</a>
-            </div>
-        </form>
-
-    </div>
-
-    <footer class="site-footer">
+    <footer class="app-footer">
         &copy; 2026 Creators Vault. All rights reserved.
     </footer>
 
@@ -480,12 +686,12 @@
 
 
     <script type="module">
-        // Import essential individual production ready configurations via standard modern CDN delivery
+        // Dynamic Modular Structural Cloud CDN Dependency Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, 
-            createUserWithEmailAndPassword, 
             signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
             sendPasswordResetEmail, 
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -496,7 +702,7 @@
             serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Structured Firebase Credentials Integration Engine
+        // Global Infrastructure Identity Verification Configurations
         const firebaseConfig = {
             apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
             authDomain: "creators-vaults.firebaseapp.com",
@@ -507,244 +713,268 @@
             measurementId: "G-MM742MSP09"
         };
 
-        // Initialize Native App Instances
+        // Initialize Shared Infrastructure Targets
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        /* --- TOAST NOTIFICATION ENGINE --- */
-        const toastContainer = document.getElementById('toast-container');
+        /* --- IMMUTABLE SYSTEM TOAST SYSTEMS MTRX --- */
+        const container = document.getElementById('toast-container');
+        
+        function callToast(msg, variant = 'info') {
+            const el = document.createElement('div');
+            el.className = `toast ${variant}`;
+            
+            let icon = 'fa-circle-info';
+            if (variant === 'success') icon = 'fa-circle-check';
+            if (variant === 'error') icon = 'fa-circle-exclamation';
+            if (variant === 'warning') icon = 'fa-triangle-exclamation';
 
-        function showToast(message, type = 'info', title = '') {
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-
-            // Configure Icon sets natively matching priority variants
-            let iconClass = 'fa-circle-info';
-            if (type === 'success') { iconClass = 'fa-circle-check'; if(!title) title = 'Success'; }
-            else if (type === 'error') { iconClass = 'fa-circle-exclamation'; if(!title) title = 'Error'; }
-            else if (type === 'warning') { iconClass = 'fa-triangle-exclamation'; if(!title) title = 'Warning'; }
-            else { if(!title) title = 'Information'; }
-
-            toast.innerHTML = `
-                <i class="fa-solid ${iconClass} toast-icon"></i>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
+            el.innerHTML = `
+                <i class="fa-solid ${icon} toast-icon"></i>
+                <div class="toast-body">
+                    <p class="toast-msg">${msg}</p>
                 </div>
-                <button class="toast-close"><i class="fa-solid fa-xmark"></i></button>
+                <button class="toast-close" type="button"><i class="fa-solid fa-xmark"></i></button>
             `;
 
-            toastContainer.appendChild(toast);
+            container.appendChild(el);
+            
+            // Render lifecycle configuration routines
+            setTimeout(() => el.classList.add('show'), 40);
+            
+            const cleanupTimer = setTimeout(() => hideToast(el), 5000);
 
-            // Fast execution context sequence injection for hardware accelerated css transforms
-            setTimeout(() => toast.classList.add('show'), 50);
-
-            // Handler lifecycle configurations
-            const autoCloseTimeout = setTimeout(() => dismissToast(toast), 5000);
-
-            toast.querySelector('.toast-close').addEventListener('click', () => {
-                clearTimeout(autoCloseTimeout);
-                dismissToast(toast);
+            el.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(cleanupTimer);
+                hideToast(el);
             });
         }
 
-        function dismissToast(toast) {
-            toast.classList.remove('show');
-            toast.classList.add('hide');
-            toast.addEventListener('transitionend', () => {
-                toast.remove();
-            });
+        function hideToast(el) {
+            el.classList.remove('show');
+            el.addEventListener('transitionend', () => el.remove());
         }
 
 
-        /* --- INTERFACE NAVIGATION & DISPLAY TOGGLES --- */
-        const forms = {
-            login: document.getElementById('login-form'),
-            register: document.getElementById('register-form'),
-            forgot: document.getElementById('forgot-form')
-        };
+        /* --- PRESETS & VISUAL MANAGEMENT DOM LOGIC (THEMING) --- */
+        const themeBtn = document.getElementById('theme-toggle');
+        const themeText = document.getElementById('theme-text');
+        const rootHtml = document.documentElement;
 
-        function switchForm(targetKey) {
-            Object.keys(forms).forEach(key => {
-                if (key === targetKey) {
-                    forms[key].classList.add('active');
+        function applyTheme(targetTheme) {
+            rootHtml.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('cv_preferred_theme', targetTheme);
+            themeText.textContent = targetTheme === 'dark' ? 'Dark Mode' : 'Light Mode';
+        }
+
+        // Initialize Session Configuration Memory Strategy 
+        const cachedTheme = localStorage.getItem('cv_preferred_theme') || 'dark';
+        applyTheme(cachedTheme);
+
+        themeBtn.addEventListener('click', () => {
+            const ongoing = rootHtml.getAttribute('data-theme');
+            applyTheme(ongoing === 'dark' ? 'light' : 'dark');
+        });
+
+
+        /* --- VIEW ROUTER MANAGEMENT ACTIONS --- */
+        const tabsRow = document.getElementById('auth-tabs-navigation');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const structuralSegments = document.querySelectorAll('.auth-segment');
+
+        function switchSegmentView(targetSegmentId) {
+            structuralSegments.forEach(seg => {
+                if(seg.id === targetSegmentId) {
+                    seg.classList.add('active');
                 } else {
-                    forms[key].classList.remove('active');
+                    seg.classList.remove('active');
                 }
             });
+
+            // Maintain alignment mappings if selection belongs inside primary array headers
+            tabButtons.forEach(btn => {
+                if(btn.getAttribute('data-target') === targetSegmentId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if (targetSegmentId === 'forgot-segment') {
+                tabsRow.style.display = 'none';
+            } else {
+                tabsRow.style.display = 'grid';
+            }
         }
 
-        // View Transition Binding Listeners
-        document.getElementById('go-register').addEventListener('click', () => switchForm('register'));
-        document.getElementById('go-login').addEventListener('click', () => switchForm('login'));
-        document.getElementById('go-forgot').addEventListener('click', () => switchForm('forgot'));
-        document.getElementById('forgot-back-login').addEventListener('click', () => switchForm('login'));
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchSegmentView(btn.getAttribute('data-target'));
+            });
+        });
+
+        document.getElementById('trigger-forgot-view').addEventListener('click', () => switchSegmentView('forgot-segment'));
+        document.getElementById('forgot-back-to-login').addEventListener('click', () => switchSegmentView('login-segment'));
 
 
-        /* --- FORM REGISTRATION CONTROL CONTROLLER (PASSWORD SHOW/HIDE) --- */
-        document.querySelectorAll('.toggle-password').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.classList.remove('fa-eye');
-                    this.classList.add('fa-eye-slash');
+        /* --- CONTROL INPUT RECOGNITION ACTIONS (PASS SHOW/HIDE) --- */
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const associatedInput = this.previousElementSibling;
+                if(associatedInput.type === 'password') {
+                    associatedInput.type = 'text';
+                    this.className = 'fa-regular fa-eye-slash password-toggle';
                 } else {
-                    input.type = 'password';
-                    this.classList.remove('fa-eye-slash');
-                    this.classList.add('fa-eye');
+                    associatedInput.type = 'password';
+                    this.className = 'fa-regular fa-eye password-toggle';
                 }
             });
         });
 
 
-        /* --- CLIENT SIDE VALIDATION PIPELINES --- */
-        function validateEmail(email) {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
+        /* --- REGISTRATION VALIDATION ENGINE PIPES --- */
+        function verifyEmailSyntax(target) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target);
         }
 
-        function setButtonLoading(formElement, isLoading) {
-            const button = formElement.querySelector('.btn-submit');
-            if (isLoading) {
-                button.classList.add('loading');
-                button.disabled = true;
+        function toggleLoadingState(formEl, state) {
+            const submissionBtn = formEl.querySelector('.btn-submit');
+            if(state) {
+                submissionBtn.classList.add('loading');
+                submissionBtn.disabled = true;
             } else {
-                button.classList.remove('loading');
-                button.disabled = false;
+                submissionBtn.classList.remove('loading');
+                submissionBtn.disabled = false;
             }
         }
 
 
-        /* --- SESSION MONITOR TRACKING --- */
-        // Auto-routing if authorization status is pre-validated
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
+        /* --- LIFECYCLE MONITOR ENGINE LINK --- */
+        onAuthStateChanged(auth, user => {
+            if(user) {
                 window.location.href = 'dashboard.html';
             }
         });
 
 
-        /* --- CONTROLLER: USER SIGN IN ACTION --- */
-        forms.login.addEventListener('submit', async (e) => {
+        /* --- SUBSYSTEM PIPELINE: SECURE LOG IN --- */
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
+            const mail = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
 
-            if (!email || !password) {
-                showToast('Please fulfill all mandatory user processing criteria fields.', 'warning');
+            if(!mail || !pass) {
+                callToast('All access credential criteria must be defined.', 'warning');
                 return;
             }
-            if (!validateEmail(email)) {
-                showToast('Format mismatch localized inside designated email parameters.', 'warning');
+            if(!verifyEmailSyntax(mail)) {
+                callToast('Target email input parsing syntax format error.', 'warning');
                 return;
             }
 
-            setButtonLoading(forms.login, true);
+            toggleLoadingState(loginForm, true);
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                showToast('Authorization access verified! Redirecting to secure profile...', 'success');
-                // Redirection processed immediately through onAuthStateChanged async loop hook
-            } catch (error) {
-                console.error(error);
-                let msg = 'Authentication failure triggered matching structural credentials.';
-                if (error.code === 'auth/invalid-credential') msg = 'Invalid account credentials specified.';
-                else if (error.code === 'auth/user-not-found') msg = 'No registered vault parameters exist for this profile.';
-                else if (error.code === 'auth/wrong-password') msg = 'The matching parameters for this account are incorrect.';
+                await signInWithEmailAndPassword(auth, mail, pass);
+                callToast('Identity matrix authenticated! Passing allocation...', 'success');
+            } catch (err) {
+                console.error(err);
+                let message = 'Verification failure matching structural parameters.';
+                if(err.code === 'auth/invalid-credential') message = 'No authorization access matching specified criteria.';
+                if(err.code === 'auth/user-disabled') message = 'Target allocation index locked by environment admin.';
                 
-                showToast(msg, 'error');
-                setButtonLoading(forms.login, false);
+                callToast(message, 'error');
+                toggleLoadingState(loginForm, false);
             }
         });
 
 
-        /* --- CONTROLLER: ACCOUNT CREATION MANAGEMENT (REGISTER) --- */
-        forms.register.addEventListener('submit', async (e) => {
+        /* --- SUBSYSTEM PIPELINE: PROFILE REGISTRATION --- */
+        const registerForm = document.getElementById('register-form');
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('register-email').value.trim();
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const mail = document.getElementById('register-email').value.trim();
+            const pass = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
 
-            // Form Validations
-            if(!email || !password || !confirmPassword) {
-                showToast('All initialization processing rows must be completed.', 'warning');
+            if(!mail || !pass || !confirm) {
+                callToast('All construction structural layers must be populated.', 'warning');
                 return;
             }
-            if(!validateEmail(email)) {
-                showToast('Provide a globally accepted standard syntax email.', 'warning');
+            if(!verifyEmailSyntax(mail)) {
+                callToast('The format specified does not match typical clear email nodes.', 'warning');
                 return;
             }
-            if(password.length < 6) {
-                showToast('Password parameters must encompass at minimum 6 distinct characters.', 'warning');
+            if(pass.length < 6) {
+                callToast('Key sequences require an array containing 6 or more units.', 'warning');
                 return;
             }
-            if(password !== confirmPassword) {
-                showToast('Structural alignment failed. Password verification fields must match.', 'warning');
+            if(pass !== confirm) {
+                callToast('Matrix values mismatch inside security validation confirmations.', 'warning');
                 return;
             }
 
-            setButtonLoading(forms.register, true);
+            toggleLoadingState(registerForm, true);
 
             try {
-                // Execute Authentication creation script inside Cloud Environment
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                const result = await createUserWithEmailAndPassword(auth, mail, pass);
+                const userInstance = result.user;
 
-                // Provision standard initial Cloud Firestore configuration schema parameters
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    email: email,
+                await setDoc(doc(db, "users", userInstance.uid), {
+                    uid: userInstance.uid,
+                    email: mail,
                     paid: false,
                     role: "user",
+                    membershipName: "Explorer Access",
                     createdAt: serverTimestamp()
                 });
 
-                showToast('Profile configuration provisioned successfully!', 'success');
-                // Auto-routing takes over instantly from structural pipeline detection loops
-            } catch (error) {
-                console.error(error);
-                let msg = 'An operational failure occurred during registration lifecycle routine.';
-                if (error.code === 'auth/email-already-in-use') msg = 'This operational email space is already claimed.';
+                callToast('Vault initialization completely finalized! Processing integration...', 'success');
+            } catch (err) {
+                console.error(err);
+                let message = 'Profile allocation runtime transaction failure.';
+                if(err.code === 'auth/email-already-in-use') message = 'Specified channel is registered inside alternate configuration profiles.';
                 
-                showToast(msg, 'error');
-                setButtonLoading(forms.register, false);
+                callToast(message, 'error');
+                toggleLoadingState(registerForm, false);
             }
         });
 
 
-        /* --- CONTROLLER: FORGOT PASSWORD PASSING LINK HANDLER --- */
-        forms.forgot.addEventListener('submit', async (e) => {
+        /* --- SUBSYSTEM PIPELINE: PASSWORD RECOVERY LINKER --- */
+        const forgotForm = document.getElementById('forgot-form');
+        forgotForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('forgot-email').value.trim();
+            const mail = document.getElementById('forgot-email').value.trim();
 
-            if (!email) {
-                showToast('A target email space must be explicit to route requests.', 'warning');
+            if(!mail) {
+                callToast('Specify a valid configuration target to distribute commands.', 'warning');
                 return;
             }
-            if (!validateEmail(email)) {
-                showToast('Verify syntax matches structural validation standard rules.', 'warning');
+            if(!verifyEmailSyntax(mail)) {
+                callToast('Syntax parsing matching failure for targeted channel.', 'warning');
                 return;
             }
 
-            setButtonLoading(forms.forgot, true);
+            toggleLoadingState(forgotForm, true);
 
             try {
-                await sendPasswordResetEmail(auth, email);
-                showToast('A secure management recovery token has dropped onto your inbox layer.', 'success');
-                forms.forgot.reset();
+                await sendPasswordResetEmail(auth, mail);
+                callToast('Dispatched verification access parameters token! Inspect your terminal inbox.', 'success');
+                forgotForm.reset();
                 setTimeout(() => {
-                    setButtonLoading(forms.forgot, false);
-                    switchForm('login');
-                }, 1500);
-            } catch (error) {
-                console.error(error);
-                let msg = 'Failed to execute transactional distribution tasks for reset parameters.';
-                if (error.code === 'auth/user-not-found') msg = 'No recognized account references match that routing target.';
+                    toggleLoadingState(forgotForm, false);
+                    switchSegmentView('login-segment');
+                }, 1000);
+            } catch (err) {
+                console.error(err);
+                let message = 'Transaction execution failure regarding reset routing parameters.';
+                if(err.code === 'auth/user-not-found') message = 'No registered vault parameters match that routing target.';
                 
-                showToast(msg, 'error');
-                setButtonLoading(forms.forgot, false);
+                callToast(message, 'error');
+                toggleLoadingState(forgotForm, false);
             }
         });
 
