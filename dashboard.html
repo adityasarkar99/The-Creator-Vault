@@ -3,718 +3,933 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creators Vault - Dashboard</title>
+    <title>Creators Vault - Premium SaaS Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CONFIGURABLE VARIABLE ROOT THEME MATRIX --- */
+        /* --- CORE SYSTEM ARCHITECTURE & TOKENS --- */
         :root, [data-theme="light"] {
-            --bg-body: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-element: #f1f5f9;
-            --border-color: #e2e8f0;
+            --bg-base: #f4f6fa;
+            --bg-surface: rgba(255, 255, 255, 0.7);
+            --bg-surface-solid: #ffffff;
+            --bg-element: #f8fafc;
+            --border-color: rgba(226, 232, 240, 0.8);
             --text-main: #0f172a;
             --text-muted: #64748b;
             --accent-primary: #2563eb;
             --accent-hover: #1d4ed8;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-            --badge-free-bg: #e2e8f0;
-            --badge-free-txt: #475569;
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --card-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+            --glass-blur: blur(16px);
+            --orb-1: rgba(37, 99, 235, 0.06);
+            --orb-2: rgba(147, 51, 234, 0.06);
         }
 
         [data-theme="dark"] {
-            --bg-body: #0b111e;
-            --bg-surface: #141b2d;
-            --bg-element: #1e2640;
-            --border-color: #24304f;
+            --bg-base: #070a13;
+            --bg-surface: rgba(15, 22, 42, 0.65);
+            --bg-surface-solid: #0f162a;
+            --bg-element: #161f38;
+            --border-color: rgba(255, 255, 255, 0.05);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-primary: #3b82f6;
-            --accent-hover: #2563eb;
-            --shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
-            --badge-free-bg: #1e293b;
-            --badge-free-txt: #94a3b8;
+            --accent-hover: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(20px);
+            --orb-1: rgba(59, 130, 246, 0.12);
+            --orb-2: rgba(168, 85, 247, 0.1);
         }
 
-        /* --- GLOBAL & STRUCTURAL RESET RULES --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background-color: var(--bg-body);
+            background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* --- IMMUTABLE SYSTEM COMPONENT OVERLAYS --- */
-        #auth-blocker {
+        /* --- AMBIENT ANIMATED BACKGROUND GRID/ORBS --- */
+        .ambient-grid {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0b111e;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.15;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+        }
+
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            mix-blend-mode: screen;
+            animation: orbFloat 12s infinite alternate ease-in-out;
+        }
+        .orb-left {
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: var(--orb-1);
+        }
+        .orb-right {
+            bottom: -10%; right: -10%;
+            width: 45vw; height: 45vw;
+            background: var(--orb-2);
+            animation-delay: -4s;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(40px) scale(1.1); }
+        }
+
+        /* --- AUTH SECURITY COVERS / PROTECTION SCREEN --- */
+        #auth-guard-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #070a13;
             z-index: 10000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
         }
-        
-        .loader-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: #3b82f6;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- APPLICATION SHELL DESIGN CONFIGURATION --- */
+        .premium-loader {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            margin-bottom: 24px;
+        }
+        .premium-loader::before, .premium-loader::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            animation: premiumSpin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        }
+        .premium-loader::before {
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-top-color: #3b82f6;
+            border-bottom-color: #a855f7;
+        }
+        .premium-loader::after {
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border-left-color: #60a5fa;
+            border-right-color: #e879f9;
+            animation-duration: 1s;
+            animation-direction: reverse;
+        }
+        @keyframes premiumSpin { to { transform: rotate(360deg); } }
+
+        /* --- HEADER STRUCTURE & HIGH-END SHINE ANIMATION --- */
         .app-header {
             position: sticky;
-            top: 0;
-            z-index: 100;
-            background-color: var(--bg-surface);
+            top: 0; z-index: 900;
+            background: var(--bg-surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--border-color);
-            padding: 16px 32px;
+            padding: 16px 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: var(--shadow);
+            box-shadow: var(--card-shadow);
         }
 
-        .header-left, .header-right {
+        /* Brand Title Typography and Animation Matrices */
+        .brand-link-group {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .logo-group {
+        .brand-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.25rem;
-            letter-spacing: -0.02em;
+            justify-content: center;
+            color: white;
+            font-size: 1.15rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .logo-group i {
-            color: var(--accent-primary);
+        .brand-link-group:hover .brand-icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        .search-container {
+        .brand-title-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-primary) 50%, var(--text-main) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: continuousTextShine 4s linear infinite;
+        }
+
+        @keyframes continuousTextShine {
+            to { background-position: 200% center; }
+        }
+
+        /* Header Utility Tools */
+        .search-wrapper {
             position: relative;
-            max-width: 320px;
+            max-width: 380px;
             width: 100%;
         }
-        .search-container i {
+        .search-wrapper i {
             position: absolute;
-            left: 14px;
-            top: 50%;
+            left: 16px; top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
+            font-size: 0.95rem;
         }
-        .search-bar {
+        .search-bar-input {
             width: 100%;
-            padding: 10px 14px 10px 40px;
+            padding: 11px 16px 11px 46px;
             background: var(--bg-element);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             color: var(--text-main);
-            outline: none;
             font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-bar-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--bg-surface-solid);
         }
 
-        .btn-utility {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .action-icon-btn {
             background: none;
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            transition: all 0.2s ease;
         }
-        .btn-utility:hover {
-            border-color: var(--accent-primary);
+        .action-icon-btn:hover {
+            border-color: var(--text-main);
+            background: var(--bg-element);
         }
-        
-        .theme-toggle i.fa-sun { display: none; }
-        [data-theme="dark"] .theme-toggle i.fa-moon { display: none; }
-        [data-theme="dark"] .theme-toggle i.fa-sun { display: inline-block; }
 
-        .avatar-trigger {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent-primary);
+        .avatar-trigger-element {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
             border: 2px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease;
+        }
+        .avatar-trigger-element:hover {
+            transform: translateY(-2px);
         }
 
-        /* --- DASHBOARD WRAPPER LAYOUT CONFIG --- */
-        .dashboard-container {
-            max-width: 1280px;
+        /* --- MAIN CONTAINER LAYOUT ENGINE --- */
+        .main-dashboard-viewport {
+            max-width: 1400px;
             width: 100%;
             margin: 0 auto;
-            padding: 40px 32px;
+            padding: 40px;
         }
 
-        /* --- STATE BANNER SYSTEMS --- */
-        .state-banner {
-            border-radius: 16px;
-            padding: 32px;
+        /* --- HERO BANNER & STATUS MATRIX FLAGS --- */
+        .hero-banner-component {
+            border-radius: 24px;
+            padding: 40px;
             margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 24px;
-            box-shadow: var(--shadow);
+            gap: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
         }
 
-        .state-banner.locked {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.05));
-            border: 1px solid rgba(239, 68, 68, 0.2);
+        .hero-banner-component.locked-state {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(147, 51, 234, 0.04) 100%);
         }
-        .state-banner.unlocked {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.05));
-            border: 1px solid rgba(16, 185, 129, 0.2);
+        .hero-banner-component.unlocked-state {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
         }
 
-        .banner-content h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 6px;
+        .hero-details-block h2 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
         }
-        .banner-content p {
+        .hero-details-block p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
         }
 
-        .btn-action {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
+        .trust-badges-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .trust-badge-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        .btn-action.primary {
-            background: var(--accent-primary);
-            color: white;
-        }
-        .btn-action.primary:hover { background: var(--accent-hover); }
-
-        /* --- RECYCLABLE MEMB BADGES GRID --- */
-        .badge-member {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
-        .badge-member.free {
-            background: var(--badge-free-bg);
-            color: var(--badge-free-txt);
-            border: 1px solid var(--border-color);
-        }
-        .badge-member.premium {
-            background: linear-gradient(90deg, #f59e0b, #ec4899, #3b82f6);
-            background-size: 200% auto;
-            color: white;
-            animation: shine 3s linear infinite;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
-        }
-        @keyframes shine { to { background-position: 200% center; } }
+        .trust-badge-item i { color: #10b981; }
 
-        /* --- RESOURCE GRID SECTIONS --- */
-        .section-title {
-            font-size: 1.2rem;
+        .btn-premium-action {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.98rem;
             font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -0.01em;
-            color: var(--text-main);
+            cursor: pointer;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-premium-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
         }
 
-        .categories-grid {
+        /* --- STATS METRICS ROW GRID --- */
+        .stats-summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 24px;
+            margin-bottom: 48px;
         }
 
-        .category-card {
+        .stat-metric-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
             padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow);
-            position: relative;
+            align-items: center;
+            gap: 20px;
         }
-        
-        .card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+
+        .stat-icon-box {
+            width: 52px; height: 52px;
+            border-radius: 14px;
             background: var(--bg-element);
             color: var(--accent-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 16px;
+            font-size: 1.3rem;
+            border: 1px solid var(--border-color);
         }
 
-        .category-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .stat-info-box h4 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
-
-        .category-card p {
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: auto;
-        }
-
-        .items-placeholder {
-            font-size: 0.8rem;
+        .stat-info-box p {
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 500;
         }
 
-        .btn-open {
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-element);
-            color: var(--text-main);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
+        /* --- BADGE STYLES DICTIONARY --- */
+        .membership-badge-component {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .btn-open:hover {
-            background: var(--accent-primary);
+        .membership-badge-component.tier-free {
+            background: var(--bg-element);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+        .membership-badge-component.tier-premium {
+            background: linear-gradient(90deg, #f59e0b, #ec4899, #3b82f6);
+            background-size: 200% auto;
             color: white;
+            animation: continuousTextShine 3s linear infinite;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.35);
+        }
+
+        /* --- PREMIUM DYNAMIC CATEGORIES GRID --- */
+        .grid-header-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 28px;
+        }
+
+        .categories-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        .category-asset-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+        .category-asset-card:hover {
+            transform: translateY(-6px);
             border-color: var(--accent-primary);
         }
 
-        .category-card.locked-card ::after {
+        .card-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .category-icon-frame {
+            width: 48px; height: 48px;
+            background: var(--bg-element);
+            color: var(--accent-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .access-chip-status {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .access-chip-status.unlocked { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .access-chip-status.locked { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .category-asset-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .category-asset-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .card-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .card-count-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .btn-card-open {
+            padding: 9px 18px;
+            background: var(--bg-element);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .category-asset-card:hover .btn-card-open {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* CARD LOCK OVERLAY LAYER MATRIX */
+        .category-asset-card.locked-card-infrastructure::after {
             content: '';
             position: absolute;
-            top: 0; left:0; width:100%; height:100%;
-            border-radius: 14px;
-            background: rgba(11, 17, 30, 0.03);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(7, 10, 19, 0.12);
+            z-index: 2;
             pointer-events: none;
         }
-        .category-card.locked-card .card-icon {
+        .category-asset-card.locked-card-infrastructure .category-icon-frame {
             color: var(--text-muted);
         }
 
-        /* --- CONTEXT CONTROLLER PROFILE SIDEBAR --- */
-        .profile-sidebar {
+        /* --- SLIDEOUT SETTINGS PANEL SIDEBAR --- */
+        .profile-drawer-view {
             position: fixed;
-            top: 0;
-            right: -380px;
-            width: 380px;
-            height: 100%;
-            background: var(--bg-surface);
+            top: 0; right: -420px;
+            width: 420px; height: 100%;
+            background: var(--bg-surface-solid);
             border-left: 1px solid var(--border-color);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.15);
-            z-index: 1000;
+            box-shadow: -15px 0 40px rgba(0,0,0,0.25);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
-            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .profile-sidebar.open {
-            right: 0;
-        }
+        .profile-drawer-view.active-state { right: 0; }
 
-        .sidebar-overlay {
+        .drawer-backdrop-mask {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4);
-            z-index: 999;
+            backdrop-filter: blur(4px);
+            z-index: 1999;
             display: none;
         }
-        .sidebar-overlay.open { display: block; }
+        .drawer-backdrop-mask.active-state { display: block; }
 
-        .sidebar-header {
+        .drawer-header-row {
             padding: 24px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .sidebar-header h3 { font-weight: 600; }
+        .drawer-header-row h3 { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; }
 
-        .sidebar-scrollbox {
+        .drawer-content-scrollbox {
             flex-grow: 1;
             overflow-y: auto;
             padding: 24px;
         }
 
-        .user-meta-block {
+        .profile-identification-card {
             text-align: center;
             padding-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 24px;
         }
-        .meta-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: var(--accent-primary);
+        .drawer-large-avatar {
+            width: 72px; height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0 auto 12px auto;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0 auto 14px auto;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
         }
-        .meta-email {
-            font-weight: 600;
-            font-size: 0.95rem;
-            word-break: break-all;
-            margin-bottom: 4px;
-        }
-        .meta-membership {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
+        .drawer-user-email { font-weight: 700; font-size: 1.05rem; word-break: break-all; margin-bottom: 4px; }
+        .drawer-membership-name { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; }
 
-        .sidebar-section {
-            margin-bottom: 28px;
-        }
-        .sidebar-section-title {
-            font-size: 0.8rem;
+        .drawer-section-block { margin-bottom: 32px; }
+        .drawer-section-title {
+            font-size: 0.78rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
-        .setting-row {
+        .interactive-settings-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            font-size: 0.9rem;
+            margin-bottom: 18px;
         }
-        .setting-info label {
-            font-weight: 500;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .setting-info p {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
+        .settings-meta-labels label { font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 2px; }
+        .settings-meta-labels p { font-size: 0.78rem; color: var(--text-muted); }
 
-        /* Form Sliders & Controls */
-        .toggle-switch {
+        /* Functional Sliders / System Toggles */
+        .toggle-input-wrapper {
             position: relative;
             display: inline-block;
-            width: 44px;
-            height: 24px;
+            width: 46px; height: 26px;
         }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider-round {
+        .toggle-input-wrapper input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider-canvas {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
             background-color: var(--bg-element);
             border: 1px solid var(--border-color);
-            transition: .2s; border-radius: 24px;
+            transition: .2s ease; border-radius: 30px;
         }
-        .slider-round:before {
-            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
-            background-color: var(--text-muted); transition: .2s; border-radius: 50%;
+        .toggle-slider-canvas::before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: var(--text-muted); transition: .2s ease; border-radius: 50%;
         }
-        .toggle-switch input:checked + .slider-round { background-color: var(--accent-primary); border-color: var(--accent-primary); }
-        .toggle-switch input:checked + .slider-round:before { transform: translateX(20px); background-color: white; }
+        .toggle-input-wrapper input:checked + .toggle-slider-canvas { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+        .toggle-input-wrapper input:checked + .toggle-slider-canvas::before { transform: translateX(20px); background-color: white; }
 
-        .brightness-slider {
+        .brightness-slider-element {
             width: 100%;
-            margin-top: 8px;
-            accent-color: var(--accent-primary);
-            background: var(--bg-element);
             height: 6px;
-            border-radius: 3px;
+            background: var(--bg-element);
+            border-radius: 4px;
             outline: none;
+            accent-color: var(--accent-primary);
+            margin-top: 10px;
         }
 
-        .btn-sidebar-action {
+        .btn-secondary-drawer {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--bg-element);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            border-radius: 8px;
-            font-size: 0.88rem;
-            font-weight: 600;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all 0.2s ease;
         }
-        .btn-sidebar-action:hover {
+        .btn-secondary-drawer:hover {
             border-color: var(--accent-primary);
             color: var(--accent-primary);
         }
 
-        .sidebar-footer {
+        .drawer-footer-wrapper {
             padding: 24px;
             border-top: 1px solid var(--border-color);
             background: var(--bg-element);
         }
-        .btn-logout {
+        .btn-logout-action {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: #ef4444;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+            transition: background 0.2s ease;
         }
-        .btn-logout:hover { background: #dc2626; }
+        .btn-logout-action:hover { background: #dc2626; }
 
-        /* --- PREMIUM INDEPENDENT TOAST STACK --- */
-        #toast-container {
+        /* --- PREMIUM TOAST LOGISTICS CONFIGURATION --- */
+        #toast-mount-point {
             position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 11000;
+            top: 24px; right: 24px;
+            z-index: 10000;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-width: 360px;
+            max-width: 380px;
             width: calc(100% - 48px);
         }
-        .toast {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-primary);
-            padding: 14px 18px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            transform: translateX(120%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-            opacity: 0;
-        }
-        .toast.show { transform: translateX(0); opacity: 1; }
-        .toast-icon { font-size: 1.1rem; margin-top: 2px; flex-shrink: 0; }
-        .toast-msg { font-size: 0.88rem; font-weight: 500; line-height: 1.4; }
-        .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; }
-        
-        .toast.success { border-left-color: #10b981; } .toast.success .toast-icon { color: #10b981; }
-        .toast.error { border-left-color: #ef4444; } .toast.error .toast-icon { color: #ef4444; }
-        .toast.warning { border-left-color: #f59e0b; } .toast.warning .toast-icon { color: #f59e0b; }
-        .toast.info { border-left-color: #3b82f6; } .toast.info .toast-icon { color: #3b82f6; }
 
-        /* --- ADJUSTABLE SYSTEM FILTER FOR BRIGHTNESS CONTROLS --- */
-        #brightness-overlay {
+        .toast-node {
+            background: var(--bg-surface-solid);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        .toast-node.visible { transform: translateX(0); opacity: 1; }
+
+        .toast-icon-wrapper { font-size: 1.2rem; margin-top: 2px; }
+        .toast-message-content h5 { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+        .toast-message-content p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+        
+        .toast-close-trigger {
+            position: absolute; top: 12px; right: 12px;
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 0.9rem;
+        }
+        .toast-close-trigger:hover { color: var(--text-main); }
+
+        .toast-progress-bar {
+            position: absolute; bottom: 0; left: 0; height: 3px; width: 100%;
+            transform-origin: left;
+        }
+
+        /* Toast Status Variations Matrix */
+        .toast-node.success .toast-icon-wrapper { color: #10b981; }
+        .toast-node.success .toast-progress-bar { background: #10b981; }
+        .toast-node.error .toast-icon-wrapper { color: #ef4444; }
+        .toast-node.error .toast-progress-bar { background: #ef4444; }
+        .toast-node.warning .toast-icon-wrapper { color: #f59e0b; }
+        .toast-node.warning .toast-progress-bar { background: #f59e0b; }
+        .toast-node.info .toast-icon-wrapper { color: #3b82f6; }
+        .toast-node.info .toast-progress-bar { background: #3b82f6; }
+
+        /* BRIGHTNESS LAYER ATTENUATOR SCREEN */
+        #brightness-attenuator {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top:0; left:0; width:100%; height:100%;
             background: black;
             pointer-events: none;
             z-index: 99999;
             mix-blend-mode: multiply;
-            opacity: 0; /* Managed via script constraints */
+            opacity: 0;
         }
 
-        /* --- RESPONSIVE STRUCTURAL OVERRIDES --- */
-        @media (max-width: 768px) {
-            .app-header { padding: 16px; }
-            .search-container { display: none; }
-            .dashboard-container { padding: 24px 16px; }
-            .profile-sidebar { width: 100%; right: -100%; }
+        /* --- RESPONSIVE MEDIA ADAPTATION LAYER --- */
+        @media (max-width: 968px) {
+            .app-header { padding: 16px 24px; }
+            .search-wrapper { display: none; }
+            .main-dashboard-viewport { padding: 24px 16px; }
+            .hero-banner-component { padding: 28px; }
+            .profile-drawer-view { width: 100%; right: -100%; }
         }
     </style>
 </head>
 <body>
 
-    <div id="auth-blocker">
-        <div class="loader-spinner"></div>
-        <p style="font-weight: 500; font-size: 0.95rem; letter-spacing: 0.02em;">Verifying active security context...</p>
+    <div id="auth-guard-layer">
+        <div class="premium-loader"></div>
+        <p style="font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; color: #94a3b8; text-transform: uppercase;">Syncing Secure Workspace Session...</p>
     </div>
 
-    <div id="brightness-overlay"></div>
+    <div id="brightness-attenuator"></div>
+
+    <div class="ambient-grid"></div>
+    <div class="ambient-orb orb-left"></div>
+    <div class="ambient-orb orb-right"></div>
 
     <header class="app-header">
-        <div class="header-left">
-            <div class="logo-group">
-                <i class="fa-solid fa-vault"></i>
-                <span>Creators Vault</span>
-            </div>
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-bar" id="search-input" placeholder="Search digital categories...">
-            </div>
+        <a class="brand-link-group" href="dashboard.html">
+            <div class="brand-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+            <span class="brand-title-text">Creators Vault</span>
+        </a>
+
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-bar-input" id="search-bar-field" placeholder="Search digital asset configurations...">
         </div>
-        <div class="header-right">
-            <button class="btn-utility theme-toggle" id="theme-btn" aria-label="Toggle visual theme">
-                <i class="fa-regular fa-moon"></i>
-                <i class="fa-regular fa-sun"></i>
+
+        <div class="header-actions">
+            <button class="action-icon-btn" id="theme-switch-trigger" aria-label="Toggle structural display theme">
+                <i class="fa-solid fa-moon"></i>
             </button>
-            <div class="avatar-trigger" id="avatar-btn">U</div>
+            <div class="avatar-trigger-element" id="drawer-open-trigger">-</div>
         </div>
     </header>
 
-    <main class="dashboard-container">
+    <main class="main-dashboard-viewport">
         
-        <div id="status-banner-placement"></div>
+        <div id="hero-banner-mount-target"></div>
+
+        <section class="stats-summary-grid">
+            <div class="stat-metric-card">
+                <div class="stat-icon-box"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="stat-info-box"><h4>7</h4><p>Total Categories</p></div>
+            </div>
+            <div class="stat-metric-card">
+                <div class="stat-icon-box"><i class="fa-solid fa-box-open"></i></div>
+                <div class="stat-info-box"><h4>50+</h4><p>Premium Bundles</p></div>
+            </div>
+            <div class="stat-metric-card">
+                <div class="stat-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                <div class="stat-info-box"><h4>2000+</h4><p>High Res Reels</p></div>
+            </div>
+            <div class="stat-metric-card">
+                <div class="stat-icon-box"><i class="fa-solid fa-infinity"></i></div>
+                <div class="stat-info-box"><h4>Lifetime</h4><p>Access Period</p></div>
+            </div>
+        </section>
 
         <section>
-            <h2 class="section-title">Digital Asset Categories</h2>
-            <div class="categories-grid" id="categories-target"></div>
+            <h2 class="grid-header-title">Premium Digital Asset Inventories</h2>
+            <div class="categories-matrix-grid" id="categories-injection-frame"></div>
         </section>
 
     </main>
 
-    <div class="sidebar-overlay" id="sidebar-shadow"></div>
-    <aside class="profile-sidebar" id="sidebar-wrapper">
-        <div class="sidebar-header">
-            <h3>Account Settings</h3>
-            <button class="btn-utility" id="sidebar-close-btn"><i class="fa-solid fa-xmark"></i></button>
+    <div class="drawer-backdrop-mask" id="drawer-shadow-mask"></div>
+    <aside class="profile-drawer-view" id="drawer-element-container">
+        <div class="drawer-header-row">
+            <h3>User Workspace Profile</h3>
+            <button class="action-icon-btn" id="drawer-close-trigger"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        
-        <div class="sidebar-scrollbox">
-            <div class="user-meta-block">
-                <div class="meta-avatar" id="user-avatar-placeholder">-</div>
-                <div class="meta-email" id="user-email-placeholder">loading...</div>
-                <div class="meta-membership" id="user-membership-placeholder">loading...</div>
-                <div id="user-badge-placeholder"></div>
-                <p id="user-creation-placeholder" style="font-size:0.75rem; color:var(--text-muted); margin-top:10px;"></p>
+
+        <div class="drawer-content-scrollbox">
+            <div class="profile-identification-card">
+                <div class="drawer-large-avatar" id="drawer-avatar-label">-</div>
+                <div class="drawer-user-email" id="drawer-email-label">loading...</div>
+                <div class="drawer-membership-name" id="drawer-membership-label">loading...</div>
+                <div id="drawer-badge-target"></div>
+                <p id="drawer-date-label" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 12px; font-weight: 500;"></p>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Visual Customization</div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <label>Display Brightness</label>
-                        <p>Dimmable interface light filter matrix</p>
+            <div class="drawer-section-block">
+                <div class="drawer-section-title">Visual Layout Layer</div>
+                <div class="interactive-settings-row">
+                    <div class="settings-meta-labels">
+                        <label>Display Theme Mode</label>
+                        <p>Switch between light and dark visualization layers</p>
                     </div>
+                    <button class="action-icon-btn" id="drawer-inline-theme-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
                 </div>
-                <input type="range" min="20" max="100" value="100" class="brightness-slider" id="brightness-ctrl">
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Notifications</div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <label>Product Updates</label>
-                        <p>Alerts when new digital products drop</p>
+                <div class="drawer-section-block" style="margin-bottom: 0; margin-top: 16px;">
+                    <div class="settings-meta-labels">
+                        <label>Attenuator Level (Brightness)</label>
+                        <p>Dimmable operational layer interface coefficient overlay</p>
                     </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notif-products" checked>
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <label>Security Alerts</label>
-                        <p>Immediate notice on active structural changes</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notif-security" checked>
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <div class="setting-info">
-                        <label>Exclusive Offers</label>
-                        <p>Discount alerts regarding upcoming catalogs</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notif-offers" checked>
-                        <span class="slider-round"></span>
-                    </label>
+                    <input type="range" min="20" max="100" value="100" class="brightness-slider-element" id="drawer-brightness-slider">
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Privacy & Security</div>
-                <div style="margin-bottom: 14px;">
-                    <button class="btn-sidebar-action" id="password-reset-trigger">
-                        <i class="fa-solid fa-key"></i> Transmit Password Reset Email
+            <div class="drawer-section-block">
+                <div class="drawer-section-title">Notification Registry Hub</div>
+                <div class="interactive-settings-row">
+                    <div class="settings-meta-labels">
+                        <label>Product Catalog Updates</label>
+                        <p>Triggers notification flags when binary uploads occur</p>
+                    </div>
+                    <label class="toggle-input-wrapper">
+                        <input type="checkbox" id="toggle-opt-products" checked>
+                        <span class="toggle-slider-canvas"></span>
+                    </label>
+                </div>
+                <div class="interactive-settings-row">
+                    <div class="settings-meta-labels">
+                        <label>Security Metric Alerts</label>
+                        <p>Forwards credential footprint alterations tracking notifications</p>
+                    </div>
+                    <label class="toggle-input-wrapper">
+                        <input type="checkbox" id="toggle-opt-security" checked>
+                        <span class="toggle-slider-canvas"></span>
+                    </label>
+                </div>
+                <div class="interactive-settings-row">
+                    <div class="settings-meta-labels">
+                        <label>Exclusive Premium Offers</label>
+                        <p>Alert pipelines monitoring upcoming discount configurations</p>
+                    </div>
+                    <label class="toggle-input-wrapper">
+                        <input type="checkbox" id="toggle-opt-offers" checked>
+                        <span class="toggle-slider-canvas"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="drawer-section-block">
+                <div class="drawer-section-title">Privacy & Infrastructure Nodes</div>
+                <div style="margin-bottom: 16px;">
+                    <button class="btn-secondary-drawer" id="drawer-password-reset-btn">
+                        <i class="fa-solid fa-envelope-open-text"></i> Transmit Password Reset Payload
                     </button>
                 </div>
-                <div class="setting-row" style="margin-bottom: 8px;">
-                    <span style="font-size: 0.8rem; font-weight:500;">Active Session:</span>
-                    <span style="font-size: 0.8rem; color:#10b981; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Encrypted</span>
+                <div class="interactive-settings-row" style="margin-bottom: 0;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:#10b981;"></i> Security Protocol Status:</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; color:#10b981;">Firebase Active</span>
                 </div>
-                <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-                    Your account is protected with Firebase Authentication. Security parameters are isolated from public environment nodes.
-                </p>
             </div>
         </div>
 
-        <div class="sidebar-footer">
-            <button class="btn-logout" id="logout-trigger">
-                <i class="fa-solid fa-right-from-bracket"></i> Sign Out Account
+        <div class="drawer-footer-wrapper">
+            <button class="btn-logout-action" id="drawer-logout-action-btn">
+                <i class="fa-solid fa-power-off"></i> Terminate Active Session
             </button>
         </div>
     </aside>
 
-    <div id="toast-container"></div>
+    <div id="toast-mount-point"></div>
 
 
     <script type="module">
-        // Import Core Infrastructure Modules from verified CDN nodes
+        // Import Immutable Cloud Architecture Framework Nodes
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, 
@@ -731,7 +946,7 @@
             serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Global Identity System Verification Configurations
+        // Global Infrastructure Identity Verification Configurations
         const firebaseConfig = {
             apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
             authDomain: "creators-vaults.firebaseapp.com",
@@ -742,295 +957,338 @@
             measurementId: "G-MM742MSP09"
         };
 
-        // Initialize Services Framework Contexts
+        // Initialize Shared Infrastructure Platforms
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Core Application Context Fields
-        let currentUserContext = null;
-        let currentUserProfile = null;
+        // Core App Session Profile Tracking Variables
+        let activeAuthenticatedUserInstance = null;
+        let activeProfilePayloadRecord = null;
 
-        /* --- STATIC LOCAL REGISTRY DATA STRUCTURES --- */
-        const categoriesData = [
-            { id: "softwares", icon: "fa-laptop-code", title: "Softwares", desc: "Premium activation tools, development pipelines, and specialized automation applications.", target: "softwares.html", total: "142 Items available" },
-            { id: "mobile-apks", icon: "fa-android", title: "Mobile APKs", desc: "Unlocked functional operational extensions and fully modded mobile utility programs.", target: "mobile-apks.html", total: "95 Items available" },
-            { id: "pc-games", icon: "fa-gamepad", title: "PC Games", desc: "High-tier premium digital gaming packages compiled for local processing deployment.", target: "pc-games.html", total: "64 Items available" },
-            { id: "reels-packs", icon: "fa-film", title: "Reels Packs", desc: "Ultra HD asset packs optimized for deployment across digital video creation frameworks.", target: "reels-packs.html", total: "1,200+ Assets ready" },
-            { id: "editing-assets", icon: "fa-photo-film", title: "Editing Assets", desc: "Professional high-fidelity LUTs, presentation transition models, and raw audio components.", target: "editing-assets.html", total: "450+ Presets loaded" },
-            { id: "courses", icon: "fa-graduation-cap", title: "Courses", desc: "Comprehensive structural video files detailing operational mastery across elite skillsets.", target: "courses.html", total: "38 Guides compiled" },
-            { id: "extra", icon: "fa-cubes", title: "Extra", desc: "Unclassified miscellaneous resource packages, secret blueprints, and legacy elements.", target: "extra.html", total: "21 Items found" }
+        /* --- PRE-BUILT RECYCLABLE BINARY DATA MATRIX --- */
+        const categoriesRegistryData = [
+            { id: "softwares", icon: "fa-code-branch", title: "Softwares", desc: "Production-level utility applications, automated workflows, and enterprise activation environments.", target: "softwares.html", count: "142 Assets" },
+            { id: "mobile-apks", icon: "fa-android", title: "Mobile APKs", desc: "Premium unlocked development frameworks, modifications, and isolated package extensions.", target: "mobile-apks.html", count: "95 Files" },
+            { id: "pc-games", icon: "fa-gamepad", title: "PC Games", desc: "Highly optimized distributions of digital game packages completely ready for local terminal runtime execution.", target: "pc-games.html", count: "64 Assemblies" },
+            { id: "reels-packs", icon: "fa-clapperboard", title: "Reels Packs", desc: "Ultra high-definition thematic vertical video assets tailored directly for monetization vectors.", target: "reels-packs.html", count: "2,150 Units" },
+            { id: "editing-assets", icon: "fa-bezier-curve", title: "Editing Assets", desc: "High-tier color spaces, transitions matrices, sound architecture component elements, and project assets.", target: "editing-assets.html", count: "480 Elements" },
+            { id: "courses", icon: "fa-user-gradient", title: "Courses", desc: "Advanced operational breakdown files containing instructional pipelines taught by verified industry leaders.", target: "courses.html", total: "38 Masterclasses", count: "38 Compilations" },
+            { id: "extra", icon: "fa-bezier-curve", title: "Extra", desc: "Experimental toolkits, legacy blueprints, unclassified code snippets, and dynamic resource repositories.", target: "extra.html", count: "21 Blueprints" }
         ];
 
-        /* --- INDEPENDENT INTERFACE APPLICATION TOAST ENGINES --- */
-        const toastContainer = document.getElementById('toast-container');
-        
-        function callToast(msg, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            let icon = 'fa-circle-info';
-            if (type === 'success') icon = 'fa-circle-check';
-            if (type === 'error') icon = 'fa-circle-exclamation';
-            if (type === 'warning') icon = 'fa-triangle-exclamation';
+        /* --- HIGH-END ASYNC ANIMATED TOAST ENGINE CONFIG --- */
+        const toastMountNode = document.getElementById('toast-mount-point');
 
-            toast.innerHTML = `
-                <i class="fa-solid ${icon} toast-icon"></i>
-                <div class="toast-body"><p class="toast-msg">${msg}</p></div>
-                <button class="toast-close" type="button"><i class="fa-solid fa-xmark"></i></button>
+        function triggerPremiumToast(title, bodyText, statusVariant = 'info') {
+            const node = document.createElement('div');
+            node.className = `toast-node ${statusVariant}`;
+            
+            let statusIcon = 'fa-circle-info';
+            if (statusVariant === 'success') statusIcon = 'fa-circle-check';
+            if (statusVariant === 'error') statusIcon = 'fa-circle-exclamation';
+            if (statusVariant === 'warning') statusIcon = 'fa-triangle-exclamation';
+
+            node.innerHTML = `
+                <div class="toast-icon-wrapper"><i class="fa-solid ${statusIcon}"></i></div>
+                <div class="toast-message-content">
+                    <h5>${title}</h5>
+                    <p>${bodyText}</p>
+                </div>
+                <button class="toast-close-trigger" type="button"><i class="fa-solid fa-xmark"></i></button>
+                <div class="toast-progress-bar"></div>
             `;
-            toastContainer.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 50);
-            const durationTimer = setTimeout(() => closeToast(toast), 4500);
 
-            toast.querySelector('.toast-close').addEventListener('click', () => {
-                clearTimeout(durationTimer);
-                closeToast(toast);
+            toastMountNode.appendChild(node);
+            
+            // Execute entrance animation sequence smoothly
+            setTimeout(() => node.classList.add('visible'), 40);
+
+            const progressBarAnimation = node.querySelector('.toast-progress-bar');
+            progressBarAnimation.style.transform = 'scaleX(1)';
+            
+            // Animate out timeline decay smoothly using CSS transitions
+            progressBarAnimation.style.transition = 'transform 4500ms linear';
+            setTimeout(() => { progressBarAnimation.style.transform = 'scaleX(0)'; }, 50);
+
+            const lifecyleDestructionTimer = setTimeout(() => dissolveToastNode(node), 4500);
+
+            node.querySelector('.toast-close-trigger').addEventListener('click', () => {
+                clearTimeout(lifecyleDestructionTimer);
+                dissolveToastNode(node);
             });
         }
-        function closeToast(t) {
-            t.classList.remove('show');
-            t.addEventListener('transitionend', () => t.remove());
+
+        function dissolveToastNode(tNode) {
+            tNode.classList.remove('visible');
+            tNode.addEventListener('transitionend', () => tNode.remove());
         }
 
-        /* --- DISPLAY LAYOUT DESIGN CONTROLLERS (THEME & BRIGHTNESS) --- */
-        const themeBtn = document.getElementById('theme-btn');
-        const rootHtml = document.documentElement;
-        const brightnessCtrl = document.getElementById('brightness-ctrl');
-        const brightnessOverlay = document.getElementById('brightness-overlay');
 
-        function executeThemeChange(target) {
-            rootHtml.setAttribute('data-theme', target);
-            localStorage.setItem('cv_dashboard_theme', target);
+        /* --- LAYOUT VISUAL ENGINE MANIPULATION PROTOCOLS (THEME & BRIGHTNESS) --- */
+        const mainThemeBtn = document.getElementById('theme-switch-trigger');
+        const drawerThemeBtn = document.getElementById('drawer-inline-theme-btn');
+        const rootHtmlElement = document.documentElement;
+        const brightnessInputNode = document.getElementById('drawer-brightness-slider');
+        const brightnessAttenuatorNode = document.getElementById('brightness-attenuator');
+
+        function updateLayoutThemeState(mode) {
+            rootHtmlElement.setAttribute('data-theme', mode);
+            localStorage.setItem('cv_saas_theme_config', mode);
+            
+            const iconClass = mode === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            mainThemeBtn.innerHTML = `<i class="${iconClass}"></i>`;
         }
-        executeThemeChange(localStorage.getItem('cv_dashboard_theme') || 'dark');
-        
-        themeBtn.addEventListener('click', () => {
-            executeThemeChange(rootHtml.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        });
+        updateLayoutThemeState(localStorage.getItem('cv_saas_theme_config') || 'dark');
 
-        function executeBrightnessFilter(v) {
-            const opacityMultiplier = (100 - v) / 100;
-            brightnessOverlay.style.opacity = opacityMultiplier;
-            localStorage.setItem('cv_dashboard_brightness', v);
-        }
-        const cachedBrightness = localStorage.getItem('cv_dashboard_brightness') || '100';
-        brightnessCtrl.value = cachedBrightness;
-        executeBrightnessFilter(cachedBrightness);
-
-        brightnessCtrl.addEventListener('input', (e) => executeBrightnessFilter(e.target.value));
-
-        /* --- CONTROLLER PERSISTED CONFIGURATION SETTINGS FOR NOTIFICATIONS --- */
-        const notifToggles = {
-            products: document.getElementById('notif-products'),
-            security: document.getElementById('notif-security'),
-            offers: document.getElementById('notif-offers')
+        const alternativeModeTriggerLambda = () => {
+            const inverse = rootHtmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            updateLayoutThemeState(inverse);
         };
-        Object.keys(notifToggles).forEach(key => {
-            const cachedVal = localStorage.getItem(`cv_notif_${key}`);
-            if(cachedVal !== null) notifToggles[key].checked = cachedVal === 'true';
-            notifToggles[key].addEventListener('change', (e) => {
-                localStorage.setItem(`cv_notif_${key}`, e.target.checked);
-                callToast('Notification configuration preferences cached successfully.', 'success');
+        mainThemeBtn.addEventListener('click', alternativeModeTriggerLambda);
+        drawerThemeBtn.addEventListener('click', alternativeModeTriggerLambda);
+
+        function updateBrightnessFilterCoefficient(value) {
+            const calculatedOpacity = (100 - value) / 100;
+            brightnessAttenuatorNode.style.opacity = calculatedOpacity;
+            localStorage.setItem('cv_saas_attenuator_val', value);
+        }
+        const cachedAttenuatorValue = localStorage.getItem('cv_saas_attenuator_val') || '100';
+        brightnessInputNode.value = cachedAttenuatorValue;
+        updateBrightnessFilterCoefficient(cachedAttenuatorValue);
+
+        brightnessInputNode.addEventListener('input', (e) => updateBrightnessFilterCoefficient(e.target.value));
+
+
+        /* --- PERSISTED CONFIGURATION SETTINGS FOR USER NOTIFICATION CHANNELS --- */
+        const channelSelectorsConfig = {
+            products: document.getElementById('toggle-opt-products'),
+            security: document.getElementById('toggle-opt-security'),
+            offers: document.getElementById('toggle-opt-offers')
+        };
+        Object.keys(channelSelectorsConfig).forEach(channelKey => {
+            const cachedFlag = localStorage.getItem(`cv_saas_notif_flag_${channelKey}`);
+            if(cachedFlag !== null) channelSelectorsConfig[channelKey].checked = cachedFlag === 'true';
+            
+            channelSelectorsConfig[channelKey].addEventListener('change', (event) => {
+                localStorage.setItem(`cv_saas_notif_flag_${channelKey}`, event.target.checked);
+                triggerPremiumToast('Preferences Modified', 'Core synchronization parameters for this notification node have been cached.', 'success');
             });
         });
 
-        /* --- PROFILE VIEW TOGGLES SIDEBAR ANIMATIONS --- */
-        const avatarBtn = document.getElementById('avatar-btn');
-        const sidebarWrapper = document.getElementById('sidebar-wrapper');
-        const sidebarShadow = document.getElementById('sidebar-shadow');
-        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
 
-        function toggleSidebarState(open) {
-            if(open) {
-                sidebarWrapper.classList.add('open');
-                sidebarShadow.classList.add('open');
+        /* --- INTERACTIVE ACTION PROFILE DRAWER LAYER CONTROL MOVES --- */
+        const triggerOpenNode = document.getElementById('drawer-open-trigger');
+        const drawerContainerNode = document.getElementById('drawer-element-container');
+        const drawerShadowNode = document.getElementById('drawer-shadow-mask');
+        const triggerCloseNode = document.getElementById('drawer-close-trigger');
+
+        function toggleDrawerVisibilityState(isVisible) {
+            if(isVisible) {
+                drawerContainerNode.classList.add('active-state');
+                drawerShadowNode.classList.add('active-state');
             } else {
-                sidebarWrapper.classList.remove('open');
-                sidebarShadow.classList.remove('open');
+                drawerContainerNode.classList.remove('active-state');
+                drawerShadowNode.classList.remove('active-state');
             }
         }
-        avatarBtn.addEventListener('click', () => toggleSidebarState(true));
-        sidebarCloseBtn.addEventListener('click', () => toggleSidebarState(false));
-        sidebarShadow.addEventListener('click', () => toggleSidebarState(false));
+        triggerOpenNode.addEventListener('click', () => toggleDrawerVisibilityState(true));
+        triggerCloseNode.addEventListener('click', () => toggleDrawerVisibilityState(false));
+        drawerShadowNode.addEventListener('click', () => toggleDrawerVisibilityState(false));
 
-        /* --- PLACEHOLDER TRIGGER: RAZORPAY PAYMENT LINKING GATEWAY --- */
+
+        /* --- GATEWAY PAYMENT RUNTIME PROTOTYPE ACTION HOOK --- */
         window.startPayment = function() {
-            callToast('Razorpay payment processor initialization sequence pending deployment.', 'warning');
+            triggerPremiumToast('Integration Deployment Pending', 'Razorpay checkout execution routine pipeline is currently awaiting merchant credential deployment parameters.', 'warning');
         };
 
-        /* --- DYNAMIC INTERFACE GENERATORS & RENDERING ENGINES --- */
-        function processUIRender(profile) {
-            const bannerPlacement = document.getElementById('status-banner-placement');
-            const categoriesTarget = document.getElementById('categories-target');
-            const isPaid = profile.paid === true;
 
-            // 1. Structural Banner Deployment Optimization
-            if(!isPaid) {
-                bannerPlacement.innerHTML = `
-                    <div class="state-banner locked">
-                        <div class="banner-content">
+        /* --- LAYOUT GRAPHICAL ASSEMBLY RENDERING CORE PASS --- */
+        function renderDashboardLayoutContent(profileData) {
+            const bannerMountPoint = document.getElementById('hero-banner-mount-target');
+            const categoriesInjectionFrame = document.getElementById('categories-injection-frame');
+            const hasPaidAccessRights = profileData.paid === true;
+
+            // 1. Render Dynamic Banner Configuration Nodes
+            if(!hasPaidAccessRights) {
+                bannerMountPoint.innerHTML = `
+                    <div class="hero-banner-component locked-state">
+                        <div class="hero-details-block">
                             <h2>Premium Vault Locked</h2>
-                            <p>Unlock untethered complete architectural access to all secure premium categories for ₹199 only.</p>
+                            <p>Gain continuous complete access pipelines across all restricted professional production asset databases instantly.</p>
+                            <div class="trust-badges-row">
+                                <span class="trust-badge-item"><i class="fa-solid fa-circle-check"></i> Secure payment integration</span>
+                                <span class="trust-badge-item"><i class="fa-solid fa-circle-check"></i> Instant asset distribution</span>
+                                <span class="trust-badge-item"><i class="fa-solid fa-circle-check"></i> Lifetime allocation guarantee</span>
+                            </div>
                         </div>
-                        <button class="btn-action primary" onclick="startPayment()">
-                            <i class="fa-solid fa-credit-card"></i> Upgrade Now & Access
+                        <button class="btn-premium-action" onclick="startPayment()">
+                            <i class="fa-solid fa-wallet"></i> Upgrade to Lifetime Access • ₹199
                         </button>
                     </div>
                 `;
             } else {
-                bannerPlacement.innerHTML = `
-                    <div class="state-banner unlocked">
-                        <div class="banner-content">
-                            <h2>Lifetime Access Confirmed</h2>
-                            <p>Welcome back! Enjoy full administrative download pipelines across all secure assets.</p>
+                bannerMountPoint.innerHTML = `
+                    <div class="hero-banner-component unlocked-state">
+                        <div class="hero-details-block">
+                            <h2>Lifetime Access Active</h2>
+                            <p>Your workspace is verified and cleared with root level download execution authority across all assets.</p>
+                            <div class="trust-badges-row">
+                                <span class="trust-badge-item" style="color:#10b981;"><i class="fa-solid fa-heart"></i> Infinite access nodes operational</span>
+                            </div>
                         </div>
-                        <div class="badge-member premium"><i class="fa-solid fa-crown"></i> Lifetime Premium</div>
+                        <div class="membership-badge-component tier-premium"><i class="fa-solid fa-crown"></i> Lifetime Premium</div>
                     </div>
                 `;
             }
 
-            // 2. Data Card Architecture Generation Pass
-            categoriesTarget.innerHTML = '';
-            categoriesData.forEach(cat => {
-                const card = document.createElement('div');
-                card.className = `category-card ${!isPaid ? 'locked-card' : ''}`;
+            // 2. Render Categories Asset Matrices Blocks
+            categoriesInjectionFrame.innerHTML = '';
+            categoriesRegistryData.forEach(catItem => {
+                const layoutCardNode = document.createElement('div');
+                layoutCardNode.className = `category-asset-card ${!hasPaidAccessRights ? 'locked-card-infrastructure' : ''}`;
                 
-                let buttonBinding = `href="${cat.target}"`;
-                if(!isPaid) {
-                    buttonBinding = `onclick="callToast('Premium tier access verification requirement failed. Please upgrade your member status.', 'warning'); event.preventDefault();" href="#"`;
+                let actionableInteractionDirectives = `href="${catItem.target}"`;
+                if(!hasPaidAccessRights) {
+                    actionableInteractionDirectives = `onclick="triggerPremiumToast('Access Restriction Matrix Active', 'Upgraded verification tier status credentials are required to request target indices data packages.', 'error'); event.preventDefault();" href="#"`;
                 }
 
-                card.innerHTML = `
-                    <div class="card-icon">
-                        <i class="fa-solid ${cat.icon}"></i>
+                layoutCardNode.innerHTML = `
+                    <div class="card-top-row">
+                        <div class="category-icon-frame"><i class="fa-solid ${catItem.icon}"></i></div>
+                        <span class="access-chip-status ${hasPaidAccessRights ? 'unlocked' : 'locked'}">
+                            ${hasPaidAccessRights ? '<i class="fa-solid fa-lock-open"></i> Clear' : '<i class="fa-solid fa-lock"></i> Locked'}
+                        </span>
                     </div>
-                    <h3>${cat.title}</h3>
-                    <p>${cat.desc}</p>
-                    <div class="card-footer">
-                        <span class="items-placeholder">${cat.total}</span>
-                        <a class="btn-open" ${buttonBinding}>
-                            Open <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i>
+                    <h3>${catItem.title}</h3>
+                    <p>${catItem.desc}</p>
+                    <div class="card-action-bar">
+                        <span class="card-count-text">${catItem.count}</span>
+                        <a class="btn-card-open" ${actionableInteractionDirectives}>
+                            Request Assets <i class="fa-solid fa-arrow-right-long" style="font-size:0.8rem;"></i>
                         </a>
                     </div>
                 `;
-                categoriesTarget.appendChild(card);
+                categoriesInjectionFrame.appendChild(layoutCardNode);
             });
 
-            // 3. User Parameters Sidebar Rendering Pass
-            document.getElementById('user-email-placeholder').textContent = profile.email;
-            document.getElementById('user-membership-placeholder').textContent = profile.membershipName;
+            // 3. Render Profile Data Settings Fields
+            document.getElementById('drawer-email-label').textContent = profileData.email;
+            document.getElementById('drawer-membership-label').textContent = profileData.membershipName;
             
-            const initialLetter = profile.email ? profile.email.charAt(0).toUpperCase() : 'U';
-            avatarBtn.textContent = initialLetter;
-            document.getElementById('user-avatar-placeholder').textContent = initialLetter;
+            const extractionLetterFallback = profileData.email ? profileData.email.charAt(0).toUpperCase() : 'U';
+            triggerOpenNode.textContent = extractionLetterFallback;
+            document.getElementById('drawer-avatar-label').textContent = extractionLetterFallback;
 
-            const badgeBox = document.getElementById('user-badge-placeholder');
-            if(isPaid) {
-                badgeBox.innerHTML = `<span class="badge-member premium"><i class="fa-solid fa-crown"></i> Lifetime Premium</span>`;
+            const badgeSlotContainer = document.getElementById('drawer-badge-target');
+            if(hasPaidAccessRights) {
+                badgeSlotContainer.innerHTML = `<span class="membership-badge-component tier-premium"><i class="fa-solid fa-crown"></i> Lifetime Premium</span>`;
             } else {
-                badgeBox.innerHTML = `<span class="badge-member free"><i class="fa-solid fa-user"></i> Free Member</span>`;
+                badgeSlotContainer.innerHTML = `<span class="membership-badge-component tier-free"><i class="fa-solid fa-user-astronaut"></i> Free Member</span>`;
             }
 
-            if(profile.createdAt) {
-                const dateObj = profile.createdAt.toDate ? profile.createdAt.toDate() : new Date(profile.createdAt);
-                document.getElementById('user-creation-placeholder').textContent = `Enrolled: ${dateObj.toLocaleDateString()}`;
+            if(profileData.createdAt) {
+                const dateCalculationInstance = profileData.createdAt.toDate ? profileData.createdAt.toDate() : new Date(profileData.createdAt);
+                document.getElementById('drawer-date-label').textContent = `Enrolled Terminal Date: ${dateCalculationInstance.toLocaleDateString()}`;
             }
         }
 
-        /* --- CLIENT SIDE LOOKUP FILTER IMPLEMENTATION --- */
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.category-card');
-            cards.forEach((card, index) => {
-                const matchedText = categoriesData[index].title.toLowerCase() + " " + categoriesData[index].desc.toLowerCase();
-                if(matchedText.includes(val)) {
-                    card.style.display = 'flex';
+        /* --- FILTERS PROTOCOL LOGIC: REAL-TIME ASSET LOOKUP --- */
+        document.getElementById('search-bar-field').addEventListener('input', (inputEvent) => {
+            const transformationQuery = inputEvent.target.value.toLowerCase().trim();
+            const collectionCards = document.querySelectorAll('.category-asset-card');
+            
+            collectionCards.forEach((cardInstance, referenceIndex) => {
+                const combinedComparisonTextStrings = categoriesRegistryData[referenceIndex].title.toLowerCase() + " " + categoriesRegistryData[referenceIndex].desc.toLowerCase();
+                if(combinedComparisonTextStrings.includes(transformationQuery)) {
+                    cardInstance.style.display = 'flex';
                 } else {
-                    card.style.display = 'none';
+                    cardInstance.style.display = 'none';
                 }
             });
         });
 
-        /* --- IDENTITY POOL SECURE SESSION WATCHDOG PIPELINES --- */
-        const authGuardLayer = document.getElementById('auth-blocker');
+        /* --- AUTHENTICATION ACTIVE MONITOR PIPELINE (WATCHDOG SHIELD) --- */
+        const absoluteSecurityScreenGuard = document.getElementById('auth-guard-layer');
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                // Instantly re-route unverified session instances out of secure contexts
+        onAuthStateChanged(auth, async (activeNetworkUser) => {
+            if (!activeNetworkUser) {
+                // Instantly eject unauthorized traffic attempts outside secure areas
                 window.location.href = 'index.html';
                 return;
             }
 
-            currentUserContext = user;
-            const docRef = doc(db, "users", user.uid);
+            activeAuthenticatedUserInstance = activeNetworkUser;
+            const targetProfileStorageRef = doc(db, "users", activeNetworkUser.uid);
 
             try {
-                let docSnap = await getDoc(docRef);
+                const recordedSnapshot = await getDoc(targetProfileStorageRef);
 
-                if (!docSnap.exists()) {
-                    // Document footprint missing. Initialize initial security schema document profiles.
-                    const initialPayload = {
-                        uid: user.uid,
-                        email: user.email,
+                if (!recordedSnapshot.exists()) {
+                    // Initialize clean workspace document storage allocation values
+                    const freshUserPayload = {
+                        uid: activeNetworkUser.uid,
+                        email: activeNetworkUser.email,
                         paid: false,
                         role: "user",
                         membershipName: "Explorer Access",
                         createdAt: serverTimestamp(),
                         lastLoginAt: serverTimestamp()
                     };
-                    await setDoc(docRef, initialPayload);
-                    currentUserProfile = initialPayload;
+                    await setDoc(targetProfileStorageRef, freshUserPayload);
+                    activeProfilePayloadRecord = freshUserPayload;
                 } else {
-                    // Update user session metadata timeline tracking parameters
-                    await updateDoc(docRef, { lastLoginAt: serverTimestamp() });
-                    currentUserProfile = docSnap.data();
+                    // Update session connection timestamp matrices tracking logs
+                    await updateDoc(targetProfileStorageRef, { lastLoginAt: serverTimestamp() });
+                    activeProfilePayloadRecord = recordedSnapshot.data();
                 }
 
-                // Push synchronized record structures into UI compilation functions
-                processUIRender(currentUserProfile);
+                // Render compiled UI layout configurations components smoothly
+                renderDashboardLayoutContent(activeProfilePayloadRecord);
                 
-                // Clear the loader mask view seamlessly
-                authGuardLayer.style.display = 'none';
+                // Animate visibility of security loader panels smoothly out of frame
+                absoluteSecurityScreenGuard.style.transition = 'opacity 0.4s ease';
+                absoluteSecurityScreenGuard.style.opacity = '0';
+                setTimeout(() => absoluteSecurityScreenGuard.style.display = 'none', 400);
 
-            } catch (firestoreError) {
-                console.error("Firestore database connection state failure:", firestoreError);
-                callToast('Database validation failure occurred. Serving emergency read-only parameters cache.', 'error');
+            } catch (storageAccessError) {
+                console.error("Infrastructure Firestore connection termination failure:", storageAccessError);
+                triggerPremiumToast('Cloud Connection Disrupted', 'Database validation routine timeout. Initializing high-security read-only fallback session parameter configurations.', 'error');
                 
-                // Active safe operational emergency profile fallback initialization structures
-                currentUserProfile = {
-                    uid: user.uid,
-                    email: user.email,
+                // Establish high-security read-only placeholder context variables to guarantee layout preservation
+                activeProfilePayloadRecord = {
+                    uid: activeNetworkUser.uid,
+                    email: activeNetworkUser.email,
                     paid: false,
                     role: "user",
-                    membershipName: "Explorer Access (Fallback Active)"
+                    membershipName: "Explorer Access (Fallback Secure State Mode)"
                 };
-                processUIRender(currentUserProfile);
-                authGuardLayer.style.display = 'none';
+                renderDashboardLayoutContent(activeProfilePayloadRecord);
+                absoluteSecurityScreenGuard.style.display = 'none';
             }
         });
 
-        /* --- TRANS-BORDER SUBMISSION CONTROLLERS: USER PASSWORD CORRECTION --- */
-        document.getElementById('password-reset-trigger').addEventListener('click', async () => {
-            if(!currentUserContext || !currentUserContext.email) return;
+        /* --- ACTION TRIGGER DISPATCHERS: ROUTINE SECURITY ALTERATIONS --- */
+        document.getElementById('drawer-password-reset-btn').addEventListener('click', async () => {
+            if(!activeAuthenticatedUserInstance || !activeAuthenticatedUserInstance.email) return;
             try {
-                await sendPasswordResetEmail(auth, currentUserContext.email);
-                callToast('A credential recovery transmission payload has been dispatched to your validated routing server inbox.', 'success');
-            } catch(resetErr) {
-                console.error(resetErr);
-                callToast('Failed to complete background reset transactional lifecycle routines.', 'error');
+                await sendPasswordResetEmail(auth, activeAuthenticatedUserInstance.email);
+                triggerPremiumToast('Security Verification Dispatched', 'A validation password configuration update transaction tracking payload link has been transferred to your designated communication channel inbox.', 'success');
+            } catch(credentialResetFault) {
+                console.error(credentialResetFault);
+                triggerPremiumToast('Transactional Lifecycle Failure', 'Cloud core authentication engines rejected the reset dispatch execution parameters configuration string.', 'error');
             }
         });
 
-        /* --- TRANS-BORDER SUBMISSION CONTROLLERS: VOLUNTARY AUTHENTICATION TERMINATION --- */
-        document.getElementById('logout-trigger').addEventListener('click', async () => {
+        document.getElementById('drawer-logout-action-btn').addEventListener('click', async () => {
             try {
-                authGuardLayer.style.display = 'flex'; // Instantly shield presentation layout before decoupling actions
+                absoluteSecurityScreenGuard.style.opacity = '1';
+                absoluteSecurityScreenGuard.style.display = 'flex'; // Block content visibility immediately prior to decoupling data links
                 await signOut(auth);
-                // Redirect automation protocols processed cleanly via global onAuthStateChanged state listeners
-            } catch(logoutErr) {
-                console.error(logoutErr);
-                authGuardLayer.style.display = 'none';
-                callToast('Voluntary session teardown verification protocols failed to register on network nodes.', 'error');
+            } catch(signoutFault) {
+                console.error(signoutFault);
+                absoluteSecurityScreenGuard.style.display = 'none';
+                triggerPremiumToast('De-authorization Interrupted', 'System tracking logs failed to register terminal session shutdown notifications natively on cloud nodes.', 'error');
             }
         });
 
