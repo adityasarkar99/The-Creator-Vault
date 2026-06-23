@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reels Packs Vault - Creators Vault</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- DESIGN SYSTEM & HARDWARE STYLING --- */
+        :root, [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --bg-card-solid: #ffffff;
+            --bg-input: #f1f5f9;
+            --bg-dropdown: #ffffff;
+            --border-primary: rgba(226, 232, 240, 0.8);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-brand: #2563eb;
+            --accent-hover: #1d4ed8;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            --glass-blur: blur(16px);
+            --badge-bg: #e2e8f0;
+            --badge-text: #475569;
+            --lock-banner-bg: rgba(239, 68, 68, 0.08);
+            --lock-banner-border: rgba(239, 68, 68, 0.2);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.6);
+            --bg-card-solid: #111827;
+            --bg-input: #1f2937;
+            --bg-dropdown: #1f2937;
+            --border-primary: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-brand: #3b82f6;
+            --accent-hover: #2563eb;
+            --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(20px);
+            --badge-bg: rgba(59, 130, 246, 0.1);
+            --badge-text: #60a5fa;
+            --lock-banner-bg: rgba(239, 68, 68, 0.12);
+            --lock-banner-border: rgba(239, 68, 68, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- AUTH SECURITY GUARD OVERLAY --- */
+        #auth-guard-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #090d16;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            width: 44px; height: 44px;
+            border: 3px solid rgba(59, 130, 246, 0.1);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .guard-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* --- STICKY PREMIUM HEADER --- */
+        .premium-header {
+            position: sticky;
+            top: 0; z-index: 999;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .brand-icon {
+            font-size: 1.25rem;
+            color: var(--accent-brand);
+        }
+        .brand-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: continuousShine 4s linear infinite;
+        }
+        @keyframes continuousShine { to { background-position: 200% center; } }
+
+        .header-search-box {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 20px;
+        }
+        .header-search-box i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .search-input {
+            width: 100%;
+            padding: 9px 16px 9px 38px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        .header-btn {
+            background: none;
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .header-btn:hover {
+            background: var(--bg-input);
+        }
+        .icon-only-btn {
+            width: 36px; height: 36px;
+            padding: 0;
+        }
+        
+        .avatar-container {
+            position: relative;
+        }
+        .profile-avatar-trigger {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* --- USER DROPDOWN COMPONENT --- */
+        .profile-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--bg-dropdown);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            width: 240px;
+            padding: 16px;
+            box-shadow: var(--shadow-subtle);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1010;
+        }
+        .profile-dropdown-menu.show {
+            display: flex;
+        }
+        .dd-user-details h5 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            word-break: break-all;
+        }
+        .dd-user-details p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .dd-status-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .dd-status-badge.free { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+        .dd-status-badge.premium { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .dd-divider {
+            height: 1px;
+            background: var(--border-primary);
+        }
+        .dd-item {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-align: left;
+            width: 100%;
+        }
+        .dd-item:hover { color: var(--accent-brand); }
+        .dd-item.logout-trigger { color: #ef4444; }
+        .dd-item.logout-trigger:hover { color: #dc2626; }
+
+        /* --- MOBILE VIEWPORTS EXTENSION --- */
+        .mobile-search-wrapper {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        /* --- MAIN DASHBOARD SECTION --- */
+        .dashboard-viewport {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px;
+            flex-grow: 1;
+        }
+
+        /* --- HERO SECTIONS --- */
+        .hero-banner {
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+        }
+        .hero-banner h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .hero-banner p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        .stats-row {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .stat-node {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-node .num {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent-brand);
+        }
+        .stat-node .lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* --- SYSTEM LOCK BLOCKADE BANNER --- */
+        .locked-platform-banner {
+            background: var(--lock-banner-bg);
+            border: 1px solid var(--lock-banner-border);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .lock-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .lock-banner-left i {
+            font-size: 1.5rem;
+            color: #ef4444;
+        }
+        .lock-banner-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .lock-banner-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .lock-banner-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lock-banner-btn:hover { background: #dc2626; }
+
+        /* --- FILTER MATRIX CHIPS --- */
+        .filter-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 28px;
+            scrollbar-width: thin;
+            scroll-behavior: smooth;
+        }
+        .filter-chip {
+            padding: 8px 16px;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary);
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--text-muted);
+        }
+        .filter-chip.active {
+            background: var(--accent-brand);
+            color: white;
+            border-color: var(--accent-brand);
+        }
+
+        /* --- INVENTORY GRID GRID --- */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 24px;
+        }
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .card-thumbnail-box {
+            position: relative;
+            width: 100%;
+            height: 155px;
+            border-radius: 10px;
+            background: var(--bg-input);
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .card-thumbnail-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .badge-absolute {
+            position: absolute;
+            top: 10px; right: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-absolute.unlocked { background: rgba(16, 185, 129, 0.2); color: #10b981; backdrop-filter: blur(4px); }
+        .badge-absolute.locked { background: rgba(239, 68, 68, 0.2); color: #ef4444; backdrop-filter: blur(4px); }
+
+        .category-tag {
+            align-self: flex-start;
+            padding: 2px 8px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .category-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .category-card .subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .info-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+        .collapsible-info-block {
+            background: var(--bg-input);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        .btn-download-action {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-top: auto;
+            border: none;
+        }
+        .btn-download-action.active-dl {
+            background: var(--accent-brand);
+            color: white;
+        }
+        .btn-download-action.active-dl:hover { background: var(--accent-hover); }
+        .btn-download-action.locked-dl {
+            background: var(--bg-input);
+            color: var(--text-muted);
+            border: 1px solid var(--border-primary);
+        }
+
+        /* --- PREMIUM APERIODIC TOAST COMPONENT --- */
+        #toast-box-mount {
+            position: fixed;
+            top: 24px; right: 24px;
+            z-index: 10010;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 340px;
+            width: calc(100% - 48px);
+        }
+        .toast-item {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            gap: 12px;
+            position: relative;
+            transform: translateX(110%);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+        .toast-item.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 1.05rem; margin-top: 2px; }
+        .toast-body h5 { font-size: 0.85rem; font-weight: 700; }
+        .toast-body p { font-size: 0.78rem; color: var(--text-muted); margin-top: 1px; }
+        .toast-close {
+            position: absolute; top: 10px; right: 10px;
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer;
+        }
+        .toast-item.success .toast-icon { color: #10b981; }
+        .toast-item.error .toast-icon { color: #ef4444; }
+        .toast-item.warning .toast-icon { color: #f59e0b; }
+        .toast-item.info .toast-icon { color: #3b82f6; }
+
+        /* --- FOOTER REGION --- */
+        .premium-footer {
+            background: var(--bg-card-solid);
+            border-top: 1px solid var(--border-primary);
+            padding: 40px 40px 24px 40px;
+            margin-top: auto;
+        }
+        .footer-grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .footer-brand-side h4 { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+        .footer-brand-side p { color: var(--text-muted); font-size: 0.85rem; max-width: 280px; }
+        .footer-col h5 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; margin-bottom: 14px; color: var(--text-muted); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col ul li a { color: var(--text-main); font-size: 0.85rem; text-decoration: none; }
+        .footer-col ul li a:hover { color: var(--accent-brand); }
+        .btn-discord {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #5865f2;
+            color: white !important;
+            border-radius: 8px;
+            font-size: 0.82rem !important;
+            font-weight: 600;
+        }
+
+        .footer-bottom {
+            max-width: 1300px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border-primary);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* --- RESPONSIVE MEDIA FILTERS --- */
+        @media (max-width: 900px) {
+            .premium-header { padding: 12px 24px; }
+            .header-search-box { display: none; }
+            .mobile-search-wrapper { display: block; position: relative; }
+            .mobile-search-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; }
+            .mobile-search-wrapper .search-input { max-width: 100%; }
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+        }
+
+        @media (max-width: 500px) {
+            .premium-header { flex-wrap: wrap; gap: 12px; justify-content: center; padding: 14px 16px; }
+            .header-right-actions { width: 100%; justify-content: center; }
+            .profile-dropdown-menu { right: 50%; transform: translateX(50%); top: 100%; }
+            .dashboard-viewport { padding: 20px 16px; }
+            .hero-banner { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-guard-screen">
+        <div class="spinner"></div>
+        <div class="guard-text">Securing Cloud Infrastructure...</div>
+    </div>
+
+    <header class="premium-header">
+        <a class="brand-container" href="dashboard.html">
+            <i class="fa-solid fa-layer-group brand-icon"></i>
+            <span class="brand-text">Creators Vault</span>
+        </a>
+
+        <div class="header-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input global-search-trigger" placeholder="Search parameters...">
+        </div>
+
+        <div class="header-right-actions">
+            <a href="dashboard.html" class="header-btn">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <button class="header-btn icon-only-btn" id="theme-toggle-node">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            
+            <div class="avatar-container">
+                <div class="profile-avatar-trigger" id="profile-avatar-btn">-</div>
+                
+                <div class="profile-dropdown-menu" id="profile-dropdown-context">
+                    <div class="dd-user-details">
+                        <h5 id="dd-email-field">loading...</h5>
+                        <p id="dd-uid-field" style="font-size:0.7rem; opacity:0.6; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></p>
+                        <div id="dd-status-badge-mount"></div>
+                    </div>
+                    <div class="dd-divider"></div>
+                    <a href="dashboard.html" class="dd-item"><i class="fa-solid fa-house-user"></i> Workspace Hub</a>
+                    <div class="dd-divider"></div>
+                    <button class="dd-item logout-trigger" id="logout-action-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out Platform</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-viewport">
+        
+        <div class="mobile-search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input global-search-trigger" placeholder="Search parameters...">
+        </div>
+
+        <div class="hero-banner">
+            <h1>Reels Packs Vault</h1>
+            <p>Premium viral reels bundles, editing-ready packs, and niche content collections.</p>
+            <div class="stats-row">
+                <div class="stat-node"><span class="num">50+</span><span class="lbl">Reels Bundles</span></div>
+                <div class="stat-node"><span class="num">2000+</span><span class="lbl">Reels</span></div>
+                <div class="stat-node"><span class="num">Lifetime Access</span><span class="lbl">Account Privilege</span></div>
+            </div>
+        </div>
+
+        <div id="lock-state-banner-target"></div>
+
+        <div class="filter-container" id="filter-chips-mount"></div>
+
+        <section class="categories-grid" id="reels-inventory-mount"></section>
+
+    </main>
+
+    <div id="toast-box-mount"></div>
+
+    <footer class="premium-footer">
+        <div class="footer-grid">
+            <div class="footer-brand-side">
+                <h4 class="brand-text">Creators Vault</h4>
+                <p>Enterprise-grade digital asset infrastructure delivering verified premium asset content configurations.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Navigation</h5>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Support Infrastructure</h5>
+                <ul>
+                    <li><a href="mailto:support@creatorsvault.com"><i class="fa-solid fa-envelope" style="margin-right:5px;"></i> support@creatorsvault.com</a></li>
+                    <li style="margin-top: 10px;"><a href="#DISCORD_LINK" class="btn-discord"><i class="fa-brands fa-discord"></i> Connect Discord</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Legal Protocol</h5>
+                <ul>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 Creators Vault. All distributed resources certified.</div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+            authDomain: "creators-vaults.firebaseapp.com",
+            projectId: "creators-vaults",
+            storageBucket: "creators-vaults.firebasestorage.app",
+            messagingSenderId: "739165070040",
+            appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+            measurementId: "G-MM742MSP09"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let activeUserContext = null;
+        let isUserPremiumCleared = false;
+        let activeCategorySelection = "All";
+        let activeSearchFilterValue = "";
+
+        const staticCategoryArray = ["All", "AI", "Motivation", "Fitness", "Business", "Cartoon", "Nature", "Gaming", "Education", "Spiritual", "Lifestyle", "Extra"];
+
+        const reelsBundles = [
+            { image: "R100.jpg", title: "AI Health Awareness", subtitle: "AI Health Awareness", info: "AI Health Awareness & Hardcore gym motivation, workout tips, and aesthetic body clips.", category: "AI", link: "https://drive.google.com/drive/folders/1Q_BCk5hRPNrzrVcNk9Th0Egi5_so439J" },
+            { image: "R1.png", title: "AI Reels Pack", subtitle: "Technology & AI Avatars", info: "High quality AI generated reels for tech and future niche pages.", category: "AI", link: "https://drive.google.com/drive/folders/1uuyeNMmD1YwNNcTrtAO-BSet6PAgbs5b" },
+            { image: "R2.png", title: "Motivational Reels", subtitle: "Inspirational Quotes", info: "Viral motivational clips with English and Hindi subtitles.", category: "Motivation", link: "https://drive.google.com/drive/folders/1JoQn2v4Q_lkdBCM_oLiKpJBB9WhG7idP" },
+            { image: "R3.png", title: "Luxury Lifestyle", subtitle: "Cars, Mansions & Money", info: "Showcase the rich lifestyle. Supercars, expensive watches, and travel.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/111SGJfYy0bRu7bX53ROeP-Nvz2uuTYIR" },
+            { image: "R4.jpg", title: "Success Reels", subtitle: "Business & Mindset", info: "Entrepreneurship and hustle culture reels for business pages.", category: "Business", link: "https://drive.google.com/drive/folders/1C5Jagl9mVEQkIfyKrPGheU6dUrDC7K6H" },
+            { image: "R5.png", title: "Monkey Reels", subtitle: "Funny & Viral Clips", info: "Trending funny monkey reaction videos and cute clips.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1WO1cYunp4agZUWuYdX5dZknA3xDe1nFH" },
+            { image: "R6.png", title: "Gym & Fitness", subtitle: "Workout & Bodybuilding", info: "Hardcore gym motivation, workout tips, and aesthetic body clips.", category: "Fitness", link: "https://drive.google.com/drive/folders/1jesQ7V_duScTQ9W02bCPsvc8ffXSabxP" },
+            { image: "R7.png", title: "2D Animation Reels", subtitle: "Cartoons & Story Clips", info: "Funny 2D animated stories and meme templates.", category: "Cartoon", link: "https://drive.google.com/drive/folders/1MIhlP8Jec29Tq52cReWruHquF-EYl8yn" },
+            { image: "R8.png", title: "Satisfying Glass Art", subtitle: "ASMR & Cutting Skills", info: "Oddly satisfying glass cutting and shaping videos.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1rd4XtiCb83esH6jNbzrsqG_JG7H_hujR" },
+            { image: "R9.jpg", title: "DIY & Life Hacks", subtitle: "Crafts & Tricks", info: "5-minute crafts, life hacks, and useful daily tricks.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1CQBuEsP3-8GSfMrbKzHHBzw01B_nS__5" },
+            { image: "R10.png", title: "Anime VFX Edits", subtitle: "Pre-Edited & 4K", info: "High quality anime edits with visual effects (VFX) ready to post.", category: "Cartoon", link: "https://drive.google.com/drive/folders/1HKkKuUcaRpKA4zkDd69rWHsxnKA43nsM" },
+            { image: "R11.png", title: "Art & Craft", subtitle: "Creative Design Reels", info: "Drawing, painting, and paper craft satisfying videos.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1eDGFXC_k392TxLTDvlZftX4vRH5aKmjB" },
+            { image: "R12.png", title: "Sanatan Dharma AI", subtitle: "Devotional & Spiritual", info: "3D AI generated videos of Hindu Gods and spiritual content.", category: "Spiritual", link: "https://drive.google.com/drive/folders/1kPwHwK3XeoLMx0k6GktG6I7ku7Rr_gWI" },
+            { image: "R13.png", title: "Animal Vlogs", subtitle: "Cute & Funny Animals", info: "Funny cats, dogs, and wildlife moments.", category: "Lifestyle", link: "https://drive.google.com/file/d/1pp72Ueosl_-9Ziibntyz8byW2O3OZMIi/view" },
+            { image: "R14.png", title: "4K Quality Reels", subtitle: "Ultra HD Nature", info: "Cinematic nature, cityscapes, and travel videos in 4K resolution.", category: "Nature", link: "https://drive.google.com/drive/folders/1XhfQ6qrVCpw8RjBwBUV3O_uK9EY5OD_m" },
+            { image: "R15.png", title: "Hindi AI Kahani", subtitle: "Storytelling & Moral", info: "Engaging Hindi stories with AI voiceovers and visuals.", category: "Education", link: "https://drive.google.com/drive/folders/17_oHWLlrkr3yX9_WzBeexX1m_mocrrZm" },
+            { image: "R16.jpg", title: "2025 Viral Bundle", subtitle: "Trending & Popular", info: "A mix of the most trending formats for the upcoming year.", category: "Extra", link: "https://drive.google.com/drive/folders/1GQP_XsehMMI8Hmr_md_-l_FzmJwhkcLB" },
+            { image: "R18.png", title: "Mad Scientist", subtitle: "Experiments & Fun", info: "Crazy science experiments and chemical reactions.", category: "Extra", link: "https://drive.google.com/drive/folders/1FV_MUr57lL0K98LBOiZuYkZwmyLNhnhM" },
+            { image: "R19.png", title: "2000+ Stickman Reels", subtitle: "Premium Animation", info: "Massive collection of funny and fighting stickman animations.", category: "Cartoon", link: "https://drive.google.com/drive/folders/1-c4xf3HLp94HOPHCWc0HYiiDoK7Oi9JB" },
+            { image: "R22.png", title: "Mini AI Worker", subtitle: "Futuristic AI", info: "Cute mini AI robots working and interacting.", category: "AI", link: "https://drive.google.com/drive/folders/1zb8LieBL4AZaT7wXw3il9Ch8t8thFIK_" },
+            { image: "R20.png", title: "Trading Tips Reels", subtitle: "Stock Market", info: "Learn trading patterns, crypto, and investment strategies.", category: "Business", link: "https://drive.google.com/drive/folders/1U-hv1MG7Uh_ZXMcqsC48EXLSMkkcU2qU" },
+            { image: "R21.png", title: "Editing Tutorial Pack", subtitle: "Pro Video Editing", info: "Resources, transitions, and overlays for video editors.", category: "Extra", link: "https://drive.google.com/drive/folders/1DP7qpfW2Io4B3BUwaP76YS-vadHxu6tv" },
+            { image: "R28.png", title: "Bundlebaaz Mix", subtitle: "Mega Mixed Collection", info: "A huge variety of mixed content from various categories.", category: "Extra", link: "https://drive.google.com/drive/folders/1ZRl6Dm_aDwWw-zZgRUC-ryfTy7bJG-nZ" },
+            { image: "R29.png", title: "Instagram Business", subtitle: "Motivational Dusk", info: "Dark aesthetic business motivation videos.", category: "Business", link: "https://drive.google.com/drive/folders/156n5Drq5F8b4mTPHqfW4RYi-8jK6ov65" },
+            { image: "R24.png", title: "Business Tips (Hindi)", subtitle: "Grow Your Brand", info: "Business advice and case studies explained in Hindi.", category: "Business", link: "https://drive.google.com/drive/folders/19OihxyPDGIludrkNUL-G35tqdY_607tM" },
+            { image: "R53.png", title: "Earning Tips Reels", subtitle: "Make Money Online", info: "Tips on freelancing, affiliate marketing, and side hustles.", category: "Business", link: "https://drive.google.com/drive/folders/1SUyb_wNDiTUEZR0DjtEm_eESpSWl93d2" },
+            { image: "R32.png", title: "Podcast Clips", subtitle: "Bundlebaaz Collection", info: "Short, impactful clips from famous podcasts.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1KrMkrZrGUOkp9_8AB3sG_7Jzfc6nhvCd" },
+            { image: "R27.png", title: "Stock Market Reels", subtitle: "Investor Education", info: "Detailed analysis and tips for stock market investors.", category: "Business", link: "https://drive.google.com/drive/folders/193sV7W9KGkZPVkVbs4rjFmHEu5Is8qZV" },
+            { image: "R22.png", title: "Mini AI Worker (v2)", subtitle: "AI Generation Tools", info: "More clips of the popular mini AI characters.", category: "AI", link: "https://drive.google.com/drive/folders/1aTKqI3lQbeN7UeDeFuikcvxnPhpD7ByU" },
+            { image: "R26.jpg", title: "Doremon Reels", subtitle: "Anime Entertainment", info: "Funny and emotional clips from the Doraemon series.", category: "Cartoon", link: "https://drive.google.com/drive/folders/15xRJFycbuA077N80VSiw34DynCn9s_Jy" },
+            { image: "R31.jpg", title: "Free Fire Bundle", subtitle: "Gaming Clips", info: "Action-packed gameplay and headshot montages.", category: "Gaming", link: "https://drive.google.com/drive/folders/1o4MMXlLZ3XxKtovFDMGgT9v7sHiP6c1b" },
+            { image: "R52.png", title: "Nature Satisfying Reels Bundle", subtitle: "Relaxing Nature Clips", info: "Peaceful nature visuals with satisfying and calming scenes.", category: "Nature", link: "https://drive.google.com/drive/folders/1z57u3QvY5BE5uZWQ4UA5x5HPXX0vQ4TE" },
+            { image: "R33.png", title: "Travel Reels Bundle", subtitle: "World Travel Clips", info: "Beautiful travel destinations, cinematic shots and adventure reels.", category: "Nature", link: "https://drive.google.com/drive/folders/1UWRU6AtXQtpug36uWv4KXGw74D9UBRrb" },
+            { image: "R34.png", title: "Lofi Songs Reels Bundle", subtitle: "Chill Music Reels", info: "Aesthetic lofi music reels perfect for chill and mood content.", category: "Nature", link: "https://drive.google.com/drive/folders/1jHPbeJdDEfo4DrW2KOxNgTphQhbSim6x" },
+            { image: "R35.png", title: "Superheroes Reels Bundle", subtitle: "Action Superhero Clips", info: "Power-packed superhero scenes, action moments and edits.", category: "Gaming", link: "https://drive.google.com/drive/folders/17GPrwy7368Yq_L_gZ25ify04eRx9YZM6" },
+            { image: "R36.png", title: "Study Reels Bundle", subtitle: "Motivational Study Clips", info: "Study motivation, productivity and focus-based reels.", category: "Education", link: "https://drive.google.com/drive/folders/1oJbBwL1uYUPX0QsApXpGzEmaJGNAzm-o" },
+            { image: "R37.png", title: "AI Doctor Reels Bundle", subtitle: "Health & AI Content", info: "AI doctor reels explaining health tips and medical facts in Hindi.", category: "Education", link: "https://drive.google.com/drive/folders/1g8I-JThUxY7aiJNklMmFuDLi14Uu1X95" },
+            { image: "R38.png", title: "Useful Gadgets Reels Bundle", subtitle: "Tech & Gadgets Clips", info: "Smart gadgets, tech hacks and trending device reels.", category: "Education", link: "https://drive.google.com/drive/folders/1buFdIWsi_MbcxMN8b9WK2qANHKGxlMWe" },
+            { image: "R39.png", title: "2D Animation Reels Bundle", subtitle: "Animated Content", info: "Creative 2D animated reels for engaging content.", category: "Cartoon", link: "https://drive.google.com/drive/folders/1sJmwRYH5l4fyGQaUPJ1MfvwwJT5PkL4h" },
+            { image: "R40.png", title: "Wood Work Reels Bundle", subtitle: "Creative Wood Craft", info: "Satisfying wood cutting, furniture making and craftsmanship reels.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1gkr0RrKbrz5yXGqBmWkbCu4L5PbFSam3" },
+            { image: "R41.png", title: "Cartoon Reels Bundle", subtitle: "Funny Cartoon Clips", info: "Popular cartoon reels with funny and entertaining moments.", category: "Cartoon", link: "https://drive.google.com/drive/folders/1sDrsT8RnCKR6uLR3oczZmAlT3jwAAoYW" },
+            { image: "R42.png", title: "Trains Reels Bundle", subtitle: "Railway & Train Videos", info: "Train journeys, engines and satisfying railway reels.", category: "Nature", link: "https://drive.google.com/drive/folders/1YzQJhFseJd5CFEZbQTDUb7nnpNUwNt22" },
+            { image: "R43.png", title: "Scary Job Reels Bundle", subtitle: "Risky & Dangerous Jobs", info: "High-risk jobs, extreme work and scary profession reels.", category: "Lifestyle", link: "https://drive.google.com/drive/folders/1A1K3HRwjJdA9-Uk4GfpuM1yKGGa7b9zu?usp=sharing" },
+            { image: "R44.png", title: "Zig & Mermaid Cartoon Bundle", subtitle: "Kids Cartoon Reels", info: "Zig & Mermaid cartoon reels loved by kids and family audience.", category: "Cartoon", link: "https://drive.google.com/drive/u/0/mobile/folders/1sDrsT8RnCKR6uLR3oczZmAlT3jwAAoYW" },
+            { image: "R45.png", title: "Daily Hacks Reels Bundle", subtitle: "Smart Daily Tips", info: "Useful daily life hacks to make routine tasks easier.", category: "Lifestyle", link: "https://drive.google.com/drive/u/0/mobile/folders/1_JDuQqRyk5hDe6JiTVHwRx3c51BtHWQu/14pMGfw5m2HaND0hBU5hGNUqxTrDtRygY" },
+            { image: "R46.png", title: "Life Hacks Reels Bundle", subtitle: "Smart Living Tips", info: "Creative life hacks and problem-solving reels.", category: "Lifestyle", link: "https://drive.google.com/drive/u/0/mobile/folders/1_JDuQqRyk5hDe6JiTVHwRx3c51BtHWQu" },
+            { image: "R47.png", title: "Attitude Reels Bundle", subtitle: "Stylish Attitude Clips", info: "Attitude, swag and confidence-based reels.", category: "Motivation", link: "https://drive.google.com/drive/u/0/mobile/folders/12NEPoxTPLUqcRtwJJP3E7zsw_danHOny" },
+            { image: "R48.png", title: "Shark Tank Reels Bundle", subtitle: "Business & Startup Clips", info: "Startup pitches, business ideas and Shark Tank moments.", category: "Business", link: "https://mega.nz/folder/MeZGAbjI#EKijxmWdI6WC89SLqc2GQg" },
+            { image: "R49.png", title: "Art Reels Bundle", subtitle: "Creative Art Videos", info: "Drawing, painting and creative art reels.", category: "Lifestyle", link: "https://drive.google.com/drive/u/0/mobile/folders/15YrKn1eqa8Te6h8-4gTJu7CB8sb7tOs3/1HI2Q3zmom9MkblsgdgT-9sjjtFp5jDY3" },
+            { image: "R50.png", title: "Yoga Reels Bundle", subtitle: "Health & Fitness", info: "Yoga poses, fitness routines and wellness reels.", category: "Fitness", link: "https://drive.google.u/0/mobile/folders/1n9s_PYqWku13IDw1SwlsnVmH5rfXR_A8/1PqhpBBbTAdbRvWp6GMNSH50yjsBBRQz-" },
+            { image: "R51.png", title: "Nature Reels Bundle", subtitle: "Beautiful Nature Clips", info: "Scenic landscapes, wildlife and relaxing nature reels.", category: "Nature", link: "https://drive.google.com/drive/u/0/mobile/folders/1maID_DgrGhrXMvCs7d7JtGPorOmMfbKH" }
+        ];
+
+        /* --- TOAST INFRASTRUCTURE MODULE --- */
+        const toastMountNode = document.getElementById('toast-box-mount');
+        window.spawnPremiumToast = function(titleString, textBody, statusType = 'info') {
+            const toastFrame = document.createElement('div');
+            toastFrame.className = `toast-item ${statusType}`;
+            
+            let descriptiveIcon = 'fa-circle-info';
+            if (statusType === 'success') descriptiveIcon = 'fa-circle-check';
+            if (statusType === 'error') descriptiveIcon = 'fa-circle-exclamation';
+            if (statusType === 'warning') descriptiveIcon = 'fa-triangle-exclamation';
+
+            toastFrame.innerHTML = `
+                <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+                <div class="toast-body">
+                    <h5>${titleString}</h5>
+                    <p>${textBody}</p>
+                </div>
+                <button class="toast-close"><i class="fa-solid fa-xmark"></i></button>
+            `;
+
+            toastMountNode.appendChild(toastFrame);
+            setTimeout(() => toastFrame.classList.add('show'), 20);
+
+            const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+            toastFrame.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(decayTimerReference);
+                clearToastInstance(toastFrame);
+            });
+        };
+        function clearToastInstance(targetNode) {
+            targetNode.classList.remove('show');
+            targetNode.addEventListener('transitionend', () => targetNode.remove());
+        }
+
+        /* --- THEME SYSTEM --- */
+        const themeToggleBtn = document.getElementById('theme-toggle-node');
+        const rootElement = document.documentElement;
+        function applyInterfaceTheme(targetMode) {
+            rootElement.setAttribute('data-theme', targetMode);
+            localStorage.setItem('cv_saved_theme', targetMode);
+            themeToggleBtn.innerHTML = targetMode === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        }
+        applyInterfaceTheme(localStorage.getItem('cv_saved_theme') || 'dark');
+        themeToggleBtn.addEventListener('click', () => {
+            applyInterfaceTheme(rootElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        /* --- INTERACTIVE DROPDOWN LAYER --- */
+        const avatarBtn = document.getElementById('profile-avatar-btn');
+        const dropdownContext = document.getElementById('profile-dropdown-context');
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContext.classList.toggle('show');
+        });
+        document.addEventListener('click', () => {
+            dropdownContext.classList.remove('show');
+        });
+
+        /* --- FIREBASE SECURE MONITORING CYCLE --- */
+        const authGuardOverlay = document.getElementById('auth-guard-screen');
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            activeUserContext = user;
+            
+            // Populating UI Identifiers
+            document.getElementById('profile-avatar-btn').textContent = user.email ? user.email.charAt(0).toUpperCase() : 'U';
+            document.getElementById('dd-email-field').textContent = user.email || 'Anonymous User';
+            document.getElementById('dd-uid-field').textContent = `ID: ${user.uid}`;
+
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const snapshot = await getDoc(userDocRef);
+                if (snapshot.exists() && snapshot.data().paid === true) {
+                    isUserPremiumCleared = true;
+                }
+            } catch (fault) {
+                console.error("Cloud data alignment anomaly:", fault);
+            }
+
+            // Sync Dropdown Badges
+            const badgeMount = document.getElementById('dd-status-badge-mount');
+            if (isUserPremiumCleared) {
+                badgeMount.innerHTML = `<span class="dd-status-badge premium">Lifetime Premium</span>`;
+            } else {
+                badgeMount.innerHTML = `<span class="dd-status-badge free">Free Member</span>`;
+            }
+
+            renderLockBannerAlert();
+            renderCategoryFilterChips();
+            generateInventoryViewLayout();
+
+            authGuardOverlay.style.transition = 'opacity 0.25s ease';
+            authGuardOverlay.style.opacity = '0';
+            setTimeout(() => authGuardOverlay.style.display = 'none', 250);
+        });
+
+        // Signout Handler Activation
+        document.getElementById('logout-action-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (err) {
+                spawnPremiumToast('Sign Out Fault', 'Unable to dismantle local secure session.', 'error');
+            }
+        });
+
+        function renderLockBannerAlert() {
+            const bannerSlot = document.getElementById('lock-state-banner-target');
+            if (!isUserPremiumCleared) {
+                bannerSlot.innerHTML = `
+                    <div class="locked-platform-banner">
+                        <div class="lock-banner-left">
+                            <i class="fa-solid fa-circle-lock"></i>
+                            <div class="lock-banner-info">
+                                <h4>Premium access required</h4>
+                                <p>Unlock lifetime access from your dashboard to download all reels bundles.</p>
+                            </div>
+                        </div>
+                        <a href="dashboard.html" class="lock-banner-btn">Go to Dashboard / Upgrade</a>
+                    </div>
+                `;
+            } else {
+                bannerSlot.innerHTML = '';
+            }
+        }
+
+        function renderCategoryFilterChips() {
+            const container = document.getElementById('filter-chips-mount');
+            container.innerHTML = '';
+            staticCategoryArray.forEach(label => {
+                const chip = document.createElement('div');
+                chip.className = `filter-chip ${activeCategorySelection === label ? 'active' : ''}`;
+                chip.textContent = label;
+                chip.addEventListener('click', () => {
+                    activeCategorySelection = label;
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    generateInventoryViewLayout();
+                });
+                container.appendChild(chip);
+            });
+        }
+
+        window.toggleInfoSection = function(btnElement) {
+            const targetBlock = btnElement.nextElementSibling;
+            const isVisible = targetBlock.style.display === 'block';
+            targetBlock.style.display = isVisible ? 'none' : 'block';
+            btnElement.innerHTML = isVisible ? 'Info <i class="fa-solid fa-chevron-down"></i>' : 'Hide Info <i class="fa-solid fa-chevron-up"></i>';
+        };
+
+        window.handleRestrictedAssetRequest = function() {
+            spawnPremiumToast('Access Refused', 'Premium access required. Upgrade account status in your workspace hub.', 'warning');
+        };
+
+        function generateInventoryViewLayout() {
+            const mountPoint = document.getElementById('reels-inventory-mount');
+            mountPoint.innerHTML = '';
+
+            const computationalFilteredArray = reelsBundles.filter(item => {
+                const alignmentFlag = (activeCategorySelection === "All" || item.category === activeCategorySelection);
+                const queryMatchFlag = !activeSearchFilterValue || 
+                    item.title.toLowerCase().includes(activeSearchFilterValue) || 
+                    item.subtitle.toLowerCase().includes(activeSearchFilterValue) || 
+                    item.info.toLowerCase().includes(activeSearchFilterValue);
+                return alignmentFlag && queryMatchFlag;
+            });
+
+            if (computationalFilteredArray.length === 0) {
+                mountPoint.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px; font-size: 0.9rem;">No video asset portfolios align with current tracking filters.</div>`;
+                return;
+            }
+
+            computationalFilteredArray.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="card-thumbnail-box">
+                        <img src="${item.image}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&width=600'">
+                        <span class="badge-absolute ${isUserPremiumCleared ? 'unlocked' : 'locked'}">
+                            ${isUserPremiumCleared ? '<i class="fa-solid fa-lock-open"></i> Unlocked' : '<i class="fa-solid fa-lock"></i> Locked'}
+                        </span>
+                    </div>
+                    <span class="category-tag">${item.category}</span>
+                    <h3>${item.title}</h3>
+                    <div class="subtitle">${item.subtitle}</div>
+                    
+                    <button class="info-toggle-btn" onclick="toggleInfoSection(this)">Info <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="collapsible-info-block">
+                        <strong>Bundle Details:</strong><br>${item.info}
+                    </div>
+
+                    ${isUserPremiumCleared ? 
+                        `<a href="${item.link}" target="_blank" class="btn-download-action active-dl"><i class="fa-solid fa-cloud-arrow-down"></i> Download Asset Bundle</a>` : 
+                        `<button class="btn-download-action locked-dl" onclick="handleRestrictedAssetRequest()"><i class="fa-solid fa-lock"></i> Locked Bundle</button>`
+                    }
+                `;
+                mountPoint.appendChild(card);
+            });
+        }
+
+        /* --- SEARCH EVENTS COUPLING --- */
+        document.querySelectorAll('.global-search-trigger').forEach(inputField => {
+            inputField.addEventListener('input', (e) => {
+                activeSearchFilterValue = e.target.value.toLowerCase().trim();
+                // Synchronize search text across elements
+                document.querySelectorAll('.global-search-trigger').forEach(el => {
+                    if(el !== e.target) el.value = e.target.value;
+                });
+                generateInventoryViewLayout();
+            });
+        });
+    </script>
+</body>
+</html>
