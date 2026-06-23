@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Games Vault - Creators Vault</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- DESIGN SYSTEM & HARDWARE STYLING --- */
+        :root, [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --bg-card-solid: #ffffff;
+            --bg-input: #f1f5f9;
+            --bg-dropdown: #ffffff;
+            --border-primary: rgba(226, 232, 240, 0.8);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-brand: #e11d48; /* Gaming Oriented Accent - Rose/Red */
+            --accent-hover: #be123c;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            --glass-blur: blur(16px);
+            --badge-bg: #ffe4e6;
+            --badge-text: #9f1239;
+            --lock-banner-bg: rgba(239, 68, 68, 0.08);
+            --lock-banner-border: rgba(239, 68, 68, 0.2);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #060814;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --bg-card-solid: #0f172a;
+            --bg-input: #1e293b;
+            --bg-dropdown: #1e293b;
+            --border-primary: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-brand: #f43f5e;
+            --accent-hover: #e11d48;
+            --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(20px);
+            --badge-bg: rgba(244, 63, 94, 0.1);
+            --badge-text: #fb7185;
+            --lock-banner-bg: rgba(239, 68, 68, 0.12);
+            --lock-banner-border: rgba(239, 68, 68, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- SECURITY DETONATION LAYER (GUARD SCREEN) --- */
+        #auth-guard-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #060814;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            width: 44px; height: 44px;
+            border: 3px solid rgba(244, 63, 94, 0.1);
+            border-top-color: var(--accent-brand);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .guard-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* --- NAVIGATION BAR HEADER --- */
+        .premium-header {
+            position: sticky;
+            top: 0; z-index: 999;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .brand-icon {
+            font-size: 1.25rem;
+            color: var(--accent-brand);
+        }
+        .brand-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: continuousShine 4s linear infinite;
+        }
+        @keyframes continuousShine { to { background-position: 200% center; } }
+
+        .header-search-box {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 20px;
+        }
+        .header-search-box i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .search-input {
+            width: 100%;
+            padding: 9px 16px 9px 38px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        .header-btn {
+            background: none;
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .header-btn:hover { background: var(--bg-input); }
+        .icon-only-btn { width: 36px; height: 36px; padding: 0; }
+        
+        .avatar-container { position: relative; }
+        .profile-avatar-trigger {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f43f5e, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* --- CONTEXTUAL ACCORDION DROP-MENU --- */
+        .profile-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--bg-dropdown);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            width: 240px;
+            padding: 16px;
+            box-shadow: var(--shadow-subtle);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1010;
+        }
+        .profile-dropdown-menu.show { display: flex; }
+        .dd-user-details h5 { font-size: 0.88rem; font-weight: 700; word-break: break-all; }
+        .dd-user-details p { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+        .dd-status-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .dd-status-badge.free { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+        .dd-status-badge.premium { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .dd-divider { height: 1px; background: var(--border-primary); }
+        .dd-item {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-align: left;
+            width: 100%;
+        }
+        .dd-item:hover { color: var(--accent-brand); }
+        .dd-item.logout-trigger { color: #ef4444; }
+        .dd-item.logout-trigger:hover { color: #dc2626; }
+
+        .mobile-search-wrapper { display: none; margin-bottom: 20px; }
+
+        /* --- DASHBOARD STRUCTURAL LAYOUT --- */
+        .dashboard-viewport {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px;
+            flex-grow: 1;
+        }
+
+        .hero-banner {
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+        }
+        .hero-banner h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+        .hero-banner p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        .stats-row { display: flex; gap: 32px; flex-wrap: wrap; }
+        .stat-node { display: flex; flex-direction: column; }
+        .stat-node .num { font-size: 1.4rem; font-weight: 800; color: var(--accent-brand); }
+        .stat-node .lbl { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+        /* --- SYSTEM LOCK BLOCKADE BANNER --- */
+        .locked-platform-banner {
+            background: var(--lock-banner-bg);
+            border: 1px solid var(--lock-banner-border);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .lock-banner-left { display: flex; align-items: center; gap: 14px; }
+        .lock-banner-left i { font-size: 1.5rem; color: #ef4444; }
+        .lock-banner-info h4 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+        .lock-banner-info p { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+        .lock-banner-btn {
+            background: #ef4444; color: white; border: none;
+            padding: 8px 16px; border-radius: 8px; font-size: 0.82rem;
+            font-weight: 700; text-decoration: none; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .lock-banner-btn:hover { background: #dc2626; }
+
+        /* --- FILTER PARAMETERS CHIPS --- */
+        .filter-container {
+            display: flex; gap: 8px; overflow-x: auto;
+            padding-bottom: 10px; margin-bottom: 28px;
+            scrollbar-width: thin; scroll-behavior: smooth;
+        }
+        .filter-chip {
+            padding: 8px 16px; background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary); border-radius: 20px;
+            font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            white-space: nowrap; color: var(--text-muted);
+        }
+        .filter-chip.active { background: var(--accent-brand); color: white; border-color: var(--accent-brand); }
+
+        /* --- PRODUCT GRID SYSTEM --- */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 24px;
+        }
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .card-thumbnail-box {
+            position: relative; width: 100%; height: 165px;
+            border-radius: 10px; background: var(--bg-input);
+            overflow: hidden; margin-bottom: 14px;
+        }
+        .card-thumbnail-box img { width: 100%; height: 100%; object-fit: cover; }
+        .badge-absolute {
+            position: absolute; top: 10px; right: 10px;
+            padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-absolute.unlocked { background: rgba(16, 185, 129, 0.2); color: #10b981; backdrop-filter: blur(4px); }
+        .badge-absolute.locked { background: rgba(239, 68, 68, 0.2); color: #ef4444; backdrop-filter: blur(4px); }
+
+        .category-tag {
+            align-self: flex-start; padding: 2px 8px;
+            background: var(--badge-bg); color: var(--badge-text);
+            border-radius: 6px; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; margin-bottom: 8px;
+        }
+
+        .category-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+        .category-card .subtitle { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; }
+
+        .info-toggle-btn {
+            background: none; border: 1px solid var(--border-primary);
+            color: var(--text-main); padding: 6px 12px; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            margin-bottom: 12px; align-self: flex-start;
+        }
+        .collapsible-info-block {
+            background: var(--bg-input); padding: 12px; border-radius: 8px;
+            font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;
+            margin-bottom: 14px; display: none;
+        }
+
+        .btn-download-action {
+            width: 100%; padding: 10px; border-radius: 10px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; text-decoration: none; margin-top: auto; border: none;
+        }
+        .btn-download-action.active-dl { background: var(--accent-brand); color: white; }
+        .btn-download-action.active-dl:hover { background: var(--accent-hover); }
+        .btn-download-action.locked-dl {
+            background: var(--bg-input); color: var(--text-muted);
+            border: 1px solid var(--border-primary);
+        }
+
+        /* --- PREMIUM APERIODIC TOAST MODULE --- */
+        #toast-box-mount {
+            position: fixed; top: 24px; right: 24px; z-index: 10010;
+            display: flex; flex-direction: column; gap: 10px;
+            max-width: 340px; width: calc(100% - 48px);
+        }
+        .toast-item {
+            background: var(--bg-card-solid); border: 1px solid var(--border-primary);
+            border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-subtle);
+            display: flex; gap: 12px; position: relative;
+            transform: translateX(110%); opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+        .toast-item.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 1.05rem; margin-top: 2px; }
+        .toast-body h5 { font-size: 0.85rem; font-weight: 700; }
+        .toast-body p { font-size: 0.78rem; color: var(--text-muted); margin-top: 1px; }
+        .toast-close { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; }
+        .toast-item.success .toast-icon { color: #10b981; }
+        .toast-item.error .toast-icon { color: #ef4444; }
+        .toast-item.warning .toast-icon { color: #f59e0b; }
+
+        /* --- PLATFORM FOOTER ZONE --- */
+        .premium-footer { background: var(--bg-card-solid); border-top: 1px solid var(--border-primary); padding: 40px 40px 24px 40px; margin-top: auto; }
+        .footer-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 32px; margin-bottom: 32px; }
+        .footer-brand-side h4 { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+        .footer-brand-side p { color: var(--text-muted); font-size: 0.85rem; max-width: 280px; }
+        .footer-col h5 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; margin-bottom: 14px; color: var(--text-muted); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col ul li a { color: var(--text-main); font-size: 0.85rem; text-decoration: none; }
+        .footer-col ul li a:hover { color: var(--accent-brand); }
+        .btn-discord { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: #5865f2; color: white !important; border-radius: 8px; font-size: 0.82rem !important; font-weight: 600; }
+        .footer-bottom { max-width: 1300px; margin: 0 auto; border-top: 1px solid var(--border-primary); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--text-muted); }
+
+        /* --- RESPONSIVE FILTERS --- */
+        @media (max-width: 900px) {
+            .premium-header { padding: 12px 24px; }
+            .header-search-box { display: none; }
+            .mobile-search-wrapper { display: block; position: relative; }
+            .mobile-search-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; }
+            .mobile-search-wrapper .search-input { max-width: 100%; }
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+        }
+        @media (max-width: 500px) {
+            .premium-header { flex-wrap: wrap; gap: 12px; justify-content: center; padding: 14px 16px; }
+            .header-right-actions { width: 100%; justify-content: center; }
+            .profile-dropdown-menu { right: 50%; transform: translateX(50%); top: 100%; }
+            .dashboard-viewport { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECURITY BLANKET -->
+    <div id="auth-guard-screen">
+        <div class="spinner"></div>
+        <div class="guard-text">Decrypting Gaming Servers...</div>
+    </div>
+
+    <!-- PREVENT OVERHEAD COLLISION HEADER -->
+    <header class="premium-header">
+        <a class="brand-container" href="dashboard.html">
+            <i class="fa-solid fa-gamepad brand-icon"></i>
+            <span class="brand-text">Creators Vault</span>
+        </a>
+
+        <div class="header-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input global-search-trigger" placeholder="Search game portfolios...">
+        </div>
+
+        <div class="header-right-actions">
+            <a href="dashboard.html" class="header-btn">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <button class="header-btn icon-only-btn" id="theme-toggle-node">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            
+            <div class="avatar-container">
+                <div class="profile-avatar-trigger" id="profile-avatar-btn">-</div>
+                
+                <div class="profile-dropdown-menu" id="profile-dropdown-context">
+                    <div class="dd-user-details">
+                        <h5 id="dd-email-field">loading...</h5>
+                        <p id="dd-uid-field" style="font-size:0.7rem; opacity:0.6; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></p>
+                        <div id="dd-status-badge-mount"></div>
+                    </div>
+                    <div class="dd-divider"></div>
+                    <a href="dashboard.html" class="dd-item"><i class="fa-solid fa-house-user"></i> Workspace Hub</a>
+                    <div class="dd-divider"></div>
+                    <button class="dd-item logout-trigger" id="logout-action-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out Session</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-viewport">
+        
+        <div class="mobile-search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input global-search-trigger" placeholder="Search game portfolios...">
+        </div>
+
+        <div class="hero-banner">
+            <h1>PC Games Vault</h1>
+            <p>Direct premium configurations, custom verified repack architectures, and strategic extensions.</p>
+            <div class="stats-row">
+                <div class="stat-node"><span class="num">52</span><span class="lbl">Game Repacks</span></div>
+                <div class="stat-node"><span class="num">100%</span><span class="lbl">Tested Mirrors</span></div>
+                <div class="stat-node"><span class="num">Unlimited</span><span class="lbl">Bandwidth Allocation</span></div>
+            </div>
+        </div>
+
+        <div id="lock-state-banner-target"></div>
+
+        <div class="filter-container" id="filter-chips-mount"></div>
+
+        <section class="categories-grid" id="game-inventory-mount"></section>
+
+    </main>
+
+    <div id="toast-box-mount"></div>
+
+    <footer class="premium-footer">
+        <div class="footer-grid">
+            <div class="footer-brand-side">
+                <h4 class="brand-text">Creators Vault</h4>
+                <p>Enterprise cloud infrastructure providing ultra-secured pre-activated gaming software builds.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Navigation</h5>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard Hub</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Support Metrics</h5>
+                <ul>
+                    <li><a href="mailto:support@creatorsvault.com"><i class="fa-solid fa-envelope" style="margin-right:5px;"></i> support@creatorsvault.com</a></li>
+                    <li style="margin-top: 10px;"><a href="#DISCORD_LINK" class="btn-discord"><i class="fa-brands fa-discord"></i> Join Discord Server</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Legal Infrastructure</h5>
+                <ul>
+                    <li><a href="#">Terms of Protocol</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 Creators Vault. All core modules cryptographically authenticated.</div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+            authDomain: "creators-vaults.firebaseapp.com",
+            projectId: "creators-vaults",
+            storageBucket: "creators-vaults.firebasestorage.app",
+            messagingSenderId: "739165070040",
+            appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+            measurementId: "G-MM742MSP09"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let activeUserContext = null;
+        let isUserPremiumCleared = false;
+        let activeCategorySelection = "All";
+        let activeSearchFilterValue = "";
+
+        // Dynamic Filtering Array extracted cleanly from text parameters
+        const staticCategoryArray = ["All", "Simulator", "Tactical Shooter", "RPG", "Action", "City Builder", "Adventure", "Classic Shooter", "MMO", "Strategy", "Battle Royale", "Racing", "Indie", "Space Exploration", "Survival", "Puzzle", "Horror"];
+
+        // FULL HARDWARE DATA EXPANSION ARRAY FOR ALL 52 GAMES (NO SHORTCUTS OR PLUGINS REMOVED)
+        const gameBundles = [
+            { image: "G15.webp", title: "American Truck Simulator", subtitle: "Full Version | Simulator", info: "Experience legendary American trucks and deliver various cargoes across sunny California and sandy Nevada.", category: "Simulator", link: "https://se7en.ws/american-truck-simulator/?lang=en" },
+            { image: "G14.jpg", title: "Arma 3", subtitle: "Tactical Shooter | Repack", info: "Experience true combat gameplay in a massive military sandbox. Authentic, diverse, open - Arma 3 sends you to war.", category: "Tactical Shooter", link: "https://se7en.ws/arma-3/?lang=en" },
+            { image: "G16.webp", title: "Baldur's Gate 3", subtitle: "RPG | GOTY Edition", info: "Gather your party and return to the Forgotten Realms in a tale of fellowship and betrayal, sacrifice and survival.", category: "RPG", link: "https://se7en.ws/baldurs-gate-3/?lang=en" },
+            { image: "G54.webp", title: "Battlefield 6", subtitle: "Action | Shooter", info: "The next generation of all-out war. Massive battles and destruction.", category: "Action", link: "https://se7en.ws/battlefield-6/?lang=en" },
+            { image: "G17.jpg", title: "Black Mesa", subtitle: "Half-Life Remake", info: "The fan-made reimagining of Valve Software's Half-Life.", category: "Action", link: "https://se7en.ws/black-mesa/?lang=en" },
+            { image: "G55.webp", title: "Cities: Skylines II", subtitle: "City Builder | Strategy", info: "Create and manage your own city without restrictions. Deep simulation and a living economy.", category: "City Builder", link: "https://se7en.ws/cities-skylines-2/?lang=en" },
+            { image: "G61.webp", title: "Clair Obscur", subtitle: "Adventure | RPG", info: "Expedition 33: A reactive turn-based RPG inspired by Belle Époque art.", category: "Adventure", link: "https://se7en.ws/clair-obscur-expedition-33/?lang=en" },
+            { image: "G11.png", title: "Counter-Strike 1.6", subtitle: "Classic Shooter | Online", info: "The world's #1 online action game. Engage in an incredibly realistic brand of terrorist warfare.", category: "Classic Shooter", link: "https://se7en.ws/counter-strike-1-6/?lang=en" },
+            { image: "G56.png", title: "CS: Global Offensive", subtitle: "CS:GO | Full Version", info: "The tactical shooter that changed everything. Competitive multiplayer action.", category: "Classic Shooter", link: "https://se7en.ws/csgo/?lang=en" },
+            { image: "G53.jpg", title: "Counter-Strike: Source", subtitle: "Source Engine | Classic", info: "A complete remake of Counter-Strike using the Source game engine.", category: "Classic Shooter", link: "https://se7en.ws/counter-strike-source/?lang=en" },
+            { image: "G18.jpg", title: "Crossout", subtitle: "Action | MMO", info: "Post-apocalyptic MMO Action game! Craft unique battle machines and fight.", category: "MMO", link: "https://se7en.ws/crossout/?lang=en" },
+            { image: "G13.png", title: "Cyberpunk 2077", subtitle: "Phantom Liberty DLC", info: "An open-world, action-adventure story set in Night City. Includes Phantom Liberty.", category: "Action", link: "https://se7en.ws/cyberpunk-2077/?lang=en" },
+            { image: "G6.png", title: "Elden Ring", subtitle: "GOTY | RPG", info: "THE NEW FANTASY ACTION RPG. Rise, Tarnished, and be guided by grace.", category: "RPG", link: "https://se7en.ws/elden-ring/?lang=en" },
+            { image: "G21.webp", title: "Elden Ring: Nightreign", subtitle: "DLC Expansion", info: "New expansion content for the award-winning RPG.", category: "RPG", link: "https://se7en.ws/elden-ring-nightreign/?lang=en" },
+            { image: "G22.webp", title: "Euro Truck Simulator 2", subtitle: "All DLCs | Repack", info: "Travel across Europe as king of the road, a trucker who delivers important cargo.", category: "Simulator", link: "https://se7en.ws/euro-truck-simulator-2/?lang=en" },
+            { image: "G23.webp", title: "Factorio", subtitle: "Strategy | Base Building", info: "Build and maintain factories. Mine resources, research technologies, and automate.", category: "Strategy", link: "https://se7en.ws/factorio/?lang=en" },
+            { image: "G3.png", title: "Farming Simulator 25", subtitle: "Simulation | Full Version", info: "The ultimate farming experience. New crops, new machines, new maps.", category: "Simulator", link: "https://se7en.ws/farming-simulator-25/?lang=en" },
+            { image: "G4.jpg", title: "Fortnite", subtitle: "Battle Royale | Free", info: "The #1 Battle Royale game. Build, shoot, and survive to be the last one standing.", category: "Battle Royale", link: "https://se7en.ws/fortnite-dl/?lang=en" },
+            { image: "G7.png", title: "Forza Horizon 5", subtitle: "Premium Edition | Racing", info: "Explore the vibrant and ever-evolving open world landscapes of Mexico.", category: "Racing", link: "https://se7en.ws/forza-horizon-5/?lang=en" },
+            { image: "G31.webp", title: "Grand Theft Auto IV", subtitle: "Complete Edition", info: "Niko Bellic arrives in Liberty City. The American Dream is not what it seems.", category: "Action", link: "https://se7en.ws/gta-iv/?lang=en" },
+            { image: "G24.png", title: "Grand Theft Auto V", subtitle: "Premium Edition", info: "Experience the open world of Los Santos. Includes GTA Online.", category: "Action", link: "https://se7en.ws/gta-v/?lang=en" },
+            { image: "G32.webp", title: "Hades II", subtitle: "Action | Roguelike", info: "Battle beyond the Underworld in this sequel to the award-winning rogue-like dungeon crawler.", category: "Action", link: "https://se7en.ws/hades-2/?lang=en" },
+            { image: "G30.jpg", title: "Half-Life 2", subtitle: "Complete Edition", info: "The game that defined a generation. Physics, puzzles, and a dystopian story.", category: "Action", link: "https://se7en.ws/half-life-2/?lang=en" },
+            { image: "G28.webp", title: "Hearts of Iron IV", subtitle: "Strategy | War Game", info: "Take command of any nation in World War II. Guide your nation to glory.", category: "Strategy", link: "https://se7en.ws/hearts-of-iron-4/?lang=en" },
+            { image: "G29.webp", title: "Hogwarts Legacy", subtitle: "Deluxe Edition | RPG", info: "Immersive, open-world action RPG set in the world of Harry Potter.", category: "RPG", link: "https://se7en.ws/hogwarts-legacy/?lang=en" },
+            { image: "G27.webp", title: "House Flipper 2", subtitle: "Simulation | Full Version", info: "Buy and renovate run-down houses. Improved mechanics and new graphics.", category: "Simulator", link: "https://se7en.ws/house-flipper-2/?lang=en" },
+            { image: "G26.jpg", title: "inZOI", subtitle: "Life Simulator", info: "A hyper-realistic life simulation game. Create unique stories and experiences.", category: "Simulator", link: "https://se7en.ws/inzoi/?lang=en" },
+            { image: "G25.webp", title: "Kingdom Come: Deliverance 2", subtitle: "RPG | Medieval", info: "A thrilling Action RPG set amid the chaos of a civil war in 15th Century Bohemia.", category: "RPG", link: "https://se7en.ws/kingdom-come-deliverance-2/?lang=en" },
+            { image: "G44.jpg", title: "Left 4 Dead", subtitle: "Survival | Zombie", info: "Cooperative survival horror FPS. Fight through hordes of zombies.", category: "Survival", link: "https://se7en.ws/left-4-dead/?lang=en" },
+            { image: "G45.webp", title: "Left 4 Dead 2", subtitle: "Survival | Multiplayer", info: "Set in the zombie apocalypse, L4D2 is the highly anticipated sequel to L4D.", category: "Survival", link: "https://se7en.ws/left-4-dead-2/?lang=en" },
+            { image: "G12.webp", title: "Miside", subtitle: "Indie | Horror", info: "An indie adventure game with horror elements and unique storytelling.", category: "Indie", link: "https://se7en.ws/miside/?lang=en" },
+            { image: "G42.png", title: "No Man's Sky", subtitle: "Space Exploration", info: "Explore an infinite universe. Every star is a sun, every planet unique.", category: "Space Exploration", link: "https://se7en.ws/no-mans-sky/?lang=en" },
+            { image: "G41.webp", title: "Oblivion Remastered", subtitle: "RPG | Classic", info: "The Elder Scrolls IV: Oblivion. One of the best RPGs of all time.", category: "RPG", link: "https://se7en.ws/oblivion-remastered/?lang=en" },
+            { image: "G40.jpg", title: "Palworld", subtitle: "Survival | Creature Collector", info: "Collect mysterious creatures called Pals and use them to fight, build, and farm.", category: "Survival", link: "https://se7en.ws/palworld/?lang=en" },
+            { image: "G38.png", title: "Portal", subtitle: "Puzzle | Classic", info: "A new kind of single player game that changes how players approach environments.", category: "Puzzle", link: "https://se7en.ws/portal/?lang=en" },
+            { image: "G39.jpg", title: "Portal 2", subtitle: "Co-op | Puzzle", info: "The 'Perpetual Testing Initiative' has been expanded. More puzzles, more science.", category: "Puzzle", link: "https://se7en.ws/portal-2/?lang=en" },
+            { image: "G35.png", title: "Ready or Not", subtitle: "Tactical Shooter", info: "Intense, tactical, first-person shooter involving SWAT units.", category: "Tactical Shooter", link: "https://se7en.ws/ready-or-not/?lang=en" },
+            { image: "G36.webp", title: "Red Dead Redemption", subtitle: "PC Port | Action", info: "Experience the epic western adventures that defined a generation.", category: "Action", link: "https://se7en.ws/red-dead-redemption/?lang=en" },
+            { image: "G37.png", title: "Red Dead Redemption 2", subtitle: "Ultimate Edition", info: "An epic tale of life in America’s unforgiving heartland. Vast open world.", category: "Action", link: "https://se7en.ws/red-dead-redemption-2/?lang=en" },
+            { image: "G34.webp", title: "Resident Evil 4 Remake", subtitle: "Horror | Action", info: "Survival is just the beginning. A complete reimagining of the horror classic.", category: "Horror", link: "https://se7en.ws/resident-evil-4-remake/?lang=en" },
+            { image: "G57.png", title: "RoboCop: Rogue City", subtitle: "Unfinished Business DLC", info: "Become the iconic part man, part machine hero and bring justice to Old Detroit.", category: "Action", link: "https://se7en.ws/robocop-unfinished-business/?lang=en" },
+            { image: "G46.webp", title: "S.T.A.L.K.E.R. 2", subtitle: "Heart of Chornobyl", info: "Discover the vast Chornobyl Exclusion Zone full of dangerous enemies and anomalies.", category: "Action", link: "https://se7en.ws/stalker-2/?lang=en" },
+            { image: "G47.webp", title: "s&box", subtitle: "Sandbox | Source 2", info: "The spiritual successor to Garry's Mod, built on the Source 2 engine.", category: "Simulator", link: "https://se7en.ws/sbox/?lang=en" },
+            { image: "G59.webp", title: "Satisfactory", subtitle: "Factory Builder", info: "First-person open-world factory building game with a dash of exploration and combat.", category: "Strategy", link: "https://se7en.ws/satisfactory/?lang=en" },
+            { image: "G60.jpg", title: "Sons of the Forest", subtitle: "Survival Horror", info: "Fight against demons on a remote island. Craft, build, and struggle to survive.", category: "Horror", link: "https://se7en.ws/sons-of-the-forest/?lang=en" },
+            { image: "G50.webp", title: "Space Marine 2", subtitle: "Warhammer 40,000", info: "Embody the superhuman skill and brutality of a Space Marine. Defend the Imperium.", category: "Action", link: "https://se7en.ws/warhammer-40000-space-marine-2/?lang=en" },
+            { image: "G48.webp", title: "Stardew Valley", subtitle: "Farming RPG", info: "You've inherited your grandfather's old farm plot. Armed with hand-me-down tools and a few coins.", category: "RPG", link: "https://se7en.ws/stardew-valley/?lang=en" },
+            { image: "G51.webp", title: "Starfield", subtitle: "Space RPG", info: "In this next generation RPG set amongst the stars, create any character you want and explore.", category: "RPG", link: "https://se7en.ws/starfield/?lang=en" },
+            { image: "G52.webp", title: "Supermarket Simulator", subtitle: "Simulation | Management", info: "Run your own supermarket. Stock shelves, set prices, take payments, and expand.", category: "Simulator", link: "https://se7en.ws/supermarket-simulator/?lang=en" },
+            { image: "G9.png", title: "The Witcher 3", subtitle: "Wild Hunt | Complete", info: "You are Geralt of Rivia, mercenary monster slayer. A war-torn, monster-infested continent awaits.", category: "RPG", link: "https://se7en.ws/the-witcher-3/?lang=en" },
+            { image: "G8.png", title: "Rainbow Six Siege", subtitle: "Tom Clancy's | Online", info: "Master the art of destruction and gadgetry. Face intense close quarters combat.", category: "Tactical Shooter", link: "https://se7en.ws/tc-rainbow-six-siege/?lang=en" },
+            { image: "G43.jpeg", title: "Motel Manager", subtitle: "Simulation | Business", info: "Manage your own motel, satisfy guests, and expand your business empire.", category: "Simulator", link: "#" }
+        ];
+
+        /* --- TOAST INTERFACE MODULE --- */
+        const toastMountNode = document.getElementById('toast-box-mount');
+        window.spawnPremiumToast = function(titleString, textBody, statusType = 'info') {
+            const toastFrame = document.createElement('div');
+            toastFrame.className = `toast-item ${statusType}`;
+            
+            let descriptiveIcon = 'fa-circle-info';
+            if (statusType === 'success') descriptiveIcon = 'fa-circle-check';
+            if (statusType === 'error') descriptiveIcon = 'fa-circle-exclamation';
+            if (statusType === 'warning') descriptiveIcon = 'fa-triangle-exclamation';
+
+            toastFrame.innerHTML = `
+                <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+                <div class="toast-body">
+                    <h5>${titleString}</h5>
+                    <p>${textBody}</p>
+                </div>
+                <button class="toast-close"><i class="fa-solid fa-xmark"></i></button>
+            `;
+
+            toastMountNode.appendChild(toastFrame);
+            setTimeout(() => toastFrame.classList.add('show'), 20);
+
+            const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+            toastFrame.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(decayTimerReference);
+                clearToastInstance(toastFrame);
+            });
+        };
+        function clearToastInstance(targetNode) {
+            targetNode.classList.remove('show');
+            targetNode.addEventListener('transitionend', () => targetNode.remove());
+        }
+
+        /* --- THEME INTERACTION --- */
+        const themeToggleBtn = document.getElementById('theme-toggle-node');
+        const rootElement = document.documentElement;
+        function applyInterfaceTheme(targetMode) {
+            rootElement.setAttribute('data-theme', targetMode);
+            localStorage.setItem('cv_saved_theme', targetMode);
+            themeToggleBtn.innerHTML = targetMode === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        }
+        applyInterfaceTheme(localStorage.getItem('cv_saved_theme') || 'dark');
+        themeToggleBtn.addEventListener('click', () => {
+            applyInterfaceTheme(rootElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        /* --- PROFILE DROPDOWN HUB --- */
+        const avatarBtn = document.getElementById('profile-avatar-btn');
+        const dropdownContext = document.getElementById('profile-dropdown-context');
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContext.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdownContext.classList.remove('show'));
+
+        /* --- SECURE DATA GATEWAY (FIREBASE SYNC) --- */
+        const authGuardOverlay = document.getElementById('auth-guard-screen');
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            activeUserContext = user;
+            
+            document.getElementById('profile-avatar-btn').textContent = user.email ? user.email.charAt(0).toUpperCase() : 'U';
+            document.getElementById('dd-email-field').textContent = user.email || 'Gamer Session';
+            document.getElementById('dd-uid-field').textContent = `ID: ${user.uid}`;
+
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const snapshot = await getDoc(userDocRef);
+                if (snapshot.exists() && snapshot.data().paid === true) {
+                    isUserPremiumCleared = true;
+                }
+            } catch (fault) {
+                console.error("Database connection anomaly:", fault);
+            }
+
+            const badgeMount = document.getElementById('dd-status-badge-mount');
+            badgeMount.innerHTML = isUserPremiumCleared ? 
+                `<span class="dd-status-badge premium">Lifetime Premium</span>` : 
+                `<span class="dd-status-badge free">Free Member</span>`;
+
+            renderLockBannerAlert();
+            renderCategoryFilterChips();
+            generateInventoryViewLayout();
+
+            authGuardOverlay.style.transition = 'opacity 0.25s ease';
+            authGuardOverlay.style.opacity = '0';
+            setTimeout(() => authGuardOverlay.style.display = 'none', 250);
+        });
+
+        document.getElementById('logout-action-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (err) {
+                spawnPremiumToast('Dismantle Fault', 'Unable to destroy local authentication token.', 'error');
+            }
+        });
+
+        function renderLockBannerAlert() {
+            const bannerSlot = document.getElementById('lock-state-banner-target');
+            if (!isUserPremiumCleared) {
+                bannerSlot.innerHTML = `
+                    <div class="locked-platform-banner">
+                        <div class="lock-banner-left">
+                            <i class="fa-solid fa-circle-lock"></i>
+                            <div class="lock-banner-info">
+                                <h4>Premium license required</h4>
+                                <p>Unlock lifetime access from your main dashboard to clear restricted direct download channels.</p>
+                            </div>
+                        </div>
+                        <a href="dashboard.html" class="lock-banner-btn">Upgrade Account Privilege</a>
+                    </div>
+                `;
+            } else {
+                bannerSlot.innerHTML = '';
+            }
+        }
+
+        function renderCategoryFilterChips() {
+            const container = document.getElementById('filter-chips-mount');
+            container.innerHTML = '';
+            staticCategoryArray.forEach(label => {
+                const chip = document.createElement('div');
+                chip.className = `filter-chip ${activeCategorySelection === label ? 'active' : ''}`;
+                chip.textContent = label;
+                chip.addEventListener('click', () => {
+                    activeCategorySelection = label;
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    generateInventoryViewLayout();
+                });
+                container.appendChild(chip);
+            });
+        }
+
+        window.toggleInfoSection = function(btnElement) {
+            const targetBlock = btnElement.nextElementSibling;
+            const isVisible = targetBlock.style.display === 'block';
+            targetBlock.style.display = isVisible ? 'none' : 'block';
+            btnElement.innerHTML = isVisible ? 'Info <i class="fa-solid fa-chevron-down"></i>' : 'Hide Info <i class="fa-solid fa-chevron-up"></i>';
+        };
+
+        window.handleRestrictedAssetRequest = function() {
+            spawnPremiumToast('Access Blocked', 'Premium subscription required. Upgrade status inside your main profile hub.', 'warning');
+        };
+
+        function generateInventoryViewLayout() {
+            const mountPoint = document.getElementById('game-inventory-mount');
+            mountPoint.innerHTML = '';
+
+            const computationalFilteredArray = gameBundles.filter(item => {
+                const alignmentFlag = (activeCategorySelection === "All" || item.category === activeCategorySelection);
+                const queryMatchFlag = !activeSearchFilterValue || 
+                    item.title.toLowerCase().includes(activeSearchFilterValue) || 
+                    item.subtitle.toLowerCase().includes(activeSearchFilterValue) || 
+                    item.info.toLowerCase().includes(activeSearchFilterValue);
+                return alignmentFlag && queryMatchFlag;
+            });
+
+            if (computationalFilteredArray.length === 0) {
+                mountPoint.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px; font-size: 0.9rem;">No gaming frameworks match your search criteria.</div>`;
+                return;
+            }
+
+            computationalFilteredArray.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="card-thumbnail-box">
+                        <img src="${item.image}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&width=600'">
+                        <span class="badge-absolute ${isUserPremiumCleared ? 'unlocked' : 'locked'}">
+                            ${isUserPremiumCleared ? '<i class="fa-solid fa-lock-open"></i> Mirror Ready' : '<i class="fa-solid fa-lock"></i> Locked'}
+                        </span>
+                    </div>
+                    <span class="category-tag">${item.category}</span>
+                    <h3>${item.title}</h3>
+                    <div class="subtitle">${item.subtitle}</div>
+                    
+                    <button class="info-toggle-btn" onclick="toggleInfoSection(this)">Info <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="collapsible-info-block">
+                        <strong>Game Specifications:</strong><br>${item.info}
+                    </div>
+
+                    ${isUserPremiumCleared ? 
+                        `<a href="${item.link}" target="_blank" class="btn-download-action active-dl"><i class="fa-solid fa-cloud-arrow-down"></i> Download Game</a>` : 
+                        `<button class="btn-download-action locked-dl" onclick="handleRestrictedAssetRequest()"><i class="fa-solid fa-lock"></i> Locked Module</button>`
+                    }
+                `;
+                mountPoint.appendChild(card);
+            });
+        }
+
+        /* --- GLOBAL SEARCH DEBOUNCE TRIGGER --- */
+        document.querySelectorAll('.global-search-trigger').forEach(inputField => {
+            inputField.addEventListener('input', (e) => {
+                activeSearchFilterValue = e.target.value.toLowerCase().trim();
+                document.querySelectorAll('.global-search-trigger').forEach(el => {
+                    if(el !== e.target) el.value = e.target.value;
+                });
+                generateInventoryViewLayout();
+            });
+        });
+    </script>
+</body>
+</html>
