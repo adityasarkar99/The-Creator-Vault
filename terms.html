@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creators Vault - Terms of Use</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- DESIGN SYSTEM (Dashboard shi purna match) --- */
+        :root, [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.75);
+            --bg-card-solid: #ffffff;
+            --border-primary: rgba(226, 232, 240, 0.8);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-brand: #2563eb;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            --glass-blur: blur(12px);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.6);
+            --bg-card-solid: #111827;
+            --border-primary: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-brand: #3b82f6;
+            --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(16px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .premium-header {
+            position: sticky;
+            top: 0; z-index: 1000;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 14px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-subtle);
+        }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .brand-icon {
+            font-size: 1.25rem;
+            color: var(--accent-brand);
+        }
+        .brand-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-back {
+            padding: 8px 16px;
+            background: var(--accent-brand);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- CONTENT CONTAINER --- */
+        .content-viewport {
+            max-width: 800px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0 24px;
+            flex-grow: 1;
+        }
+        .legal-card {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .legal-card h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-primary);
+            padding-bottom: 16px;
+        }
+        
+        .legal-section {
+            margin-bottom: 28px;
+        }
+        .legal-section h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .legal-section p, .legal-section ul {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .legal-section ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        .legal-section li {
+            margin-bottom: 6px;
+        }
+
+        /* --- FOOTER --- */
+        .premium-footer {
+            background: var(--bg-card-solid);
+            border-top: 1px solid var(--border-primary);
+            padding: 24px 40px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .premium-header { padding: 14px 20px; }
+            .legal-card { padding: 24px; }
+            .legal-card h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Block -->
+    <header class="premium-header">
+        <a class="brand-container" href="dashboard.html">
+            <i class="fa-solid fa-shield-halved brand-icon"></i>
+            <span class="brand-text">Creators Vault</span>
+        </a>
+        <a href="dashboard.html" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Main Text Sheet Content -->
+    <main class="content-viewport">
+        <article class="legal-card">
+            <h1>Terms of Use</h1>
+            <div class="last-updated">Last Updated: June 24, 2026</div>
+
+            <div class="legal-section">
+                <h2>1. Acceptance of Terms</h2>
+                <p>Welcome to Creators Vault. By accessing or using our platform, digital dashboard, and services, you agree to comply with and be bound by these Terms of Use. If you do not agree to these terms, please do not use our platform.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>2. Account Security & Verification</h2>
+                <p>To access our premium resource node inventory, you must authenticate through a verified session. You are completely responsible for protecting your session keys and password data. Any unauthorized activities under your account must be reported to our support infrastructure immediately.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>3. Premium Assets & Licensing</h2>
+                <p>All software configurations, vertical reels packs, editing assets, courses, and digital packages distributed through Creators Vault are licensed, not sold, to you for authorized content creation use. You are strictly prohibited from:</p>
+                <ul>
+                    <li>Reselling, redistributing, or copying raw digital assets directly.</li>
+                    <li>Sharing asset authorization links with non-paying users.</li>
+                    <li>Using malicious scripts or software to automatically scrap content nodes.</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <h2>4. Payments & Lifetime Upgrades</h2>
+                <p>Upgrades to the Vault Pro Lifetime tier are handled via secure payment gateways (Razorpay). Prices are subject to specific promotional campaigns. Once a payment is verified, your environment core tier is instantly modified.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>5. Limitation of Liability</h2>
+                <p>Creators Vault distributes tools and components on an "as-is" basis. We are not liable for any specific system instabilities, project file breakdowns, or platform metric fluctuations resulting from the deployment of downloaded assets.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>6. Modifications to Service</h2>
+                <p>We reserve the right to append, update, or deprecate any digital category bundle, script config, or dashboard infrastructure module at our complete discretion without prior notice to ensure system health.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>7. Contact Information</h2>
+                <p>For clarifications regarding these service terms or operational policies, connect directly with our legal infrastructure desk at <strong>support@creatorsvault.com</strong>.</p>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer Block -->
+    <footer class="premium-footer">
+        <div>&copy; 2026 Creators Vault. Terms framework compliance active.</div>
+    </footer>
+
+    <script>
+        // Synchronize display theme with dashboard's theme preference context
+        const savedTheme = localStorage.getItem('cv_saved_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>
