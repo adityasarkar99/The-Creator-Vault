@@ -198,6 +198,8 @@
             background: var(--bg-input);
             border-color: var(--text-muted);
         }
+        
+        /* Updated Profile Avatar Layout to host images smoothly */
         .profile-avatar-trigger {
             width: 38px; height: 38px;
             border-radius: 10px;
@@ -211,6 +213,12 @@
             cursor: pointer;
             box-shadow: var(--shadow-subtle);
             border: 1px solid var(--border-primary);
+            overflow: hidden;
+        }
+        .profile-avatar-trigger img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* --- VIEWPORT MAX CONTAINER --- */
@@ -517,7 +525,10 @@
             border-bottom: 1px solid var(--border-primary);
             margin-bottom: 24px;
         }
+        
+        /* Interactive Camera Hover Effect for Image Selection */
         .drawer-avatar-large {
+            position: relative;
             width: 64px; height: 64px;
             border-radius: 14px;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -529,7 +540,33 @@
             font-weight: 700;
             margin: 0 auto 12px auto;
             box-shadow: var(--shadow-subtle);
+            overflow: hidden;
+            cursor: pointer;
         }
+        .drawer-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-upload-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        .drawer-avatar-large:hover .avatar-upload-overlay {
+            opacity: 1;
+        }
+        #hidden-avatar-input {
+            display: none;
+        }
+
         .drawer-email { font-weight: 700; font-size: 1rem; margin-bottom: 4px; word-break: break-all; }
         .drawer-membership-name { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
         .drawer-date { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
@@ -813,7 +850,16 @@
 
         <div class="drawer-body">
             <div class="drawer-profile-summary">
-                <div class="drawer-avatar-large" id="drawer-avatar-label">-</div>
+                <!-- Interactive Profile Area Linked with File Upload -->
+                <div class="drawer-avatar-large" id="drawer-avatar-label">
+                    <span id="avatar-initials-fallback">-</span>
+                    <div class="avatar-upload-overlay">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                </div>
+                <!-- Hidden file input node -->
+                <input type="file" id="hidden-avatar-input" accept="image/*">
+
                 <div class="drawer-email" id="drawer-email-label">Syncing user...</div>
                 <div class="drawer-membership-name" id="drawer-membership-label">Verifying system tier...</div>
                 <div id="drawer-badge-target"></div>
@@ -917,9 +963,10 @@
             <div class="footer-col">
                 <h5>Legal Terms</h5>
                 <ul>
-                    <li><a href="#">Terms of Use</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Refund Policy</a></li>
+                    <!-- Activated exact file mappings for compliance standard pages -->
+                    <li><a href="terms.html">Terms of Use</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
                 </ul>
             </div>
         </div>
@@ -936,6 +983,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Firebase Storage infrastructure modules imported
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
@@ -950,6 +999,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app); // Storage initialize kela
 
         let currentAuthenticatedUser = null;
         let activeUserWorkspaceRecord = null;
@@ -1056,6 +1106,52 @@
         closeDrawerBtn.addEventListener('click', () => modifyDrawerVisibilityState(false));
         drawerOverlayBackdrop.addEventListener('click', () => modifyDrawerVisibilityState(false));
 
+        /* --- PROFILE PICTURE PERMANENT UPLOAD LOGIC --- */
+        const largeAvatarLabel = document.getElementById('drawer-avatar-label');
+        const hiddenAvatarInput = document.getElementById('hidden-avatar-input');
+
+        largeAvatarLabel.addEventListener('click', () => {
+            hiddenAvatarInput.click();
+        });
+
+        hiddenAvatarInput.addEventListener('change', async (event) => {
+            const profileFile = event.target.files[0];
+            if (!profileFile) return;
+
+            if (!currentAuthenticatedUser) {
+                spawnPremiumToast('Authentication Error', 'Active profile session not discovered.', 'error');
+                return;
+            }
+
+            spawnPremiumToast('Uploading Image', 'Connecting with cluster storage engines...', 'info');
+
+            try {
+                // 1. Firebase Storage bucket paths mapped uniquely by UID
+                const storageBucketRef = ref(storage, `user_avatars/${currentAuthenticatedUser.uid}/avatar.jpg`);
+                await uploadBytes(storageBucketRef, profileFile);
+
+                // 2. Fetch runtime explicit public access URL string
+                const targetPublicDownloadURL = await getDownloadURL(storageBucketRef);
+
+                // 3. Keep Firestore users configuration node permanently mapped
+                const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
+                await updateDoc(userDocRef, {
+                    photoURL: targetPublicDownloadURL
+                });
+
+                // Update runtime current memory metrics
+                if (activeUserWorkspaceRecord) {
+                    activeUserWorkspaceRecord.photoURL = targetPublicDownloadURL;
+                    manifestDashboardLayoutData(activeUserWorkspaceRecord);
+                }
+
+                spawnPremiumToast('Profile Updated', 'Your profile presentation element synchronized successfully.', 'success');
+            } catch (storageFaultLogs) {
+                console.error("Storage transactional processing pipeline crashed:", storageFaultLogs);
+                spawnPremiumToast('Upload Refused', 'Storage system denied permissions kiva configuration missing.', 'error');
+            }
+        });
+
         /* --- NOTIFICATION PREFERENCES HANDLING --- */
         const trackingNotificationChannelMap = {
             products: document.getElementById('notif-products'),
@@ -1083,10 +1179,9 @@
                 return;
             }
 
-            // Options mapping structure config using the provided Test Key
             const paymentOptions = {
                 "key": "rzp_live_T4fJA5NyF26FgY", 
-                "amount": 100, // INR 199.00 (represented in paise)
+                "amount": 19900, // INR 199.00 (represented in paise)
                 "currency": "INR",
                 "name": "Creators Vault",
                 "description": "Lifetime Vault Pro Access Purchase Bundle",
@@ -1105,7 +1200,6 @@
                         
                         spawnPremiumToast('Account Upgraded', 'Your lifetime premium environment matrix has been successfully unlocked!', 'success');
                         
-                        // Local runtime profile updates fallback update trigger
                         if (activeUserWorkspaceRecord) {
                             activeUserWorkspaceRecord.paid = true;
                             activeUserWorkspaceRecord.membershipName = "Vault Pro Lifetime";
@@ -1206,9 +1300,16 @@
             document.getElementById('drawer-email-label').textContent = userRecord.email;
             document.getElementById('drawer-membership-label').textContent = userRecord.membershipName;
             
+            // Dynamic Image Rendering Engine for Header & Drawer Profile elements
             const standardFallbackLetter = userRecord.email ? userRecord.email.charAt(0).toUpperCase() : 'U';
-            openDrawerBtn.textContent = standardFallbackLetter;
-            document.getElementById('drawer-avatar-label').textContent = standardFallbackLetter;
+            
+            if (userRecord.photoURL) {
+                openDrawerBtn.innerHTML = `<img src="${userRecord.photoURL}" alt="User Avatar">`;
+                largeAvatarLabel.innerHTML = `<img src="${userRecord.photoURL}" alt="User Avatar"><div class="avatar-upload-overlay"><i class="fa-solid fa-camera"></i></div>`;
+            } else {
+                openDrawerBtn.textContent = standardFallbackLetter;
+                largeAvatarLabel.innerHTML = `<span id="avatar-initials-fallback">${standardFallbackLetter}</span><div class="avatar-upload-overlay"><i class="fa-solid fa-camera"></i></div>`;
+            }
 
             const badgeOutputSlot = document.getElementById('drawer-badge-target');
             if (isPremiumVerifiedUser) {
