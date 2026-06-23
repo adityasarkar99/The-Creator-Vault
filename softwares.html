@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Vault - Creators Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --premium-color: #3b82f6;
+            --premium-bg: rgba(59, 130, 246, 0.1);
+            --toast-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --border-color: #1e293b;
+            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            --premium-color: #60a5fa;
+            --premium-bg: rgba(96, 165, 250, 0.15);
+            --toast-bg: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Auth Loading Overlay --- */
+        #auth-guard-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-primary);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Header / Navbar --- */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 70px;
+        }
+
+        .nav-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-area i {
+            color: var(--accent-color);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .nav-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--border-color);
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Profile Dropdown Architecture */
+        .profile-menu-container {
+            position: relative;
+        }
+
+        .avatar-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+        }
+
+        .avatar-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-btn i {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 280px;
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem;
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            animation: slideDropdown 0.2s ease forwards;
+            transform-origin: top right;
+        }
+
+        @keyframes slideDropdown {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .dropdown-user-info {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .dropdown-user-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .dropdown-user-info .user-email {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .membership-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .membership-badge.premium {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .membership-badge.free {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .dropdown-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .dropdown-item.logout-trigger {
+            color: #ef4444;
+        }
+
+        .dropdown-item.logout-trigger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2.5rem 2rem;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            max-width: 650px;
+            margin: 0 auto 2.5rem auto;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-val {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .stat-lbl {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Search & Filter Architecture --- */
+        .search-filter-controls {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-engine-input {
+            width: 100%;
+            height: 54px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0 1rem 0 3.25rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        .search-engine-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .filter-tags-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-tag {
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        .filter-tag.active {
+            background-color: var(--text-primary);
+            color: var(--bg-secondary);
+            border-color: var(--text-primary);
+        }
+
+        /* --- Grid & Dynamic Card Architecture --- */
+        .vault-main-container {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex-grow: 1;
+        }
+
+        .software-grid-system {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .software-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: translateY(0);
+            animation: fadeInCard 0.4s ease forwards;
+        }
+
+        @keyframes fadeInCard {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .software-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+
+        .card-img-wrapper {
+            width: 100%;
+            height: 180px;
+            background-color: var(--bg-tertiary);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-category-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            padding: 0.3rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-grow: 1;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .card-title-row h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .version-tag {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .card-short-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Expandable Info Panel */
+        .toggle-info-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            align-self: flex-start;
+            margin-top: 0.25rem;
+            padding: 0.25rem 0;
+        }
+
+        .toggle-info-btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-info-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        .seo-box {
+            background-color: var(--bg-primary);
+            border-radius: 8px;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+        }
+
+        .seo-box.expanded {
+            padding: 1rem;
+            max-height: 200px;
+        }
+
+        .requirements-hdr {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .requirements-txt {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Actions & Download Control Logic */
+        .card-action-wrapper {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            margin-top: auto;
+        }
+
+        .download-btn {
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn.unlocked {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .download-btn.unlocked:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        .download-btn.locked {
+            background-color: var(--bg-tertiary);
+            color: var(--text-muted);
+            border: 1px dashed var(--border-color);
+        }
+
+        .download-btn.locked i.fa-lock {
+            color: #f59e0b;
+        }
+
+        /* Empty State */
+        .empty-state-card {
+            grid-column: 1 / -1;
+            background-color: var(--bg-secondary);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .empty-state-card i {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .empty-state-card p {
+            color: var(--text-secondary);
+            max-width: 400px;
+        }
+
+        /* --- Global Toast System --- */
+        #toast-wrapper-spatial {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 10000;
+            max-width: 420px;
+            width: calc(100% - 4rem);
+        }
+
+        .toast-notification {
+            background-color: var(--toast-bg);
+            border-left: 4px solid #fff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideInToast {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast-notification.success { border-left: 4px solid #10b981; }
+        .toast-notification.warning { border-left: 4px solid #f59e0b; }
+        .toast-notification.error { border-left: 4px solid #ef4444; }
+        .toast-notification.info { border-left: 4px solid #3b82f6; }
+
+        .toast-content-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast-content-wrapper i {
+            font-size: 1.2rem;
+        }
+
+        .toast-notification.success i { color: #10b981; }
+        .toast-notification.warning i { color: #f59e0b; }
+        .toast-notification.error i { color: #ef4444; }
+        .toast-notification.info i { color: #3b82f6; }
+
+        .toast-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toast-dismiss {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .toast-dismiss:hover {
+            color: var(--text-primary);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            padding: 3rem 2rem;
+        }
+
+        .footer-grid {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2.5rem;
+        }
+
+        .footer-brand h4 {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .footer-links-col h5 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .footer-links-col a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .footer-links-col a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-bottom-bar {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Responsive Viewport Adaptations --- */
+        @media(max-width: 992px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 768px) {
+            .hero-section h1 { font-size: 2.25rem; }
+            .stats-grid { gap: 1.5rem; flex-direction: column; }
+            .stat-item { border-bottom: 1px solid var(--border-color); width: 100%; padding-bottom: 0.75rem; }
+            .stat-item:last-child { border: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom-bar { flex-direction: column; gap: 1rem; text-align: center; }
+            .search-filter-controls { padding: 0 1rem; }
+            .vault-main-container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-guard-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 1.5rem; font-weight: 600; color: var(--text-secondary); font-size: 0.95rem;">Securing Vault Pipeline...</p>
+    </div>
+
+    <header>
+        <div class="nav-container">
+            <a href="dashboard.html" class="logo-area">
+                <i class="fa-solid fa-vault"></i>
+                <span>Creators Vault</span>
+            </a>
+            
+            <div class="nav-controls">
+                <a href="dashboard.html" class="nav-btn">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <button class="theme-toggle-btn" id="theme-switch-trigger" aria-label="Toggle structural theme style matching">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+                <div class="profile-menu-container">
+                    <button class="avatar-btn" id="profile-panel-trigger" aria-haspopup="true">
+                        <i class="fa-solid fa-user-ninja"></i>
+                    </button>
+                    <div class="dropdown-panel" id="profile-dropdown-panel">
+                        <div class="dropdown-user-info">
+                            <p class="user-email" id="dropdown-email-slot">fetching...</p>
+                            <p id="dropdown-uid-slot">UID: ...</p>
+                            <div style="margin-top: 0.6rem;">
+                                <span id="dropdown-badge-slot" class="membership-badge free">Verifying Status</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-links">
+                            <a href="dashboard.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> System Settings</a>
+                            <div class="dropdown-item logout-trigger" id="logout-action-trigger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Disconnect Session</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <h1>Software Vault</h1>
+        <p>Premium creator software, productivity tools, design resources and professional applications compiled for production workspaces.</p>
+        
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-val">25+</div>
+                <div class="stat-lbl">Software Packages</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">Lifetime</div>
+                <div class="stat-lbl">Access Duration</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val"><i class="fa-solid fa-shield-halved" style="color:var(--accent-color);"></i></div>
+                <div class="stat-lbl">Premium Verified</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="search-filter-controls">
+        <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-engine-input" id="vault-search-query" placeholder="Search by title, category, target version features...">
+        </div>
+        
+        <div class="filter-tags-container" id="filter-tags-rack">
+            </div>
+    </div>
+
+    <main class="vault-main-container">
+        <div class="software-grid-system" id="software-render-grid">
+            </div>
+    </main>
+
+    <div id="toast-wrapper-spatial"></div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h4>Creators Vault</h4>
+                <p>High tier architectural resource distribution models providing modern asset scaling capabilities for enterprise level content networks.</p>
+            </div>
+            <div class="footer-links-col">
+                <h5>Navigation Links</h5>
+                <ul>
+                    <li><a href="dashboard.html">Account Dashboard</a></li>
+                    <li><a href="software-vault.html">Application Node</a></li>
+                    <li><a href="#">Asset Channels</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h5>Support Structure</h5>
+                <ul>
+                    <li><a href="#">Platform SLA Matrix</a></li>
+                    <li><a href="#">Encryption Standards</a></li>
+                    <li><a href="#">Report Interruption</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h5>Legal Compliance</h5>
+                <ul>
+                    <li><a href="#">Data Policies</a></li>
+                    <li><a href="#">Terms of Asset Use</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div>&copy; 2026 Creators Vault Operations Engine. All clearance validation protocols active.</div>
+            <div>Secure System Node</div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        // Firebase Client Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs-YourActualConfigKeyGoesHere",
+            authDomain: "creators-vault-prod.firebaseapp.com",
+            projectId: "creators-vault-prod",
+            storageBucket: "creators-vault-prod.appspot.com",
+            messagingSenderId: "84729104829",
+            appId: "1:84729104829:web:a1b2c3d4e5f67890"
+        };
+
+        // Initialize Cloud Pipeline Modules
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Core Application State Matrix ---
+        let currentAuthenticatedUser = null;
+        let isPremiumMembershipValid = false;
+        let runningSearchFilterCategory = "All";
+        let runningSearchFilterString = "";
+
+        // --- Software Datastore Source Array ---
+        const softwareData = [
+            {
+                image: "S27.png",
+                title: "Adobe Premiere Pro",
+                version: "v2024",
+                category: "Video Editing",
+                description: "The industry-leading video editing software. AI-powered tools help you craft footage into polished films.",
+                requirements: "Win 10/11 (64-bit) | AI Text-Based Editing, Auto Tone Mapping",
+                link: "https://www.mediafire.com/file/prj7cvzu4lqtvym/Adobe_Premiere_Pro_2024_%2528v24.4.1.002%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S11.png",
+                title: "Adobe Photoshop",
+                version: "v2024",
+                category: "Photo Editing",
+                description: "Create and enhance photographs, illustrations, and 3D artwork with advanced Generative AI engines.",
+                requirements: "8GB RAM Required Min | Generative Fill AI, Neural Filters Active",
+                link: "https://www.mediafire.com/file/iht1wfeg9tokjms/Adobe_Photoshop_2024_%2528v25.9.0.573%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S30.png",
+                title: "MS Office 2021 Pro Plus",
+                version: "v2021",
+                category: "Office",
+                description: "Full localized enterprise suite workspace. Includes native Word, Excel, PowerPoint, and Outlook.",
+                requirements: "Lifetime Pre-Activated Core | Dark Mode Support, XLOOKUP functions",
+                link: "https://www.mediafire.com/file/placeholder-office-link/file"
+            },
+            {
+                image: "S15.png",
+                title: "WinRAR 2024",
+                version: "v2024",
+                category: "Utilities",
+                description: "Powerful compression archive manager. Compress, encrypt, package and backup production directory trees.",
+                requirements: "Fast Extraction Node | RAR5 Extension Engine, AES-256 Bit Encryption",
+                link: "https://www.win-rar.com/start.html?&L=0"
+            },
+            {
+                image: "S1.jpg",
+                title: "Adobe Acrobat Pro",
+                version: "v2024",
+                category: "Office",
+                description: "Complete institutional PDF solution. Edit text layers, sign payloads, and batch convert forms seamlessly.",
+                requirements: "x64 Native Pipeline | Convert to Office Frameworks, Smart E-Signatures",
+                link: "https://www.mediafire.com/file/h8y8rfepb8w7f8p/Adobe_Acrobat_Pro_2024_%2528v24.2.20895%2529_x64_Multilingual.rar/file"
+            },
+            {
+                image: "S26.png",
+                title: "Adobe After Effects",
+                version: "v2024",
+                category: "Video Editing",
+                description: "Create industry-grade cinematic movie titles, custom intros, tracking adjustments, and asset transitions.",
+                requirements: "16GB RAM Minimum Standard | Roto Brush 2 AI, 3D Transform Gizmos",
+                link: "https://www.mediafire.com/file/frwxif8l97e7djs/Adobe_After_Effects_2024_%2528v24.4.1.002%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S2.png",
+                title: "Adobe Animate",
+                version: "v2024",
+                category: "Design",
+                description: "Design highly interactive vector animations optimized for interactive web components, games, and rich media vectors.",
+                requirements: "HTML5 Canvas Pipeline | Asset Warping Engines, Character Rigging Models",
+                link: "https://www.mediafire.com/file/gl88lz264opkekm/Adobe_Animate_2024_%2528v24.0.3.19%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S3.jpg",
+                title: "Adobe Audition",
+                version: "v2024",
+                category: "Audio",
+                description: "Advanced precision workstation engineered to accelerate audio cleanup workflows, podcast design, and multitrack mixing.",
+                requirements: "Multitrack Spectral Workspace | Advanced Noise Reduction, Podcast Mastering Hooks",
+                link: "https://www.mediafire.com/file/tzmjf9j207wdacg/Adobe_Audition_2024_%2528v24.4.0.045%2529_Multilingua.rar/file"
+            },
+            {
+                image: "S16.png",
+                title: "Adobe Bridge",
+                version: "v2024",
+                category: "Utilities",
+                description: "Centralized media workspace built to organize file trees, preview nested layers, and update mass EXIF raw structural data.",
+                requirements: "Batch Processing System | Photo Structuring System, RAW Integration Camera profiles",
+                link: "https://www.mediafire.com/file/64s4dc0ycvxbh09/Adobe_Bridge_2024_%2528v14.1.0.257%2529_Multil.rar/file"
+            },
+            {
+                image: "S23.png",
+                title: "Adobe Illustrator",
+                version: "v2024",
+                category: "Design",
+                description: "Vector layout core design program for production-ready design elements, geometric assets, icons, and display print graphics.",
+                requirements: "Scalable Vector Graphics Matrix | Text to Vector AI System, Precision Gradient Controls",
+                link: "https://www.mediafire.com/file/1ou9zu3771hatyv/Adobe_Illustrator_2024_%2528v28.4.1.86%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S17.png",
+                title: "Character Animator",
+                version: "v2024",
+                category: "Design",
+                description: "Capture face geometry markers from localized webcam signals to automate real-time vector skeletal rigging output arrays.",
+                requirements: "Real-time Live Render Pipeline | Automated Lip-Syncing, Expression Mimicry",
+                link: "https://www.mediafire.com/file/pgjvj6a0s5bvoxa/Adobe_Character_Animator_2024_%2528v24.0%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S18.png",
+                title: "Adobe Dimension",
+                version: "v2024",
+                category: "Design",
+                description: "Rapidly generate vector realistic 3D product mockups, asset layouts, component lighting testing, and multi-angle branding tests.",
+                requirements: "Photoshop Smart-Link Engine | Realistic Global Ray Lighting, Simple Drag-And-Drop 3D",
+                link: "https://www.mediafire.com/file/cdw00eu4gvc36a0/Adobe_Dimension_3.4.10_%2528x64%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S19.png",
+                title: "Adobe Dreamweaver",
+                version: "v2021",
+                category: "Development",
+                description: "Visual IDE layouts integrated with modern styling modules. Supports local testing stacks, CSS extensions, and live editing environments.",
+                requirements: "Smart Coding Compiler | Git Integration Frameworks, Live View Multi-Browser Rendering",
+                link: "https://www.mediafire.com/file/swuq4f2pmft8j69/Adobe_Dreamweaver_2021_v21.3_%2528x64%2529_Multilingual_%2528Pre-Activated%2529.rar/file"
+            },
+            {
+                image: "S20.png",
+                title: "Adobe Fresco",
+                version: "v5.0",
+                category: "Photo Editing",
+                description: "Digital drawing array optimizing custom pixel tools alongside watercolor simulation mathematics and responsive brushes.",
+                requirements: "Stylus Optimization Core | Advanced Vector Support, Real-time Fluid Color Bleed Simulation",
+                link: "https://www.mediafire.com/file/it3uin8yk7s02gh/Adobe_Fresco_v5.0.1_Multilingual.rar/file"
+            },
+            {
+                image: "S21.png",
+                title: "Adobe InCopy",
+                version: "v2024",
+                category: "Office",
+                description: "Document structure synchronization tool allowing editorial copy writers to alter body copy sections inside operational design files simultaneously.",
+                requirements: "InDesign Cross-Platform Sync | Collaborative Lockout Safeguards, Character Density Checkers",
+                link: "https://www.mediafire.com/file/tbd2q99h54itsvc/Adobe_InCopy_2024_%2528v19.4.0.063%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S22.png",
+                title: "Adobe InDesign",
+                version: "v2024",
+                category: "Design",
+                description: "Industry-standard desktop page construction application engine for layout books, multi-page print formats, and digital magazines.",
+                requirements: "Advanced Typographic Core | Print Layout Preflight Verification, Interactivity Export Options",
+                link: "https://www.mediafire.com/file/yr74jgixh22r1cp/Adobe_InDesign_2024_%2528v19.4.0.063%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S24.png",
+                title: "Adobe Lightroom Classic",
+                version: "v13.3",
+                category: "Photo Editing",
+                description: "Photographer data workspace prioritizing high batch RAW conversion, color grading processing curves, and non-destructive parameter testing.",
+                requirements: "Hardware Acceleration Required | AI Denoise Modules, Multi-Layer Masking Frameworks",
+                link: "https://www.mediafire.com/file/4r5as0vd9hwifbo/Adobe_Lightroom_Classic_v13.3.1_Multilingual.rar/file"
+            },
+            {
+                image: "S25.png",
+                title: "Adobe Media Encoder",
+                version: "v2024",
+                category: "Utilities",
+                description: "Unified transcoding calculation background asset that builds background rendering threads for post production assets.",
+                requirements: "Multi-Format Parsing Matrix | Ingest Processing Hooks, Social Stream Preset Formats",
+                link: "https://www.mediafire.com/file/eeoed3mi39g8mp6/Adobe_Media_Encoder_2024_%2528v24.4.1.002%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S28.png",
+                title: "Adobe Premiere Rush",
+                version: "v2.9",
+                category: "Video Editing",
+                description: "Streamlined cross-platform editing engine built to facilitate instant project rendering, trimming, and online content exports.",
+                requirements: "Mobile Sync Architecture | Drag-And-Drop Design Panels, Fast Frame Exporters",
+                link: "https://www.mediafire.com/file/szg7pqpjgzs6i0a/Adobe_Premiere_Rush_2.9.0.14_%2528x64%2529_Multilingual_%2528Pre-Activated%2529.rar/file"
+            },
+            {
+                image: "S29.png",
+                title: "Adobe XD",
+                version: "v56.1",
+                category: "Design",
+                description: "Prototyping vector toolkit for application structural development, interactive wireframe layout configuration, and responsive component testing.",
+                requirements: "UX Design Environment | Auto-Animation Engine, Repeat Grid Automation Features",
+                link: "https://www.mediafire.com/file/lk9d466vpbz0bwn/Adobe_XD_56.1.12_%2528x64%2529_Multilingual.rar/file"
+            },
+            {
+                image: "S5.png",
+                title: "CapCut PC Premium",
+                version: "v2024",
+                category: "Video Editing",
+                description: "Desktop optimization video editing pipeline incorporating pre-computed asset layers, smart subtitle detection, and trending visual filters.",
+                requirements: "Beta-Stable Integration Module | Automated Smart Subtitle Generator, Background Chroma Isolation",
+                link: "https://www.mediafire.com/file/7t3354u95aasyll/CapCut_7_0_0_2843_beta6_capcutpc_beta_creatortool.exe/file"
+            },
+            {
+                image: "S12.png",
+                title: "Photoshop Express Desktop",
+                version: "v2024",
+                category: "Photo Editing",
+                description: "Rapid single-module workflow system created for instant pixel fixing, lens correction presets, and clean layout scaling arrays.",
+                requirements: "Express Engine Framework | One-Touch Asset Cleanups, Spot Healing Tools",
+                link: "https://www.mediafire.com/file/placeholder-psexpress-link/file"
+            },
+            {
+                image: "S9.png",
+                title: "Topaz Video AI Pro",
+                version: "v7.1",
+                category: "AI Tools",
+                description: "Neural network analysis asset rendering framework configured to upscale low resolution recordings to clean 4K/8K presentation levels.",
+                requirements: "Dedicated GPU Calculation Model | Frame Interpolation Engines, AI Temporal Noise Elimination",
+                link: "https://www.mediafire.com/file/qjtgoad9rxov4uz/Topaz+Video+AI+Pro+7.1.4+(x64)+%5BFileCR%5D.zip/file"
+            },
+            {
+                image: "S6.png",
+                title: "Canva Desktop App",
+                version: "v1.111",
+                category: "Design",
+                description: "Localized system wrapper desktop app providing access to complex vector templates, offline cache storage, and multi-user sync arrays.",
+                requirements: "Resource Synchronization Stack | Offline Document Buffer, Fluid Canvas Rendering",
+                link: "https://www.mediafire.com/file/vhdg6rd11hy7j1t/Canva+Setup+1.111.0.zip/file"
+            },
+            {
+                image: "S10.png",
+                title: "Aiseesoft Screen Recorder",
+                version: "v3.1",
+                category: "Utilities",
+                description: "High-bitrate system capture array supporting low overhead frame streaming, target application isolation, and lossless codec data capture.",
+                requirements: "Lossless Audio Capture Framework | Vector Screen Pen Notation Tools, Direct Application Window Lockout",
+                link: "https://www.mediafire.com/file/0y91bdlqnonu4qm/Aiseesoft+Screen+Recorder+3.1.22+(x64)+Multilingual+[FileCR].zip/file"
+            },
+            {
+                image: "S14.png",
+                title: "IObit Uninstaller Pro",
+                version: "v15.0",
+                category: "Utilities",
+                description: "System engineering maintenance logic that unlinks nested registry values and systemic file footprint artifacts from uninstalled packages.",
+                requirements: "Pro Entitlement Framework Active | Persistent File System Scrubbing, Registry Cache Purger",
+                link: "https://www.mediafire.com/file/gqsaioavy9zkzo8/IObit+Uninstaller+Pro+15.0.0.8+Multilingual+%5BFileCR%5D.zip/file"
+            }
+        ];
+
+        const platformCategories = ["All", "Video Editing", "Photo Editing", "Design", "Audio", "Office", "Utilities", "Development", "AI Tools"];
+
+        // --- Core UI & Lifecycle Management Class ---
+        class SoftwareVaultAppManager {
+            constructor() {
+                this.initializeDOMReferences();
+                this.bindGlobalUIPerformanceListeners();
+                this.generateCategoryFilterInterfaceElements();
+                this.themeExecutionProtocol(this.fetchActiveSystemThemeProfile());
+            }
+
+            initializeDOMReferences() {
+                this.searchElement = document.getElementById("vault-search-query");
+                this.categoryContainer = document.getElementById("filter-tags-rack");
+                this.gridRenderer = document.getElementById("software-render-grid");
+                this.themeToggle = document.getElementById("theme-switch-trigger");
+                this.profileToggle = document.getElementById("profile-panel-trigger");
+                this.dropdownMenu = document.getElementById("profile-dropdown-panel");
+                this.userEmailSlot = document.getElementById("dropdown-email-slot");
+                this.userUidSlot = document.getElementById("dropdown-uid-slot");
+                this.userBadgeSlot = document.getElementById("dropdown-badge-slot");
+                this.logoutTrigger = document.getElementById("logout-action-trigger");
+                this.guardOverlay = document.getElementById("auth-guard-overlay");
+                this.toastContainer = document.getElementById("toast-wrapper-spatial");
+            }
+
+            bindGlobalUIPerformanceListeners() {
+                // Instanced Engine Event Hooks
+                this.searchElement.addEventListener("input", (e) => {
+                    runningSearchFilterString = e.target.value.toLowerCase().trim();
+                    this.executeVaultStateFilteringRender();
+                });
+
+                this.themeToggle.addEventListener("click", () => {
+                    const workingTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+                    this.themeExecutionProtocol(workingTheme);
+                });
+
+                this.profileToggle.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const currentState = this.dropdownMenu.style.display === "flex";
+                    this.dropdownMenu.style.display = currentState ? "none" : "flex";
+                });
+
+                document.addEventListener("click", () => {
+                    this.dropdownMenu.style.display = "none";
+                });
+
+                this.dropdownMenu.addEventListener("click", (e) => e.stopPropagation());
+
+                this.logoutTrigger.addEventListener("click", async () => {
+                    try {
+                        await signOut(auth);
+                        window.location.href = "index.html";
+                    } catch (err) {
+                        this.triggerSpatialToast(`SignOut Error: ${err.message}`, "error");
+                    }
+                });
+            }
+
+            fetchActiveSystemThemeProfile() {
+                const manualThemeCache = localStorage.getItem("vault-theme-cache");
+                if (manualThemeCache) return manualThemeCache;
+                return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+
+            themeExecutionProtocol(selectedTheme) {
+                document.documentElement.setAttribute("data-theme", selectedTheme);
+                localStorage.setItem("vault-theme-cache", selectedTheme);
+                const themeIconNode = this.themeToggle.querySelector("i");
+                if (selectedTheme === "dark") {
+                    themeIconNode.className = "fa-solid fa-sun";
+                } else {
+                    themeIconNode.className = "fa-solid fa-moon";
+                }
+            }
+
+            generateCategoryFilterInterfaceElements() {
+                this.categoryContainer.innerHTML = "";
+                platformCategories.forEach(categoryName => {
+                    const filterTagButton = document.createElement("div");
+                    filterTagButton.className = `filter-tag ${categoryName === "All" ? "active" : ""}`;
+                    filterTagButton.textContent = categoryName;
+                    filterTagButton.addEventListener("click", () => {
+                        document.querySelectorAll(".filter-tag").forEach(el => el.classList.remove("active"));
+                        filterTagButton.classList.add("active");
+                        runningSearchFilterCategory = categoryName;
+                        this.executeVaultStateFilteringRender();
+                    });
+                    this.categoryContainer.appendChild(filterTagButton);
+                });
+            }
+
+            triggerSpatialToast(messageText, notificationType = "info") {
+                const toastNode = document.createElement("div");
+                toastNode.className = `toast-notification ${notificationType}`;
+                
+                let iconCodeString = "fa-circle-info";
+                if(notificationType === "success") iconCodeString = "fa-circle-check";
+                if(notificationType === "warning") iconCodeString = "fa-triangle-exclamation";
+                if(notificationType === "error") iconCodeString = "fa-circle-xmark";
+
+                toastNode.innerHTML = `
+                    <div class="toast-content-wrapper">
+                        <i class="fa-solid ${iconCodeString}"></i>
+                        <span class="toast-text">${messageText}</span>
+                    </div>
+                    <button class="toast-dismiss"><i class="fa-solid fa-xmark"></i></button>
+                `;
+
+                toastNode.querySelector(".toast-dismiss").addEventListener("click", () => {
+                    toastNode.remove();
+                });
+
+                this.toastContainer.appendChild(toastNode);
+                setTimeout(() => {
+                    if (toastNode.parentNode) toastNode.remove();
+                }, 5000);
+            }
+
+            executeVaultStateFilteringRender() {
+                this.gridRenderer.innerHTML = "";
+                
+                const qualifiedSoftwareAssets = softwareData.filter(item => {
+                    const matchesCategory = (runningSearchFilterCategory === "All" || item.category === runningSearchFilterCategory);
+                    const matchesSearchToken = (
+                        item.title.toLowerCase().includes(runningSearchFilterString) ||
+                        item.category.toLowerCase().includes(runningSearchFilterString) ||
+                        item.version.toLowerCase().includes(runningSearchFilterString) ||
+                        item.description.toLowerCase().includes(runningSearchFilterString)
+                    );
+                    return matchesCategory && matchesSearchToken;
+                });
+
+                if (qualifiedSoftwareAssets.length === 0) {
+                    this.gridRenderer.innerHTML = `
+                        <div class="empty-state-card">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <h3>No Resources Located</h3>
+                            <p>No applications match your filtering criteria or operational strings. Reset your configuration filters to retry processing pipeline.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                qualifiedSoftwareAssets.forEach((asset, loopIndex) => {
+                    const softwareCardContainerNode = document.createElement("div");
+                    softwareCardContainerNode.className = "software-card";
+                    softwareCardContainerNode.style.animationDelay = `${loopIndex * 0.04}s`;
+
+                    // Generate Entitlement State Configuration UI Layout Elements
+                    let downloadActionMarkup = "";
+                    if (isPremiumMembershipValid) {
+                        downloadActionMarkup = `
+                            <a href="${asset.link}" target="_blank" class="download-btn unlocked">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> Download Asset
+                            </a>
+                        `;
+                    } else {
+                        downloadActionMarkup = `
+                            <button class="download-btn locked" data-trigger-restricted="true">
+                                <i class="fa-solid fa-lock"></i> Premium Locked
+                            </button>
+                        `;
+                    }
+
+                    softwareCardContainerNode.innerHTML = `
+                        <div class="card-img-wrapper">
+                            <img src="${asset.image}" alt="${asset.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'">
+                            <span class="card-category-badge">${asset.category}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title-row">
+                                <h3>${asset.title}</h3>
+                                <span class="version-tag">${asset.version}</span>
+                            </div>
+                            <p class="card-short-desc">${asset.description}</p>
+                            
+                            <button class="toggle-info-btn"><i class="fa-solid fa-chevron-down"></i> App Architecture</button>
+                            <div class="seo-box">
+                                <span class="requirements-hdr">Operational Requirements</span>
+                                <p class="requirements-txt">${asset.requirements}</p>
+                            </div>
+                        </div>
+                        <div class="card-action-wrapper">
+                            ${downloadActionMarkup}
+                        </div>
+                    `;
+
+                    // Bind Expandable Technical Specification Interface Elements
+                    const expandButton = softwareCardContainerNode.querySelector(".toggle-info-btn");
+                    const infoPanel = softwareCardContainerNode.querySelector(".seo-box");
+                    expandButton.addEventListener("click", () => {
+                        const isExpandedNow = infoPanel.classList.toggle("expanded");
+                        expandButton.classList.toggle("active", isExpandedNow);
+                    });
+
+                    // Bind Unauthorized Dynamic Toast Alert Notifications
+                    if (!isPremiumMembershipValid) {
+                        softwareCardContainerNode.querySelector('[data-trigger-restricted="true"]').addEventListener("click", () => {
+                            this.triggerSpatialToast("Membership Tier Verification Failure. Premium Subscription clearance required to unlock download pipeline downloads.", "warning");
+                        });
+                    }
+
+                    this.gridRenderer.appendChild(softwareCardContainerNode);
+                });
+            }
+
+            processSecurityClearanceProfile(userEntity, userDataProfile) {
+                currentAuthenticatedUser = userEntity;
+                isPremiumMembershipValid = userDataProfile && userDataProfile.paid === true;
+
+                // Set User Configuration Context Fields inside Dropdown Panel DOM structure
+                this.userEmailSlot.textContent = userEntity.email;
+                this.userUidSlot.textContent = `UID: ${userEntity.uid.substring(0, 16)}...`;
+                
+                if (isPremiumMembershipValid) {
+                    this.userBadgeSlot.textContent = "Lifetime Premium";
+                    this.userBadgeSlot.className = "membership-badge premium";
+                } else {
+                    this.userBadgeSlot.textContent = "Free Member";
+                    this.userBadgeSlot.className = "membership-badge free";
+                }
+
+                // Complete Auth State Verification, Clear Overlay Loader Screen Element
+                if (this.guardOverlay) {
+                    this.guardOverlay.style.opacity = "0";
+                    setTimeout(() => this.guardOverlay.remove(), 350);
+                }
+
+                // Initial Asset Grid Calculation Render Loop Execution
+                this.executeVaultStateFilteringRender();
+                this.triggerSpatialToast(`Clearance established for profile: ${userEntity.email}`, "success");
+            }
+        }
+
+        // --- Core Application Initialization Phase ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const EngineApplicationInstance = new SoftwareVaultAppManager();
+
+            // Setup Firebase Authentication Reactive Guard Watch State Hook
+            onAuthStateChanged(auth, async (activeUser) => {
+                if (!activeUser) {
+                    // Unauthorized User detected within security perimeter. Evict browser.
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                try {
+                    // Extract Verification Profile Document Node from Firestore Storage
+                    const userDatabaseReference = doc(db, "users", activeUser.uid);
+                    const userDataSnapshot = await getDoc(userDatabaseReference);
+                    
+                    if (userDataSnapshot.exists()) {
+                        EngineApplicationInstance.processSecurityClearanceProfile(activeUser, userDataSnapshot.data());
+                    } else {
+                        // User Document Node missing inside Cloud Firestore. Enforce limited safety state profile.
+                        EngineApplicationInstance.processSecurityClearanceProfile(activeUser, { paid: false });
+                    }
+                } catch (firestoreFetchError) {
+                    EngineApplicationInstance.triggerSpatialToast(`Data Integrity Interruption: ${firestoreFetchError.message}`, "error");
+                    // Safe Fallback Architecture Execution if cloud data retrieval yields failure status
+                    EngineApplicationInstance.processSecurityClearanceProfile(activeUser, { paid: false });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
