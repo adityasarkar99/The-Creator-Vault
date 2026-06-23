@@ -746,18 +746,43 @@
         let activeCategorySelection = "All";
         let activeSearchFilterValue = "";
 
-        // Categories matching software domain
-        const staticCategoryArray = ["All", "Editing", "Development", "Office", "Operating System", "Utilities", "Graphics", "Security"];
+        // All Specific Filter Categories
+        const staticCategoryArray = ["All", "Editing", "Development", "Office", "Operating System", "Utilities", "Graphics", "Security", "3D Modeling"];
 
-        // Populated with placeholder premium software pack data
+        // FULL 30+ COMPCOMPLETE PREMIUM SOFTWARE BUNDLES DATA
         const softwareBundles = [
-            { image: "adobe_pack.jpg", title: "Adobe Master Collection", subtitle: "Creative Suite Pre-Activated", info: "Complete bundle containing Photoshop, Premiere Pro, After Effects, and Illustrator. Lifetime pre-activated offline installer.", category: "Editing", link: "https://drive.google.com/" },
-            { image: "office_pack.jpg", title: "MS Office Pro Plus 2024", subtitle: "Productivity Office Suite", info: "Includes Word, Excel, PowerPoint, and Access. Features clean one-click automated activation protocol.", category: "Office", link: "https://drive.google.com/" },
-            { image: "vscode_dev.jpg", title: "Web Developer PowerPack", subtitle: "IDE & Core Tool Extensions", info: "Pre-configured coding environments with advanced themes, localized performance tools, and essential extensions.", category: "Development", link: "https://drive.google.com/" },
-            { image: "idm_pack.jpg", title: "Internet Download Manager", subtitle: "Unlimited Speed Downloader", info: "Latest version with full activation registry fixes. Boosts downloading speed up to 5 times.", category: "Utilities", link: "https://drive.google.com/" },
-            { image: "antivirus_pack.jpg", title: "Premium Firewall & Security", subtitle: "Enterprise Security Pack", info: "Curated suite of top-tier system protection scanners and localized script/malware interceptors.", category: "Security", link: "https://drive.google.com/" },
-            { image: "win11_pro.jpg", title: "Windows 11 Pro Superlite", subtitle: "Gaming & Performance OS", info: "Optimized, debloated Windows 11 ISO with enhanced system resources management and RAM tweaks.", category: "Operating System", link: "https://drive.google.com/" },
-            { image: "corel_draw.jpg", title: "CorelDRAW Technical Suite", subtitle: "Vector Graphics & Design", info: "Professional vector illustration, layout, photo editing, and typography software bundle.", category: "Graphics", link: "https://drive.google.com/" }
+            { image: "adobe_pack.jpg", title: "Adobe Master Collection 2024", subtitle: "Creative Cloud Suite", info: "Includes Photoshop, Premiere Pro, After Effects, Illustrator, InDesign, and Audition. Lifetime pre-activated offline architecture.", category: "Editing", link: "https://drive.google.com/" },
+            { image: "office_pack.jpg", title: "MS Office Pro Plus 2024", subtitle: "Productivity Office Suite", info: "Complete build of Word, Excel, PowerPoint, Access, and Outlook. Built-in one-click KMS digital activation deployment.", category: "Office", link: "https://drive.google.com/" },
+            { image: "vscode_dev.jpg", title: "Web Developer PowerPack", subtitle: "IDE & Core Utility Stack", info: "Pre-configured coding environments packed with modern extensions, local compilers, server monitors, and asset snippets.", category: "Development", link: "https://drive.google.com/" },
+            { image: "idm_pack.jpg", title: "Internet Download Manager", subtitle: "High-Speed Downloader Pro", info: "Latest version featuring automatic site grabbers, advanced browser integration, and absolute registry bypass keys.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "antivirus_pack.jpg", title: "Malwarebytes Premium", subtitle: "Real-time Malware Protection", info: "Comprehensive threat hunter engine with active zero-day exploit shielding and persistent tracking blockers.", category: "Security", link: "https://drive.google.com/" },
+            { image: "win11_pro.jpg", title: "Windows 11 Pro Superlite", subtitle: "Gaming Optimization Build", info: "Meticulously stripped, debloated custom ISO. Maximizes CPU thread usage and frees overhead RAM for optimal system performance.", category: "Operating System", link: "https://drive.google.com/" },
+            { image: "corel_draw.jpg", title: "CorelDRAW Technical Suite", subtitle: "Vector Graphics Architecture", info: "Professional design powerhouse optimized for complex vector illustrations, blueprints, layout design, and modern typography.", category: "Graphics", link: "https://drive.google.com/" },
+            { image: "autocad.jpg", title: "Autodesk AutoCAD 2025", subtitle: "2D & 3D CAD Design Studio", info: "Industry-standard architectural mapping and mechanical drawing suite, complete with activated enterprise license file.", category: "3D Modeling", link: "https://drive.google.com/" },
+            { image: "blender.jpg", title: "Blender Render Toolkit", subtitle: "3D Asset Design pipeline", info: "Open-source 3D asset pipeline bundled with essential premium texturing plugins, render engine extensions, and skeletal models.", category: "3D Modeling", link: "https://drive.google.com/" },
+            { image: "filmora.jpg", title: "Wondershare Filmora 13", subtitle: "Lightweight Creative Video Editor", info: "Fast-rendering video production studio fully pre-activated, unlocking premium motion assets, custom filters, and full 4K output.", category: "Editing", link: "https://drive.google.com/" },
+            { image: "da_vinci.jpg", title: "DaVinci Resolve Studio 19", subtitle: "Cinematic Grade Color Correction", info: "Professional Hollywood editing toolkit complete with Neural Engine features, stereoscopic 3D tracking, and premium sound systems.", category: "Editing", link: "https://drive.google.com/" },
+            { image: "camtasia.jpg", title: "Camtasia Studio 2024", subtitle: "Screen Recorder & E-Learning", info: "High-definition desktop capturing tool integrated with callout templates, transitions, and local activation patch configurations.", category: "Editing", link: "https://drive.google.com/" },
+            { image: "jetbrains.jpg", title: "JetBrains ToolBox Suite", subtitle: "IntelliJ, PyCharm & WebStorm", info: "Complete enterprise development IDE pack ideal for advanced Python, Java, and JavaScript architecture pipelines.", category: "Development", link: "https://drive.google.com/" },
+            { image: "sublime.jpg", title: "Sublime Text 4 Build", subtitle: "Ultra-Fast Source Code Editor", info: "Blazing fast text processor packed with a premium multi-license structure bypass and full theme custom packages.", category: "Development", link: "https://drive.google.com/" },
+            { image: "postman.jpg", title: "Postman API Enterprise Pro", subtitle: "API Testing Workspace Infrastructure", info: "Local desktop utility toolkit configured for debugging, simulating, and security hardening production RESTful API terminals.", category: "Development", link: "https://drive.google.com/" },
+            { image: "gitkraken.jpg", title: "GitKraken Client Pro", subtitle: "Advanced Cross-Platform Git UI", info: "Visual terminal dashboard built to manage git trees, track branch repositories, and handle cross-merge conflicts cleanly.", category: "Development", link: "https://drive.google.com/" },
+            { image: "docker.jpg", title: "Docker Desktop Pro", subtitle: "Container Isolation Network", info: "Optimized environment constructed to build, isolate, deploy, and scale application microservices efficiently without overhead lag.", category: "Development", link: "https://drive.google.com/" },
+            { image: "vmware.jpg", title: "VMware Workstation Pro 17", subtitle: "Virtual Machine Hypervisor", info: "Deploy multiple isolated guest operating systems seamlessly on a single PC. Includes lifetime enterprise license codes.", category: "Operating System", link: "https://drive.google.com/" },
+            { image: "virtualbox.jpg", title: "VirtualBox Extension Pack", subtitle: "Open Hypervisor Orchestration", info: "Pre-patched extension matrix unlocking high-speed USB 3.0 nodes, custom NVMe drives, and direct RDP server setups.", category: "Operating System", link: "https://drive.google.com/" },
+            { image: "win10.jpg", title: "Windows 10 Enterprise LTSC", subtitle: "Long Term Stability OS Build", info: "The cleanest Windows 10 platform completely devoid of Cortana, Edge tracking bloatware, and disruptive force-update protocols.", category: "Operating System", link: "https://drive.google.com/" },
+            { image: "win_rar.jpg", title: "WinRAR Pro License Pack", subtitle: "Data Compression Engine", info: "Essential file archival framework bundled with a clean custom keygen script to permanently wipe out evaluation warning boxes.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "ccleaner.jpg", title: "CCleaner Professional Plus", subtitle: "System Cache & Registry Purge", info: "Deep file cluster optimizer engineered to clean hidden registry bugs, tracking cookies, and temporary partition bloat.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "revo.jpg", title: "Revo Uninstaller Pro", subtitle: "Deep Application Eraser", info: "Forcefully dismantles persistent software alongside their leftover junk file clusters and hidden deep registry remnants.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "rufus.jpg", title: "Rufus Bootable Suite Pro", subtitle: "USB Partition Flash Utility", info: "Rapidly write bootable system ISO profiles to external USB units with built-in safe TPM check bypass parameters.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "acronis.jpg", title: "Acronis Cyber Protect Home", subtitle: "Partition Backup & Disk Cloner", info: "Sector-by-sector hard drive cloning engine built for making immediate bare-metal backups and data mirror images.", category: "Utilities", link: "https://drive.google.com/" },
+            { image: "photoshop_lightroom.jpg", title: "Adobe Lightroom Classic", subtitle: "RAW Photo Development Lab", info: "State-of-the-art photography production platform with hardware acceleration enabled for batch color presets processing.", category: "Graphics", link: "https://drive.google.com/" },
+            { image: "illustrator.jpg", title: "Adobe Illustrator 2024", subtitle: "Scalable Vector Asset Lab", info: "Standalone pre-activated Illustrator configuration. Perfect for logos, interface mockup assets, and banners.", category: "Graphics", link: "https://drive.google.com/" },
+            { image: "kaspersky.jpg", title: "Kaspersky Total Security", subtitle: "Full Sandbox Isolation Suite", info: "Deep structural network shield equipped with local code isolation sandboxing, phishing block hooks, and active data protection.", category: "Security", link: "https://drive.google.com/" },
+            { image: "nord_vpn.jpg", title: "NordVPN Secure Proxy Stack", subtitle: "Encrypted Network Tunnel", info: "Localized client wrapper loaded with stealth server protocols, peer-to-peer data protection nodes, and automatic tracking shields.", category: "Security", link: "https://drive.google.com/" },
+            { image: "3ds_max.jpg", title: "Autodesk 3ds Max 2025", subtitle: "High Fidelity Model Render", info: "Powerful 3D shapes rendering, game asset design engineering, and complex motion physics simulator architecture platform.", category: "3D Modeling", link: "https://drive.google.com/" },
+            { image: "sketchup.jpg", title: "SketchUp Pro Studio", subtitle: "Rapid CAD Blueprint Architecture", info: "Intuititve, lightning-fast 3D blueprinting engine tailored for structural landscape designs, home interiors, and quick CAD rendering.", category: "3D Modeling", link: "https://drive.google.com/" },
+            { image: "pdf_element.jpg", title: "Wondershare PDFelement Pro", subtitle: "Complete PDF Editor Matrix", info: "Enterprise document manager built to perform advanced OCR scans, merge data layers, sign forms, and unlock protected sheets.", category: "Office", link: "https://drive.google.com/" }
         ];
 
         /* --- TOAST INFRASTRUCTURE MODULE --- */
@@ -827,7 +852,6 @@
             }
             activeUserContext = user;
             
-            // Populating UI Identifiers
             document.getElementById('profile-avatar-btn').textContent = user.email ? user.email.charAt(0).toUpperCase() : 'U';
             document.getElementById('dd-email-field').textContent = user.email || 'Anonymous User';
             document.getElementById('dd-uid-field').textContent = `ID: ${user.uid}`;
@@ -842,7 +866,6 @@
                 console.error("Cloud data alignment anomaly:", fault);
             }
 
-            // Sync Dropdown Badges
             const badgeMount = document.getElementById('dd-status-badge-mount');
             if (isUserPremiumCleared) {
                 badgeMount.innerHTML = `<span class="dd-status-badge premium">Lifetime Premium</span>`;
@@ -859,7 +882,6 @@
             setTimeout(() => authGuardOverlay.style.display = 'none', 250);
         });
 
-        // Signout Handler Activation
         document.getElementById('logout-action-btn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
