@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Vault - Dashboard</title>
     
+    <!-- Google Fonts & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Razorpay Standard Checkout Script Integration -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
@@ -23,9 +25,11 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --accent-brand: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.15);
+            --accent-brand-hover: #1d4ed8;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
             --glass-blur: blur(12px);
-            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            --badge-free-bg: #e2e8f0;
+            --badge-free-text: #475569;
         }
 
         [data-theme="dark"] {
@@ -37,36 +41,19 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-brand: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.25);
-            --glass-blur: blur(16px);
+            --accent-brand-hover: #60a5fa;
             --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(16px);
+            --badge-free-bg: rgba(59, 130, 246, 0.1);
+            --badge-free-text: #60a5fa;
         }
 
-        /* --- MODERN HARDWARE ANIMATION OPTIMIZATIONS --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-        }
-
-        /* --- PREMIUM ULTRA-THIN CUSTOM SCROLLBAR --- */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-main);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-primary);
-            border-radius: 20px;
-            transition: background 0.3s ease;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-brand);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -74,1055 +61,1339 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             overflow-x: hidden;
-            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* --- GLOBAL SHIMMER ANIMATION KEYFRAMES --- */
-        @keyframes premiumShimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        @keyframes pulseIndicator {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* --- NAVIGATION SIDEBAR SHEET --- */
-        .sidebar-shell {
-            width: 280px;
-            min-height: 100vh;
-            background: var(--bg-card-solid);
-            border-right: 1px solid var(--border-primary);
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
+        /* --- PRE-AUTH GUARD LOADER SCREEN --- */
+        #auth-guard-screen {
             position: fixed;
-            left: 0; top: 0; z-index: 99;
-            transition: width 0.3s ease, background 0.4s ease;
-        }
-
-        .brand-block {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            padding-left: 8px;
-        }
-
-        .brand-logo-icon {
-            font-size: 1.5rem;
-            color: var(--accent-brand);
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .brand-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            background: linear-gradient(90deg, var(--text-main), var(--accent-brand));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-menu-list {
-            list-style: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #090d16;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-link-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 16px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .nav-link-item i {
-            font-size: 1.1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-link-item:hover {
-            color: var(--text-main);
-            background: var(--bg-input);
-            transform: translateX(4px);
-        }
-
-        .nav-link-item:hover i {
-            transform: scale(1.15);
-        }
-
-        .nav-link-item.active-route {
-            background: var(--accent-brand);
-            color: #ffffff;
-            box-shadow: 0 8px 20px -6px var(--accent-glow);
-        }
-
-        /* --- CORE APPLICATION VIEWPORT --- */
-        .app-viewport {
-            margin-left: 280px;
-            flex-grow: 1;
-            padding: 40px 48px;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        /* --- TOP RUNTIME CONTROL HEADBOARD --- */
-        .top-control-shelf {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            max-width: 440px;
-            width: 100%;
-        }
-
-        .search-input-wrapper i {
-            position: absolute;
-            left: 16px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .search-bar-core {
-            width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            border-radius: 14px;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar-core:focus {
-            border-color: var(--accent-brand);
-            box-shadow: 0 0 0 4px var(--accent-glow);
-            transform: scale(1.01);
-        }
-
-        .user-widget-cluster {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .theme-toggle-btn {
-            width: 48px; height: 48px;
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            border-radius: 14px;
-            color: var(--text-main);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle-btn:hover {
-            transform: rotate(15deg) scale(1.05);
-            border-color: var(--accent-brand);
-            color: var(--accent-brand);
-        }
-
-        .profile-trigger-card {
-            display: flex;
             align-items: center;
-            gap: 12px;
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            padding: 6px 14px 6px 6px;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .profile-trigger-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-subtle);
-            border-color: var(--accent-brand);
-        }
-
-        .profile-avatar-frame {
-            width: 36px; height: 36px;
-            border-radius: 12px;
-            object-fit: cover;
-            background: var(--bg-input);
-        }
-
-        .profile-meta-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .profile-username {
-            font-size: 0.85rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .profile-badge-label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .pulse-live-dot {
-            width: 6px; height: 6px;
-            background-color: #10b981;
+        .spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(59, 130, 246, 0.1);
+            border-top-color: #3b82f6;
             border-radius: 50%;
-            display: inline-block;
-            animation: pulseIndicator 2s infinite;
-        }
-
-        /* --- UPGRADE MARKETING BOARD --- */
-        .upgrade-promo-banner {
-            background: linear-gradient(135deg, #1e3a8a, #0f172a);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 32px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .upgrade-promo-banner::before {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            top: -150px; right: -50px;
-            pointer-events: none;
-        }
-
-        .promo-content-block {
-            max-width: 540px;
-            z-index: 2;
-        }
-
-        .promo-tag-pill {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #60a5fa;
-            padding: 6px 14px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border-radius: 20px;
-            display: inline-block;
+            animation: spin 1s linear infinite;
             margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .guard-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
 
-        .promo-main-heading {
-            color: #ffffff;
-            font-size: 1.85rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
+        /* --- BRIGHTNESS LAYER OVERLAY --- */
+        #brightness-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: black;
+            pointer-events: none;
+            z-index: 99998;
+            mix-blend-mode: multiply;
+            opacity: 0;
         }
 
-        .promo-description {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .btn-upgrade-action {
-            background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa, #2563eb);
-            background-size: 200% auto;
-            color: #ffffff;
-            padding: 16px 32px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            white-space: nowrap;
-            z-index: 2;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-            animation: premiumShimmer 4s linear infinite;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .btn-upgrade-action:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.6);
-        }
-
-        /* --- STATISTICAL OVERVIEW GRID --- */
-        .metrics-dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 11fr);
-            gap: 24px;
-        }
-
-        .metric-data-card {
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            padding: 24px;
-            border-radius: 20px;
+        /* --- STICKY PREMIUM HEADER --- */
+        .premium-header {
+            position: sticky;
+            top: 0; z-index: 1000;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 14px 40px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: space-between;
             box-shadow: var(--shadow-subtle);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
         }
 
-        .metric-data-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--accent-brand);
-            box-shadow: 0 20px 35px -10px var(--accent-glow);
-        }
-
-        .metric-icon-avatar {
-            width: 54px; height: 54px;
-            border-radius: 14px;
-            background: var(--bg-input);
-            color: var(--accent-brand);
+        .brand-container {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .brand-icon {
+            font-size: 1.25rem;
+            color: var(--accent-brand);
             transition: transform 0.3s ease;
         }
-
-        .metric-data-card:hover .metric-icon-avatar {
+        .brand-container:hover .brand-icon {
             transform: scale(1.1) rotate(-5deg);
         }
-
-        .metric-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .metric-counter-display {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-
-        .metric-label-text {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* --- CATEGORIES MATRIX ARCHITECTURE --- */
-        .categories-section-header {
+        .brand-text {
             font-size: 1.25rem;
             font-weight: 800;
             letter-spacing: -0.02em;
-            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: continuousShine 4s linear infinite;
+        }
+        @keyframes continuousShine {
+            to { background-position: 200% center; }
         }
 
-        .categories-flex-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 11fr);
-            gap: 24px;
+        .header-search-box {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 20px;
         }
-
-        .category-asset-box {
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            border-radius: 24px;
-            padding: 24px;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: var(--shadow-subtle);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
-        }
-
-        .category-asset-box:hover {
-            transform: translateY(-6px);
-            border-color: var(--accent-brand);
-            box-shadow: 0 25px 40px -15px var(--accent-glow);
-        }
-
-        .category-media-frame {
-            width: 100%; height: 180px;
-            border-radius: 16px;
-            object-fit: cover;
-            margin-bottom: 20px;
-            background: var(--bg-input);
-            transition: transform 0.5s ease;
-        }
-
-        .category-asset-box:hover .category-media-frame {
-            transform: scale(1.02);
-        }
-
-        .category-info-meta h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            margin-bottom: 6px;
-        }
-
-        .category-info-meta p {
-            font-size: 0.88rem;
+        .header-search-box i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
             color: var(--text-muted);
-            line-height: 1.4;
+            font-size: 0.9rem;
         }
-
-        /* --- CONFIGURATION SETTINGS SLIDEOUT DRAWER --- */
-        .settings-drawer-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
         }
-
-        .settings-drawer-panel {
-            position: fixed;
-            top: 0; right: -400px;
-            width: 400px; height: 100vh;
+        .search-input:focus {
+            border-color: var(--accent-brand);
             background: var(--bg-card-solid);
-            border-left: 1px solid var(--border-primary);
-            box-shadow: -10px 0 40px rgba(0,0,0,0.2);
-            z-index: 1001;
-            padding: 40px 32px;
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .drawer-header-block {
+        .header-right-actions {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
+        }
+        .header-btn {
+            background: none;
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+        .header-btn:hover {
+            background: var(--bg-input);
+            border-color: var(--text-muted);
+        }
+        
+        /* Updated Profile Avatar Layout to host images smoothly */
+        .profile-avatar-trigger {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--border-primary);
+            overflow: hidden;
+        }
+        .profile-avatar-trigger img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .drawer-header-block h2 {
-            font-size: 1.3rem;
+        /* --- VIEWPORT MAX CONTAINER --- */
+        .dashboard-viewport {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px;
+            flex-grow: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-size: 1.75rem;
             font-weight: 800;
             letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
         }
 
-        .drawer-close-btn {
-            background: none; border: none;
-            font-size: 1.2rem; color: var(--text-muted);
-            cursor: pointer; transition: color 0.2s ease;
+        /* --- HERO BANNER --- */
+        #hero-banner-slot {
+            margin-bottom: 32px;
         }
-
-        .drawer-close-btn:hover { color: var(--text-main); }
-
-        .drawer-profile-segment {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 12px;
-            background: var(--bg-input);
-            padding: 24px;
-            border-radius: 20px;
-        }
-
-        .drawer-avatar-large {
-            width: 80px; height: 80px;
-            border-radius: 24px;
-            object-fit: cover;
-            border: 3px solid var(--bg-card-solid);
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .drawer-action-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .drawer-action-btn {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 12px;
+        .hero-banner {
+            border-radius: 16px;
+            padding: 32px;
             border: 1px solid var(--border-primary);
-            background: var(--bg-card-solid);
-            color: var(--text-main);
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        .hero-banner.locked {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+        }
+        .hero-banner.unlocked {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+        }
+        .hero-content h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .hero-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        .trust-row {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+        .trust-row span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .trust-row i { color: #10b981; }
+        
+        .btn-upgrade {
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
             font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-upgrade:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        /* --- STATS SECTION --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .stat-icon {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--accent-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .stat-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .stat-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* --- CATEGORIES MATRIX SYSTEM --- */
+        .section-subtitle {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 20px;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-brand);
+        }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+        .cat-icon-box {
+            width: 44px; height: 44px;
+            background: var(--bg-input);
+            color: var(--accent-brand);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+        .status-chip {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .status-chip.unlocked { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .status-chip.locked { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .category-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .category-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .item-counter {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .btn-open-cat {
+            padding: 8px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.82rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .category-card:hover .btn-open-cat {
+            background: var(--accent-brand);
+            color: white;
+            border-color: var(--accent-brand);
+        }
+
+        .category-card.is-locked::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.02);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* --- PREMIUM MEMBER TIERS BADGES --- */
+        .badge-ui {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-ui.free {
+            background: var(--badge-free-bg);
+            color: var(--badge-free-text);
+            border: 1px solid var(--border-primary);
+        }
+        .badge-ui.premium {
+            background: linear-gradient(90deg, #f59e0b, #ec4899, #3b82f6);
+            background-size: 200% auto;
+            color: white;
+            animation: continuousShine 3s linear infinite;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        /* --- PROFILE RIGHT-SIDE PANEL --- */
+        .drawer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: none;
+        }
+        .drawer-overlay.open { display: block; }
+        
+        .profile-drawer {
+            position: fixed;
+            top: 0; right: -400px;
+            width: 400px; height: 100%;
+            background: var(--bg-card-solid);
+            border-left: 1px solid var(--border-primary);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+            z-index: 2001;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .profile-drawer.open { right: 0; }
+
+        .drawer-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .drawer-header h3 { font-weight: 700; font-size: 1.1rem; }
+        
+        .drawer-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .drawer-profile-summary {
+            text-align: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-primary);
+            margin-bottom: 24px;
+        }
+        
+        /* Interactive Camera Hover Effect for Image Selection */
+        .drawer-avatar-large {
+            position: relative;
+            width: 64px; height: 64px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 12px auto;
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .drawer-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-upload-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        .drawer-avatar-large:hover .avatar-upload-overlay {
+            opacity: 1;
+        }
+        #hidden-avatar-input {
+            display: none;
+        }
+
+        .drawer-email { font-weight: 700; font-size: 1rem; margin-bottom: 4px; word-break: break-all; }
+        .drawer-membership-name { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+        .drawer-date { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+
+        .drawer-section { margin-bottom: 28px; }
+        .drawer-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .setting-info label { font-size: 0.88rem; font-weight: 600; display: block; margin-bottom: 2px; }
+        .setting-info p { font-size: 0.78rem; color: var(--text-muted); }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 42px; height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            transition: .2s; border-radius: 24px;
+        }
+        .toggle-slider::before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: var(--text-muted); transition: .2s; border-radius: 50%;
+        }
+        .toggle-switch input:checked + .toggle-slider { background-color: var(--accent-brand); border-color: var(--accent-brand); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background-color: white; }
+
+        .brightness-slider {
+            width: 100%;
+            height: 5px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            outline: none;
+            accent-color: var(--accent-brand);
+            margin-top: 8px;
+        }
+
+        .btn-drawer-secondary {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
+            justify-content: center;
+            gap: 6px;
         }
+        .btn-drawer-secondary:hover { border-color: var(--text-muted); }
 
-        .drawer-action-btn:hover {
+        .drawer-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-primary);
             background: var(--bg-input);
-            border-color: var(--accent-brand);
-            transform: translateX(-4px);
         }
-
-        .drawer-action-btn.btn-danger {
-            color: #ef4444; border-color: rgba(239, 68, 68, 0.1);
-        }
-        .drawer-action-btn.btn-danger:hover {
-            background: rgba(239, 68, 68, 0.05);
-            border-color: #ef4444;
-        }
-
-        /* --- PREMIUM SYSTEM TOAST NOTIFICATIONS --- */
-        .toast-notification-container {
-            position: fixed;
-            bottom: 40px; right: 40px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .premium-toast-node {
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-primary);
-            padding: 16px 20px;
-            border-radius: 14px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            max-width: 360px;
-            transform: translateY(50px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .toast-status-icon { font-size: 1.15rem; margin-top: 2px; }
-        .toast-success-icon { color: #10b981; }
-        .toast-error-icon { color: #ef4444; }
-
-        .toast-text-block h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
-        .toast-text-block p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
-
-        /* --- APPLICATION SECURITY INTERCEPTOR MATRIX --- */
-        .security-intercept-guard {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-main);
-            z-index: 99999;
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 1;
-            transition: opacity 0.5s ease;
+            gap: 6px;
         }
+        .btn-logout:hover { background: #dc2626; }
 
-        .spinner-hardware-node {
-            width: 48px; height: 48px;
-            border: 4px solid var(--border-primary);
-            border-top-color: var(--accent-brand);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        /* --- PREMIUM TOAST INFRASTRUCTURE --- */
+        #toast-box-mount {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+            width: calc(100% - 40px);
         }
+        .toast-item {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            transform: translateX(110%);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+        .toast-item.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 1.1rem; margin-top: 2px; }
+        .toast-body h5 { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
+        .toast-body p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+        .toast-close {
+            position: absolute; top: 10px; right: 10px;
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 0.85rem;
+        }
+        .toast-progress {
+            position: absolute; bottom: 0; left: 0; height: 3px; width: 100%;
+            transform-origin: left;
+        }
+        .toast-item.success .toast-icon { color: #10b981; }
+        .toast-item.success .toast-progress { background: #10b981; }
+        .toast-item.error .toast-icon { color: #ef4444; }
+        .toast-item.error .toast-progress { background: #ef4444; }
+        .toast-item.warning .toast-icon { color: #f59e0b; }
+        .toast-item.warning .toast-progress { background: #f59e0b; }
+        .toast-item.info .toast-icon { color: #3b82f6; }
+        .toast-item.info .toast-progress { background: #3b82f6; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- LEGAL COMPLIANCE FOOTER --- */
-        .dashboard-footer {
-            margin-top: auto;
-            padding-top: 40px;
+        /* --- PREMIUM COMPREHENSIVE FOOTER --- */
+        .premium-footer {
+            background: var(--bg-card-solid);
             border-top: 1px solid var(--border-primary);
-            display: flex;
+            padding: 40px 40px 24px 40px;
+            margin-top: auto;
+        }
+        .footer-grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .footer-brand-side h4 { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+        .footer-brand-side p { color: var(--text-muted); font-size: 0.85rem; max-width: 260px; line-height: 1.5; }
+        .footer-col h5 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; color: var(--text-muted); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col ul li a { color: var(--text-main); font-size: 0.85rem; text-decoration: none; font-weight: 500; }
+        .footer-col ul li a:hover { color: var(--accent-brand); }
+        
+        .btn-discord {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            color: var(--text-muted);
+            gap: 8px;
+            padding: 8px 14px;
+            background: #5865f2;
+            color: white !important;
+            border-radius: 8px;
+            font-size: 0.82rem !important;
+            font-weight: 600;
+            margin-top: 4px;
         }
+        .btn-discord:hover { background: #4752c4; }
 
-        .footer-compliance-links {
+        .footer-bottom {
+            max-width: 1300px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border-primary);
+            padding-top: 20px;
             display: flex;
-            gap: 20px;
-        }
-
-        .footer-compliance-links a {
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s ease;
+            font-weight: 500;
         }
-
-        .footer-compliance-links a:hover {
-            color: var(--accent-brand);
-        }
-
-        /* --- RESPONSIVE ADAPTATION DEEPLINKS --- */
-        @media (max-width: 1200px) {
-            .metrics-dashboard-grid { grid-template-columns: repeat(2, 11fr); }
-            .categories-flex-matrix { grid-template-columns: repeat(2, 11fr); }
-        }
+        .footer-legal-links { display: flex; gap: 16px; }
+        .footer-legal-links a { color: var(--text-muted); text-decoration: none; }
+        .footer-legal-links a:hover { color: var(--text-main); }
 
         @media (max-width: 768px) {
-            .sidebar-shell { width: 0; padding: 0; overflow: hidden; border: none; }
-            .app-viewport { margin-left: 0; padding: 24px; }
-            .top-control-shelf { flex-direction: column-reverse; align-items: stretch; }
-            .metrics-dashboard-grid { grid-template-columns: 11fr; }
-            .categories-flex-matrix { grid-template-columns: 11fr; }
-            .upgrade-promo-banner { flex-direction: column; align-items: start; padding: 24px; }
-            .btn-upgrade-action { width: 100%; text-align: center; }
+            .premium-header { padding: 14px 20px; }
+            .header-search-box { display: none; }
+            .dashboard-viewport { padding: 24px 16px; }
+            .hero-banner { padding: 24px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+            .profile-drawer { width: 100%; right: -100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="security-intercept-guard" id="global-auth-interceptor">
-        <div class="spinner-hardware-node"></div>
+    <!-- Full Screen Security Authentication Guard Overlay -->
+    <div id="auth-guard-screen">
+        <div class="spinner"></div>
+        <div class="guard-text">Verifying Security Session...</div>
     </div>
 
-    <nav class="sidebar-shell">
-        <div class="brand-block">
-            <i class="fa-solid fa-cubes brand-logo-icon"></i>
-            <span class="brand-title">Creators Vault</span>
+    <!-- Attenuator Filter Layer -->
+    <div id="brightness-overlay"></div>
+
+    <!-- Sticky Platform Header Shell -->
+    <header class="premium-header">
+        <a class="brand-container" href="dashboard.html">
+            <i class="fa-solid fa-shield-halved brand-icon"></i>
+            <span class="brand-text">Creators Vault</span>
+        </a>
+
+        <div class="header-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="platform-search" placeholder="Search digital resource nodes...">
         </div>
-        <ul class="nav-menu-list">
-            <li><a href="#" class="nav-link-item active-route"><i class="fa-solid fa-chart-pie"></i> Core Terminal</a></li>
-            <li><a href="reels.html" class="nav-link-item"><i class="fa-solid fa-clapperboard"></i> Reels Vault</a></li>
-            <li><a href="editing.html" class="nav-link-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Asset Bundles</a></li>
-            <li><a href="courses.html" class="nav-link-item"><i class="fa-solid fa-graduation-cap"></i> Courses Library</a></li>
-            <li><a href="software.html" class="nav-link-item"><i class="fa-solid fa-laptop-code"></i> Software Node</a></li>
-            <li><a href="games.html" class="nav-link-item"><i class="fa-solid fa-gamepad"></i> Game Storage</a></li>
-        </ul>
-    </nav>
 
-    <main class="app-viewport">
-        
-        <section class="top-control-shelf">
-            <div class="search-input-wrapper">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-bar-core" placeholder="Search system resources, asset matrix files...">
-            </div>
-            
-            <div class="user-widget-cluster">
-                <button class="theme-toggle-btn" id="theme-configuration-trigger" title="Switch Environment Matrix Theme">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-                
-                <div class="profile-trigger-card" id="profile-drawer-trigger">
-                    <img src="" alt="Profile Node Image" class="profile-avatar-frame" id="display-profile-avatar">
-                    <div class="profile-meta-text">
-                        <span class="profile-username" id="display-profile-name">Authenticating...</span>
-                        <span class="profile-badge-label">
-                            <span class="pulse-live-dot"></span> <span id="display-profile-tier">Tier Context</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <article class="upgrade-promo-banner" id="premium-marketing-banner" style="display: none;">
-            <div class="promo-content-block">
-                <span class="promo-tag-pill">Limited Vault Access Pass Active</span>
-                <h1 class="promo-main-heading">Upgrade to Vault Pro Lifetime Plan</h1>
-                <p class="promo-description">Unlock direct lightning-fast download links for premium multi-layer vertical reels packs, raw video development assets, premium enterprise editing software builds, and direct support desks.</p>
-            </div>
-            <button class="btn-upgrade-action" id="trigger-premium-checkout-pipeline">
-                <i class="fa-solid fa-bolt"></i> Upgrade to Vault Pro
+        <div class="header-right-actions">
+            <button class="header-btn" id="theme-toggle-btn" title="Toggle System Theme">
+                <i class="fa-solid fa-moon"></i>
             </button>
-        </article>
+            <button class="header-btn" id="bell-notification-mock" title="System Notifications">
+                <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="profile-avatar-trigger" id="drawer-open-btn">-</div>
+        </div>
+    </header>
 
-        <section class="metrics-dashboard-grid">
-            <div class="metric-data-card">
-                <div class="metric-icon-avatar"><i class="fa-solid fa-film"></i></div>
-                <div class="metric-details">
-                    <span class="metric-counter-display" data-target="1500">0</span>
-                    <span class="metric-label-text">Premium Reels Packs</span>
-                </div>
+    <!-- Main Dashboard Body Work Surface -->
+    <main class="dashboard-viewport">
+        <div class="page-header">
+            <h1>Dashboard</h1>
+            <p>Manage your premium digital resources from one secure place.</p>
+        </div>
+
+        <!-- Dynamic User Core Status Anchor Point -->
+        <div id="hero-banner-slot"></div>
+
+        <!-- Metric Statistics Grid Block -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-folder-tree"></i></div>
+                <div class="stat-info"><h3>7</h3><p>Categories Available</p></div>
             </div>
-            <div class="metric-data-card">
-                <div class="metric-icon-avatar"><i class="fa-solid fa-box-open"></i></div>
-                <div class="metric-details">
-                    <span class="metric-counter-display" data-target="450">0</span>
-                    <span class="metric-label-text">Asset Bundles</span>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-cubes"></i></div>
+                <div class="stat-info"><h3>50+</h3><p>Asset Bundles</p></div>
             </div>
-            <div class="metric-data-card">
-                <div class="metric-icon-avatar"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <div class="metric-details">
-                    <span class="metric-counter-display" data-target="120">0</span>
-                    <span class="metric-label-text">Expert Courses</span>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-film"></i></div>
+                <div class="stat-info"><h3>2000+</h3><p>High-Res Reels</p></div>
             </div>
-            <div class="metric-data-card">
-                <div class="metric-icon-avatar"><i class="fa-solid fa-compact-disc"></i></div>
-                <div class="metric-details">
-                    <span class="metric-counter-display" data-target="85">0</span>
-                    <span class="metric-label-text">Software & Games</span>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-key"></i></div>
+                <div class="stat-info"><h3>Lifetime</h3><p>Access Cleared</p></div>
             </div>
         </section>
 
+        <!-- Managed Asset Collection Segment -->
         <section>
-            <h2 class="categories-section-header">Vault Resource Infrastructure Modules</h2>
-            <div class="categories-flex-matrix">
-                
-                <a href="reels.html" class="category-asset-box">
-                    <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=600&auto=format&fit=crop" alt="Reels Category Image" class="category-media-frame">
-                    <div class="category-info-meta">
-                        <h3>Vertical Reels Matrix</h3>
-                        <p>High-converting ready-to-render editing packs, split sequences, and background visuals.</p>
-                    </div>
-                </a>
-
-                <a href="editing.html" class="category-asset-box">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop" alt="Asset Bundles Image" class="category-media-frame">
-                    <div class="category-info-meta">
-                        <h3>Video Asset Bundles</h3>
-                        <p>Raw overlay packs, cinematic LUT profiles, custom sound design, typography modules.</p>
-                    </div>
-                </a>
-
-                <a href="courses.html" class="category-asset-box">
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop" alt="Courses Library Image" class="category-media-frame">
-                    <div class="category-info-meta">
-                        <h3>Full Courses Library</h3>
-                        <p>Complete multi-module monetization guidelines, editing bootcamps, and visual strategy guides.</p>
-                    </div>
-                </a>
-
-                <a href="software.html" class="category-asset-box">
-                    <img src="https://images.unsplash.com/photo-1607799279861-4dd421887fb3?q=80&w=600&auto=format&fit=crop" alt="Software Node Image" class="category-media-frame">
-                    <div class="category-info-meta">
-                        <h3>Core Software Engines</h3>
-                        <p>Pre-configured desktop visual studio setups, rendering plugins, audio treatment kits.</p>
-                    </div>
-                </a>
-
-                <a href="games.html" class="category-asset-box">
-                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=600&auto=format&fit=crop" alt="Game Storage Image" class="category-media-frame">
-                    <div class="category-info-meta">
-                        <h3>PC Game Distribution Vault</h3>
-                        <p>Full deployment compressed high-tier gaming environments for benchmark evaluations.</p>
-                    </div>
-                </a>
-
-            </div>
+            <h2 class="section-subtitle">Premium Resource Inventories</h2>
+            <div class="categories-grid" id="categories-injection-frame"></div>
         </section>
-
-        <footer class="dashboard-footer">
-            <div>&copy; 2026 Creators Vault. Platform system architecture securely initialized.</div>
-            <div class="footer-compliance-links">
-                <a href="terms.html">Terms of Use</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="refund.html">Cancellation & Refund Policy</a>
-            </div>
-        </footer>
     </main>
 
-    <div class="settings-drawer-overlay" id="drawer-overlay-shield"></div>
-    <aside class="settings-drawer-panel" id="drawer-hardware-panel">
-        <div class="drawer-header-block">
-            <h2>Account Terminal Preferences</h2>
-            <button class="drawer-close-btn" id="drawer-dismiss-trigger"><i class="fa-solid fa-xmark"></i></button>
+    <!-- Right Side Sliding User Core Environment Workspace Drawer -->
+    <div class="drawer-overlay" id="drawer-bg-overlay"></div>
+    <aside class="profile-drawer" id="account-profile-drawer">
+        <div class="drawer-header">
+            <h3>Account Settings</h3>
+            <button class="header-btn" id="drawer-close-btn"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        
-        <div class="drawer-profile-segment">
-            <img src="" alt="Drawer Large Avatar Frame" class="drawer-avatar-large" id="drawer-profile-avatar-node">
-            <div>
-                <h3 id="drawer-profile-name-string">User Signature</h3>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;" id="drawer-profile-email-string">identity@domain.com</p>
+
+        <div class="drawer-body">
+            <div class="drawer-profile-summary">
+                <!-- Interactive Profile Area Linked with File Upload -->
+                <div class="drawer-avatar-large" id="drawer-avatar-label">
+                    <span id="avatar-initials-fallback">-</span>
+                    <div class="avatar-upload-overlay">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                </div>
+                <!-- Hidden file input node -->
+                <input type="file" id="hidden-avatar-input" accept="image/*">
+
+                <div class="drawer-email" id="drawer-email-label">Syncing user...</div>
+                <div class="drawer-membership-name" id="drawer-membership-label">Verifying system tier...</div>
+                <div id="drawer-badge-target"></div>
+                <div class="drawer-date" id="drawer-created-date-label"></div>
+            </div>
+
+            <!-- Customization Settings Module -->
+            <div class="drawer-section">
+                <div class="drawer-section-title">Visual Layout Preferences</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <label>Display Theme Mode</label>
+                        <p>Toggle between light and dark visualization layers</p>
+                    </div>
+                    <button class="header-btn" id="drawer-inline-theme-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
+                </div>
+                <div class="drawer-section" style="margin-bottom: 0;">
+                    <div class="setting-info">
+                        <label>Attenuator Coefficient (Brightness)</label>
+                        <p>Adjust system overlay dimming values</p>
+                    </div>
+                    <input type="range" min="30" max="100" value="100" class="brightness-slider" id="drawer-brightness-range">
+                </div>
+            </div>
+
+            <!-- Notification Rules Section -->
+            <div class="drawer-section">
+                <div class="drawer-section-title">Notification Pipeline Configurations</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <label>Product Catalog Updates</label>
+                        <p>Alerts on newly indexed package versions</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notif-products" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <label>Security Metric Alerts</label>
+                        <p>Real-time monitor tracking environment shifts</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notif-security" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <label>Exclusive Premium Offers</label>
+                        <p>Broadcast channel monitoring tier promotions</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notif-offers" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Security Action Interface Module -->
+            <div class="drawer-section">
+                <div class="drawer-section-title">Privacy & Platform Security</div>
+                <button class="btn-drawer-secondary" id="action-password-reset">
+                    <i class="fa-solid fa-envelope-open-text"></i> Send Password Reset Link
+                </button>
             </div>
         </div>
 
-        <div class="drawer-action-list">
-            <button class="drawer-action-btn" id="action-password-reset">
-                <i class="fa-solid fa-key"></i> Transmit Password Reset Token
-            </button>
-            <button class="drawer-action-btn btn-danger" id="action-session-logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Disconnect Session Terminal
+        <div class="drawer-footer">
+            <button class="btn-logout" id="action-session-logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Terminate Active Session
             </button>
         </div>
     </aside>
 
-    <div class="toast-notification-container" id="toast-system-dock"></div>
+    <!-- Global Application Toast Container System -->
+    <div id="toast-box-mount"></div>
 
+    <!-- Complete Clean Enterprise Footprint Section -->
+    <footer class="premium-footer">
+        <div class="footer-grid">
+            <div class="footer-brand-side">
+                <h4 class="brand-text">Creators Vault</h4>
+                <p>Enterprise-grade digital artifact storage distribution platform protecting high-value creator toolkits.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Navigation</h5>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="#" onclick="document.getElementById('platform-search').focus(); return false;">Categories</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Support Channels</h5>
+                <ul>
+                    <li><a href="mailto:support@creatorsvault.com"><i class="fa-solid fa-envelope" style="margin-right:5px;"></i> support@creatorsvault.com</a></li>
+                    <li><a href="#DISCORD_LINK" class="btn-discord"><i class="fa-brands fa-discord"></i> Join Community Discord</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Legal Terms</h5>
+                <ul>
+                    <!-- Activated exact file mappings for compliance standard pages -->
+                    <li><a href="terms.html">Terms of Use</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 Creators Vault. All systems operational.</div>
+            <div class="footer-legal-links">
+                <a href="#">Security Audits Verified</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- --- CORE INTERFACE LOGICAL ENGINE APPLICATION SCRIPT --- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Firebase Storage infrastructure modules imported
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        // Firebase Cloud Core Infrastructure Target Keys Config Mapping
         const firebaseConfig = {
-            apiKey: "AIzaSyAsYOUR_REAL_API_KEY_STRING",
-            authDomain: "creators-vault-prod.firebaseapp.com",
-            projectId: "creators-vault-prod",
-            storageBucket: "creators-vault-prod.appspot.com",
-            messagingSenderId: "999999999999",
-            appId: "1:999999999999:web:aaaaaaaaaaaaaaaa"
+            apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+            authDomain: "creators-vaults.firebaseapp.com",
+            projectId: "creators-vaults",
+            storageBucket: "creators-vaults.firebasestorage.app",
+            messagingSenderId: "739165070040",
+            appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+            measurementId: "G-MM742MSP09"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app); // Storage initialize kela
 
-        // System Core Runtime Tracking Variables
         let currentAuthenticatedUser = null;
-        let globalUserMembershipTierState = 'free';
+        let activeUserWorkspaceRecord = null;
 
-        // Interface UI Component Object Maps
-        const globalAuthenticationGuardShield = document.getElementById('global-auth-interceptor');
-        const applicationMarketingUpsellBanner = document.getElementById('premium-marketing-banner');
+        const staticCategoryConfigurations = [
+            { id: "softwares", icon: "fa-code", title: "Softwares", desc: "Production utility systems, pipeline components, and verified continuous development tools.", target: "softwares.html", count: "142 Packaged Assets" },
+            { id: "mobile-apks", icon: "fa-android", title: "Mobile APKs", desc: "Premium development package environments, verified sandboxed applications, and portable tools.", target: "mobile-apks.html", count: "88 Secure Packages" },
+            { id: "pc-games", icon: "fa-gamepad", title: "PC Games", desc: "High-performance application assemblies configured for digital asset simulation test platforms.", target: "pc-games.html", count: "65 Direct Builds" },
+            { id: "reels-packs", icon: "fa-video", title: "Reels Packs", desc: "High vertical aspect ratio content sequences meticulously engineered for strategic media metrics.", target: "reels-packs.html", count: "2,150 High-Res Reels" },
+            { id: "editing-assets", icon: "fa-wand-magic-sparkles", title: "Editing Assets", desc: "Professional LUTs matrices, audio design components, transitions, and production templates.", target: "editing-assets.html", count: "512 Component Assets" },
+            { id: "courses", icon: "fa-graduation-cap", title: "Courses", desc: "Advanced conceptual blueprints and production knowledge systems designed by domain veterans.", target: "courses.html", count: "34 Full Modules" },
+            { id: "extra", icon: "fa-folder-plus", title: "Extra", desc: "Experimental workflows, unclassified automation extensions, and rare resource configurations.", target: "extra.html", count: "19 Rare Items" }
+        ];
 
-        /* --- THEME SYNC ENGINE --- */
-        const cachedThemePreferences = localStorage.getItem('cv_saved_theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', cachedThemePreferences);
-        updateThemeToggleVisualElements(cachedThemePreferences);
+        /* --- GLOBAL ASYNC EVENT TOAST HANDLER ROUTINE --- */
+        const toastMountNode = document.getElementById('toast-box-mount');
+        function spawnPremiumToast(titleString, textBody, statusType = 'info') {
+            const toastFrame = document.createElement('div');
+            toastFrame.className = `toast-item ${statusType}`;
+            
+            let descriptiveIcon = 'fa-circle-info';
+            if (statusType === 'success') descriptiveIcon = 'fa-circle-check';
+            if (statusType === 'error') descriptiveIcon = 'fa-circle-exclamation';
+            if (statusType === 'warning') descriptiveIcon = 'fa-triangle-exclamation';
 
-        document.getElementById('theme-configuration-trigger').addEventListener('click', () => {
-            const activeConfigurationState = document.documentElement.getAttribute('data-theme');
-            const calculatedTargetState = (activeConfigurationState === 'dark') ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', calculatedTargetState);
-            localStorage.setItem('cv_saved_theme', calculatedTargetState);
-            updateThemeToggleVisualElements(calculatedTargetState);
-        });
+            toastFrame.innerHTML = `
+                <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+                <div class="toast-body">
+                    <h5>${titleString}</h5>
+                    <p>${textBody}</p>
+                </div>
+                <button class="toast-close"><i class="fa-solid fa-xmark"></i></button>
+                <div class="toast-progress"></div>
+            `;
 
-        function updateThemeToggleVisualElements(targetStateString) {
-            const buttonIconElement = document.querySelector('#theme-configuration-trigger i');
-            if(targetStateString === 'dark') {
-                buttonIconElement.className = 'fa-solid fa-sun';
+            toastMountNode.appendChild(toastFrame);
+            setTimeout(() => toastFrame.classList.add('show'), 20);
+
+            const dynamicProgressNode = toastFrame.querySelector('.toast-progress');
+            dynamicProgressNode.style.transform = 'scaleX(1)';
+            dynamicProgressNode.style.transition = 'transform 4000ms linear';
+            setTimeout(() => { dynamicProgressNode.style.transform = 'scaleX(0)'; }, 30);
+
+            const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+
+            toastFrame.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(decayTimerReference);
+                clearToastInstance(toastFrame);
+            });
+        }
+        function clearToastInstance(targetNode) {
+            targetNode.classList.remove('show');
+            targetNode.addEventListener('transitionend', () => targetNode.remove());
+        }
+
+        /* --- VISUAL INTERFACE CORE STATE MANIPULATIONS --- */
+        const mainThemeTrigger = document.getElementById('theme-toggle-btn');
+        const drawerThemeTrigger = document.getElementById('drawer-inline-theme-btn');
+        const brightnessControlInput = document.getElementById('drawer-brightness-range');
+        const brightnessOverlayMask = document.getElementById('brightness-overlay');
+        const rootElement = document.documentElement;
+
+        function applyInterfaceTheme(targetMode) {
+            rootElement.setAttribute('data-theme', targetMode);
+            localStorage.setItem('cv_saved_theme', targetMode);
+            const descriptiveIcon = targetMode === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            mainThemeTrigger.innerHTML = descriptiveIcon;
+        }
+        applyInterfaceTheme(localStorage.getItem('cv_saved_theme') || 'dark');
+
+        const structuralThemeToggleLambda = () => {
+            const alternativeThemeState = rootElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyInterfaceTheme(alternativeThemeState);
+        };
+        mainThemeTrigger.addEventListener('click', structuralThemeToggleLambda);
+        drawerThemeTrigger.addEventListener('click', structuralThemeToggleLambda);
+
+        function updateAttenuatorCoefficient(percentageValue) {
+            const inverseFactorAlpha = (100 - percentageValue) / 100;
+            brightnessOverlayMask.style.opacity = inverseFactorAlpha;
+            localStorage.setItem('cv_brightness_coefficient', percentageValue);
+        }
+        const cachedBrightnessValue = localStorage.getItem('cv_brightness_coefficient') || '100';
+        brightnessControlInput.value = cachedBrightnessValue;
+        updateAttenuatorCoefficient(cachedBrightnessValue);
+        brightnessControlInput.addEventListener('input', (event) => updateAttenuatorCoefficient(event.target.value));
+
+        /* --- SYSTEM SIDE DRAWER CONTROL LOGIC --- */
+        const openDrawerBtn = document.getElementById('drawer-open-btn');
+        const closeDrawerBtn = document.getElementById('drawer-close-btn');
+        const drawerOverlayBackdrop = document.getElementById('drawer-bg-overlay');
+        const drawerContainerBox = document.getElementById('account-profile-drawer');
+
+        function modifyDrawerVisibilityState(displayStateFlag) {
+            if (displayStateFlag) {
+                drawerContainerBox.classList.add('open');
+                drawerOverlayBackdrop.classList.add('open');
             } else {
-                buttonIconElement.className = 'fa-solid fa-moon';
+                drawerContainerBox.classList.remove('open');
+                drawerOverlayBackdrop.classList.remove('open');
             }
         }
+        openDrawerBtn.addEventListener('click', () => modifyDrawerVisibilityState(true));
+        closeDrawerBtn.addEventListener('click', () => modifyDrawerVisibilityState(false));
+        drawerOverlayBackdrop.addEventListener('click', () => modifyDrawerVisibilityState(false));
 
-        /* --- PROFILE SETTINGS SLIDEOUT DRAWER COUPLINGS --- */
-        const profileTriggerCardNode = document.getElementById('profile-drawer-trigger');
-        const settingsDrawerPanelNode = document.getElementById('drawer-hardware-panel');
-        const drawerOverlayShieldNode = document.getElementById('drawer-overlay-shield');
-        const drawerDismissTriggerNode = document.getElementById('drawer-dismiss-trigger');
+        /* --- PROFILE PICTURE PERMANENT UPLOAD LOGIC --- */
+        const largeAvatarLabel = document.getElementById('drawer-avatar-label');
+        const hiddenAvatarInput = document.getElementById('hidden-avatar-input');
 
-        profileTriggerCardNode.addEventListener('click', () => {
-            drawerOverlayShieldNode.style.display = 'block';
-            setTimeout(() => {
-                drawerOverlayShieldNode.style.opacity = '1';
-                settingsDrawerPanelNode.style.right = '0px';
-            }, 50);
+        largeAvatarLabel.addEventListener('click', () => {
+            hiddenAvatarInput.click();
         });
 
-        function dismissDrawerPanelHierarchy() {
-            settingsDrawerPanelNode.style.right = '-400px';
-            drawerOverlayShieldNode.style.opacity = '0';
-            setTimeout(() => { drawerOverlayShieldNode.style.display = 'none'; }, 400);
-        }
+        hiddenAvatarInput.addEventListener('change', async (event) => {
+            const profileFile = event.target.files[0];
+            if (!profileFile) return;
 
-        drawerDismissTriggerNode.addEventListener('click', dismissDrawerPanelHierarchy);
-        drawerOverlayShieldNode.addEventListener('click', dismissDrawerPanelHierarchy);
+            if (!currentAuthenticatedUser) {
+                spawnPremiumToast('Authentication Error', 'Active profile session not discovered.', 'error');
+                return;
+            }
 
-        /* --- CORE APPLICATION SECURITY AUTH MONITOR --- */
-        onAuthStateChanged(auth, async (authenticatedUserPayload) => {
-            if (authenticatedUserPayload) {
-                currentAuthenticatedUser = authenticatedUserPayload;
-                
-                // Fetch Profile document data matrix from target document route
-                const databaseProfileDocumentReference = doc(db, "users", authenticatedUserPayload.uid);
-                try {
-                    const documentSnapshotDataVector = await getDoc(databaseProfileDocumentReference);
-                    
-                    let evaluatedUsername = authenticatedUserPayload.displayName || "Content Creator";
-                    let evaluatedAvatarURI = authenticatedUserPayload.photoURL || "https://api.dicebear.com/7.x/bottts/svg?seed=" + authenticatedUserPayload.uid;
-                    globalUserMembershipTierState = 'free';
+            spawnPremiumToast('Uploading Image', 'Connecting with cluster storage engines...', 'info');
 
-                    if (documentSnapshotDataVector.exists()) {
-                        const underlyingDataPayload = documentSnapshotDataVector.data();
-                        if(underlyingDataPayload.username) evaluatedUsername = underlyingDataPayload.username;
-                        if(underlyingDataPayload.avatarUrl) evaluatedAvatarURI = underlyingDataPayload.avatarUrl;
-                        if(underlyingDataPayload.tier) globalUserMembershipTierState = underlyingDataPayload.tier;
-                    } else {
-                        // Safe state initialization mapping fallback execution
-                        await setDoc(databaseProfileDocumentReference, {
-                            email: authenticatedUserPayload.email,
-                            username: evaluatedUsername,
-                            avatarUrl: evaluatedAvatarURI,
-                            tier: 'free',
-                            createdAt: serverTimestamp()
-                        });
-                    }
+            try {
+                // 1. Firebase Storage bucket paths mapped uniquely by UID
+                const storageBucketRef = ref(storage, `user_avatars/${currentAuthenticatedUser.uid}/avatar.jpg`);
+                await uploadBytes(storageBucketRef, profileFile);
 
-                    // Mount parameters to physical DOM interfaces
-                    document.getElementById('display-profile-name').textContent = evaluatedUsername;
-                    document.getElementById('display-profile-avatar').src = evaluatedAvatarURI;
-                    document.getElementById('drawer-profile-name-string').textContent = evaluatedUsername;
-                    document.getElementById('drawer-profile-avatar-node').src = evaluatedAvatarURI;
-                    document.getElementById('drawer-profile-email-string').textContent = authenticatedUserPayload.email;
+                // 2. Fetch runtime explicit public access URL string
+                const targetPublicDownloadURL = await getDownloadURL(storageBucketRef);
 
-                    const activeTierBadgeNode = document.getElementById('display-profile-tier');
-                    if (globalUserMembershipTierState === 'premium') {
-                        activeTierBadgeNode.textContent = "Vault Pro Member";
-                        activeTierBadgeNode.style.color = "var(--accent-brand)";
-                        applicationMarketingUpsellBanner.style.display = 'none';
-                    } else {
-                        activeTierBadgeNode.textContent = "Standard Tier Account";
-                        activeTierBadgeNode.style.color = "var(--text-muted)";
-                        applicationMarketingUpsellBanner.style.display = 'flex';
-                    }
+                // 3. Keep Firestore users configuration node permanently mapped
+                const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
+                await updateDoc(userDocRef, {
+                    photoURL: targetPublicDownloadURL
+                });
 
-                    // Remove initial authentication screen locker
-                    globalAuthenticationGuardShield.style.opacity = '0';
-                    setTimeout(() => { globalAuthenticationGuardShield.style.display = 'none'; }, 500);
-                    
-                    // Trigger dynamic counters rolling animation sequence loop
-                    initializeMicroCountersFramework();
-
-                } catch (documentFetchFaultException) {
-                    console.error(documentFetchFaultException);
-                    spawnPremiumToast('Profile Verification Fault', 'System engines could not map target database profile values.', 'error');
+                // Update runtime current memory metrics
+                if (activeUserWorkspaceRecord) {
+                    activeUserWorkspaceRecord.photoURL = targetPublicDownloadURL;
+                    manifestDashboardLayoutData(activeUserWorkspaceRecord);
                 }
-            } else {
-                // Return unauthorized connections to onboarding portal pipeline
-                window.location.replace("index.html");
+
+                spawnPremiumToast('Profile Updated', 'Your profile presentation element synchronized successfully.', 'success');
+            } catch (storageFaultLogs) {
+                console.error("Storage transactional processing pipeline crashed:", storageFaultLogs);
+                spawnPremiumToast('Upload Refused', 'Storage system denied permissions kiva configuration missing.', 'error');
             }
         });
 
-        /* --- RAZORPAY SECURE TRANSACTION GATEWAY INTEGRATION --- */
-        document.getElementById('trigger-premium-checkout-pipeline').addEventListener('click', () => {
-            if(!currentAuthenticatedUser) return;
+        /* --- NOTIFICATION PREFERENCES HANDLING --- */
+        const trackingNotificationChannelMap = {
+            products: document.getElementById('notif-products'),
+            security: document.getElementById('notif-security'),
+            offers: document.getElementById('notif-offers')
+        };
+        Object.keys(trackingNotificationChannelMap).forEach(keyID => {
+            const storedValue = localStorage.getItem(`cv_notif_pipeline_${keyID}`);
+            if (storedValue !== null) trackingNotificationChannelMap[keyID].checked = storedValue === 'true';
+            
+            trackingNotificationChannelMap[keyID].addEventListener('change', (e) => {
+                localStorage.setItem(`cv_notif_pipeline_${keyID}`, e.target.checked);
+                spawnPremiumToast('Configuration Synchronized', 'Your tracking preference vector state update was applied successfully.', 'success');
+            });
+        });
 
-            var checkoutConfigurationPayloadOptions = {
-                "key": "rzp_live_YOUR_LIVE_KEY_VALUE_HERE", // Add live token key string identifier here
-                "amount": "49900", // Evaluates to ₹499.00 INR currency specification format
+        document.getElementById('bell-notification-mock').addEventListener('click', () => {
+            spawnPremiumToast('System Pipeline Active', 'No critical infrastructure alert notifications are pending in your account queue.', 'info');
+        });
+
+        /* --- LIVE RAZORPAY PAYMENT SYSTEM INTEGRATION --- */
+        window.startPayment = function() {
+            if (!currentAuthenticatedUser) {
+                spawnPremiumToast('Authentication Error', 'You must be signed in to perform this setup transaction.', 'error');
+                return;
+            }
+
+            const paymentOptions = {
+                "key": "rzp_live_T4fJA5NyF26FgY", 
+                "amount": 19900, // INR 199.00 (represented in paise)
                 "currency": "INR",
                 "name": "Creators Vault",
-                "description": "Vault Pro Lifetime Access Package Upgrade",
-                "image": "https://api.dicebear.com/7.x/identicon/svg?seed=vaultlogo",
-                "handler": async function (transactionResponseMapping){
-                    // Show loading locker screen immediately to prevent double submission
-                    globalAuthenticationGuardShield.style.display = 'flex';
-                    globalAuthenticationGuardShield.style.opacity = '1';
-
+                "description": "Lifetime Vault Pro Access Purchase Bundle",
+                "image": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/shield-halved.svg",
+                "handler": async function (paymentResponse) {
+                    spawnPremiumToast('Payment Success', 'Verification received! Synchronizing secure database nodes...', 'success');
+                    
                     try {
-                        const targetingUserDocumentReference = doc(db, "users", currentAuthenticatedUser.uid);
+                        const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
+                        await updateDoc(userDocRef, {
+                            paid: true,
+                            membershipName: "Vault Pro Lifetime",
+                            premiumActivationTimestamp: serverTimestamp(),
+                            razorpayPaymentId: paymentResponse.razorpay_payment_id
+                        });
                         
-                        // ⚡ SAFE BACKEND WRITE FOR AUTO-UPGRADE & EMAIL EXTENSION TRIGGER
-                        await setDoc(targetingUserDocumentReference, {
-                            tier: 'premium',
-                            premiumTransactionId: transactionResponseMapping.razorpay_payment_id,
-                            premiumActivatedAt: serverTimestamp()
-                        }, { merge: true });
-
-                        // Explicit local variables configuration alignment mapping
-                        globalUserMembershipTierState = 'premium';
-                        document.getElementById('display-profile-tier').textContent = "Vault Pro Member";
-                        document.getElementById('display-profile-tier').style.color = "var(--accent-brand)";
-                        applicationMarketingUpsellBanner.style.display = 'none';
-
-                        spawnPremiumToast('Transaction Verified! 🎉', 'Welcome to Vault Pro! Check your email for purchase invoice.', 'success');
-                    } catch(writeFailureError) {
-                        console.error(writeFailureError);
-                        spawnPremiumToast('Database Write Fault', 'Payment was successful but account update failed. Contact support@creatorsvault.com immediately.', 'error');
-                    } finally {
-                        globalAuthenticationGuardShield.style.opacity = '0';
-                        setTimeout(() => { globalAuthenticationGuardShield.style.display = 'none'; }, 500);
+                        spawnPremiumToast('Account Upgraded', 'Your lifetime premium environment matrix has been successfully unlocked!', 'success');
+                        
+                        if (activeUserWorkspaceRecord) {
+                            activeUserWorkspaceRecord.paid = true;
+                            activeUserWorkspaceRecord.membershipName = "Vault Pro Lifetime";
+                            manifestDashboardLayoutData(activeUserWorkspaceRecord);
+                        }
+                    } catch (dbUpdateError) {
+                        console.error("Firestore database status tier updates failure logs:", dbUpdateError);
+                        spawnPremiumToast('Database Sync Error', 'Payment confirmed but profile updating step failed. Contact operations team.', 'error');
                     }
                 },
                 "prefill": {
-                    "name": currentAuthenticatedUser.displayName || "",
                     "email": currentAuthenticatedUser.email || ""
                 },
-                "theme": { "color": "#3b82f6" },
-                "modal": {
-                    "ondismiss": function(){
-                        spawnPremiumToast('Checkout Aborted', 'Transaction pipeline interface terminated by client.', 'error');
-                    }
+                "theme": {
+                    "color": "#2563eb"
                 }
             };
 
-            var paymentGatewayCoreInstance = new Razorpay(checkoutConfigurationPayloadOptions);
-            paymentGatewayCoreInstance.open();
+            try {
+                const razorpayPaymentGatewayObject = new Razorpay(paymentOptions);
+                razorpayPaymentGatewayObject.on('payment.failed', function (failedResponse) {
+                    spawnPremiumToast('Transaction Aborted', failedResponse.error.description || 'The secure asset payment process was cancelled or refused.', 'error');
+                });
+                razorpayPaymentGatewayObject.open();
+            } catch (checkoutInitializationFault) {
+                console.error("Razorpay SDK launch breakdown tracking logic errors:", checkoutInitializationFault);
+                spawnPremiumToast('Gateway Framework Defect', 'Unable to resolve external payment scripts module components.', 'error');
+            }
+        };
+
+        /* --- MAIN VIEWPORT INJECTION AND GENERATION --- */
+        function manifestDashboardLayoutData(userRecord) {
+            const heroContainerTarget = document.getElementById('hero-banner-slot');
+            const categoriesInjectionTarget = document.getElementById('categories-injection-frame');
+            const isPremiumVerifiedUser = userRecord.paid === true;
+
+            if (!isPremiumVerifiedUser) {
+                heroContainerTarget.innerHTML = `
+                    <div class="hero-banner locked">
+                        <div class="hero-content">
+                            <h2>Premium Vault Locked</h2>
+                            <p>Unlock lifetime access to all digital product categories for only ₹199.</p>
+                            <div class="trust-row">
+                                <span><i class="fa-solid fa-circle-check"></i> Secure payment</span>
+                                <span><i class="fa-solid fa-circle-check"></i> Instant access</span>
+                                <span><i class="fa-solid fa-circle-check"></i> Lifetime validity</span>
+                            </div>
+                        </div>
+                        <button class="btn-upgrade" onclick="startPayment()">
+                            <i class="fa-solid fa-crown"></i> Buy Lifetime Access
+                        </button>
+                    </div>
+                `;
+            } else {
+                heroContainerTarget.innerHTML = `
+                    <div class="hero-banner unlocked">
+                        <div class="hero-content">
+                            <h2>Lifetime Access Active</h2>
+                            <p>Welcome back to your premium digital vault ecosystem environment hub.</p>
+                            <div class="trust-row">
+                                <span style="color:#10b981;"><i class="fa-solid fa-shield-checkmark"></i> Fully Verified Secure Environment Core</span>
+                            </div>
+                        </div>
+                        <span class="badge-ui premium"><i class="fa-solid fa-circle-check"></i> Active Lifetime Profile</span>
+                    </div>
+                `;
+            }
+
+            categoriesInjectionTarget.innerHTML = '';
+            staticCategoryConfigurations.forEach(categoryNode => {
+                const functionalCardWrapper = document.createElement('div');
+                functionalCardWrapper.className = `category-card ${!isPremiumVerifiedUser ? 'is-locked' : ''}`;
+                
+                let navigationDirectiveMarkup = `href="${categoryNode.target}"`;
+                if (!isPremiumVerifiedUser) {
+                    navigationDirectiveMarkup = `onclick="spawnPremiumToast('Upgrade Required', 'The category requested demands an active verified digital account authorization tier state.', 'error'); event.preventDefault();" href="#"`;
+                }
+
+                functionalCardWrapper.innerHTML = `
+                    <div class="card-top">
+                        <div class="cat-icon-box"><i class="fa-solid ${categoryNode.icon}"></i></div>
+                        <span class="status-chip ${isPremiumVerifiedUser ? 'unlocked' : 'locked'}">
+                            ${isPremiumVerifiedUser ? '<i class="fa-solid fa-lock-open"></i> Unlocked' : '<i class="fa-solid fa-lock"></i> Locked'}
+                        </span>
+                    </div>
+                    <h3>${categoryNode.title}</h3>
+                    <p>${categoryNode.desc}</p>
+                    <div class="card-footer">
+                        <span class="item-counter">${categoryNode.count}</span>
+                        <a class="btn-open-cat" ${navigationDirectiveMarkup}>
+                            Open Vault <i class="fa-solid fa-arrow-right-long" style="font-size:0.75rem;"></i>
+                        </a>
+                    </div>
+                `;
+                categoriesInjectionTarget.appendChild(functionalCardWrapper);
+            });
+
+            document.getElementById('drawer-email-label').textContent = userRecord.email;
+            document.getElementById('drawer-membership-label').textContent = userRecord.membershipName;
+            
+            // Dynamic Image Rendering Engine for Header & Drawer Profile elements
+            const standardFallbackLetter = userRecord.email ? userRecord.email.charAt(0).toUpperCase() : 'U';
+            
+            if (userRecord.photoURL) {
+                openDrawerBtn.innerHTML = `<img src="${userRecord.photoURL}" alt="User Avatar">`;
+                largeAvatarLabel.innerHTML = `<img src="${userRecord.photoURL}" alt="User Avatar"><div class="avatar-upload-overlay"><i class="fa-solid fa-camera"></i></div>`;
+            } else {
+                openDrawerBtn.textContent = standardFallbackLetter;
+                largeAvatarLabel.innerHTML = `<span id="avatar-initials-fallback">${standardFallbackLetter}</span><div class="avatar-upload-overlay"><i class="fa-solid fa-camera"></i></div>`;
+            }
+
+            const badgeOutputSlot = document.getElementById('drawer-badge-target');
+            if (isPremiumVerifiedUser) {
+                badgeOutputSlot.innerHTML = `<span class="badge-ui premium"><i class="fa-solid fa-crown"></i> Vault Pro Lifetime</span>`;
+            } else {
+                badgeOutputSlot.innerHTML = `<span class="badge-ui free"><i class="fa-solid fa-user-gear"></i> Explorer Access</span>`;
+            }
+
+            if (userRecord.createdAt) {
+                const transformedDateInstance = userRecord.createdAt.toDate ? userRecord.createdAt.toDate() : new Date(userRecord.createdAt);
+                document.getElementById('drawer-created-date-label').textContent = `Account Created: ${transformedDateInstance.toLocaleDateString()}`;
+            }
+        }
+
+        /* --- SELECTION SEARCH QUERY MANAGEMENT --- */
+        document.getElementById('platform-search').addEventListener('input', (event) => {
+            const normalQueryValue = event.target.value.toLowerCase().trim();
+            const instantiatedCardNodes = document.querySelectorAll('.category-card');
+            
+            instantiatedCardNodes.forEach((cardNode, indexingRef) => {
+                const collectionTextHaystack = staticCategoryConfigurations[indexingRef].title.toLowerCase() + " " + staticCategoryConfigurations[indexingRef].desc.toLowerCase();
+                cardNode.style.display = collectionTextHaystack.includes(normalQueryValue) ? 'flex' : 'none';
+            });
         });
 
-        /* --- PREMIUM SYSTEM TOAST BUILDER ENGINE --- */
-        function spawnPremiumToast(headingText, messageBodyText, toastTypeDescriptor = 'success') {
-            const targetDockContainer = document.getElementById('toast-system-dock');
-            const toastNodeElement = document.createElement('div');
-            toastNodeElement.className = 'premium-toast-node';
-            
-            const statusIconMarkup = (toastTypeDescriptor === 'success') 
-                ? `<i class="fa-solid fa-circle-check toast-status-icon toast-success-icon"></i>`
-                : `<i class="fa-solid fa-circle-xmark toast-status-icon toast-error-icon"></i>`;
+        /* --- AUTH PROTOCOL SECURITY MONITOR PIPELINE --- */
+        const globalAuthenticationGuardShield = document.getElementById('auth-guard-screen');
 
-            toastNodeElement.innerHTML = `
-                ${statusIconMarkup}
-                <div class="toast-text-block">
-                    <h4>${headingText}</h4>
-                    <p>${messageBodyText}</p>
-                </div>
-            `;
+        onAuthStateChanged(auth, async (networkUserContext) => {
+            if (!networkUserContext) {
+                window.location.href = 'index.html';
+                return;
+            }
 
-            targetDockContainer.appendChild(toastNodeElement);
-            
-            // Trigger layout slide entry physics frame update sequence
-            setTimeout(() => {
-                toastNodeElement.style.opacity = '1';
-                toastNodeElement.style.transform = 'translateY(0)';
-            }, 50);
+            currentAuthenticatedUser = networkUserContext;
+            const operationalUserRecordReference = doc(db, "users", networkUserContext.uid);
 
-            // Life cycle garbage collection sequence schedule
-            setTimeout(() => {
-                toastNodeElement.style.opacity = '0';
-                toastNodeElement.style.transform = 'translateY(-20px)';
-                setTimeout(() => { toastNodeElement.remove(); }, 400);
-            }, 4000);
-        }
+            try {
+                const functionalSnapshot = await getDoc(operationalUserRecordReference);
 
-        /* --- STATS COUNTERS RUNTIME ROLLING ANIMATION EFFECT --- */
-        function initializeMicroCountersFramework() {
-            const allCounterDisplayNodes = document.querySelectorAll('.metric-counter-display');
-            
-            allCounterDisplayNodes.forEach(counterNode => {
-                const ceilingTargetValue = parseInt(counterNode.getAttribute('data-target'), 10);
-                const stepIncrementValue = Math.ceil(ceilingTargetValue / 60); // Calculates frame iteration values
-                let structuralCurrentValue = 0;
+                if (!functionalSnapshot.exists()) {
+                    const foundationalUserStructureValues = {
+                        uid: networkUserContext.uid,
+                        email: networkUserContext.email,
+                        paid: false,
+                        role: "user",
+                        membershipName: "Explorer Access",
+                        createdAt: serverTimestamp(),
+                        lastLoginAt: serverTimestamp()
+                    };
+                    await setDoc(operationalUserRecordReference, foundationalUserStructureValues);
+                    activeUserWorkspaceRecord = foundationalUserStructureValues;
+                } else {
+                    await updateDoc(operationalUserRecordReference, { lastLoginAt: serverTimestamp() });
+                    activeUserWorkspaceRecord = functionalSnapshot.data();
+                }
 
-                const numericTicksIntervalTimer = setInterval(() => {
-                    structuralCurrentValue += stepIncrementValue;
-                    if (structuralCurrentValue >= ceilingTargetValue) {
-                        counterNode.textContent = ceilingTargetValue + "+";
-                        clearInterval(numericTicksIntervalTimer);
-                    } else {
-                        counterNode.textContent = structuralCurrentValue;
-                    }
-                }, 20); // 20ms refresh loop cycle ticks
-            });
-        }
+                manifestDashboardLayoutData(activeUserWorkspaceRecord);
+                
+                globalAuthenticationGuardShield.style.transition = 'opacity 0.35s ease';
+                globalAuthenticationGuardShield.style.opacity = '0';
+                setTimeout(() => globalAuthenticationGuardShield.style.display = 'none', 350);
+
+            } catch (cloudDataClusterFailure) {
+                console.error("Infrastructure Firestore operational read-write fault tracking log:", cloudDataClusterFailure);
+                spawnPremiumToast('Cloud Synchronization Failure', 'Failed to retrieve cloud data. Activating transient secure offline read-only fallback mode.', 'error');
+                
+                activeUserWorkspaceRecord = {
+                    uid: networkUserContext.uid,
+                    email: networkUserContext.email,
+                    paid: false,
+                    role: "user",
+                    membershipName: "Explorer Access (Fallback State)"
+                };
+                manifestDashboardLayoutData(activeUserWorkspaceRecord);
+                globalAuthenticationGuardShield.style.display = 'none';
+            }
+        });
 
         /* --- DRAWER TERMINAL ACTION EVENT HANDLERS --- */
         document.getElementById('action-password-reset').addEventListener('click', async () => {
             if (!currentAuthenticatedUser || !currentAuthenticatedUser.email) return;
             try {
                 await sendPasswordResetEmail(auth, currentAuthenticatedUser.email);
-                dismissDrawerPanelHierarchy();
                 spawnPremiumToast('Security Reset Payload Outbound', 'A secure instruction validation link has been directed to your email address channel inbox.', 'success');
             } catch (resetExecutionFault) {
                 console.error(resetExecutionFault);
@@ -1132,7 +1403,6 @@
 
         document.getElementById('action-session-logout').addEventListener('click', async () => {
             try {
-                dismissDrawerPanelHierarchy();
                 globalAuthenticationGuardShield.style.display = 'flex';
                 globalAuthenticationGuardShield.style.opacity = '1';
                 await signOut(auth);
