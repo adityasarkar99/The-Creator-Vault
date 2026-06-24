@@ -268,7 +268,7 @@
         .hero-banner h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
         .hero-banner p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
         .stats-row { display: flex; gap: 32px; flex-wrap: wrap; }
-        .stat-node { display: flex; flex-direction: column; }
+        .stats-row .stat-node { display: flex; flex-direction: column; }
         .stat-node .num { font-size: 1.4rem; font-weight: 800; color: var(--accent-brand); }
         .stat-node .lbl { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
 
@@ -327,12 +327,25 @@
             flex-direction: column;
             position: relative;
         }
+        
+        /* FIXED: Thumbnail aspect-ratio and image alignment fix */
         .card-thumbnail-box {
-            position: relative; width: 100%; height: 165px;
-            border-radius: 10px; background: var(--bg-input);
-            overflow: hidden; margin-bottom: 14px;
+            position: relative; 
+            width: 100%; 
+            height: 175px;
+            border-radius: 10px; 
+            background: var(--bg-input);
+            overflow: hidden; 
+            margin-bottom: 14px;
         }
-        .card-thumbnail-box img { width: 100%; height: 100%; object-fit: cover; }
+        .card-thumbnail-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            object-position: center;
+            display: block;
+        }
+        
         .badge-absolute {
             position: absolute; top: 10px; right: 10px;
             padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;
@@ -561,7 +574,7 @@
         // Dynamic Filtering Array extracted cleanly from text parameters
         const staticCategoryArray = ["All", "Simulator", "Tactical Shooter", "RPG", "Action", "City Builder", "Adventure", "Classic Shooter", "MMO", "Strategy", "Battle Royale", "Racing", "Indie", "Space Exploration", "Survival", "Puzzle", "Horror"];
 
-        // FULL HARDWARE DATA EXPANSION ARRAY FOR ALL 52 GAMES (NO SHORTCUTS OR PLUGINS REMOVED)
+        // FULL HARDWARE DATA EXPANSION ARRAY FOR ALL 52 GAMES
         const gameBundles = [
             { image: "G15.webp", title: "American Truck Simulator", subtitle: "Full Version | Simulator", info: "Experience legendary American trucks and deliver various cargoes across sunny California and sandy Nevada.", category: "Simulator", link: "https://se7en.ws/american-truck-simulator/?lang=en" },
             { image: "G14.jpg", title: "Arma 3", subtitle: "Tactical Shooter | Repack", info: "Experience true combat gameplay in a massive military sandbox. Authentic, diverse, open - Arma 3 sends you to war.", category: "Tactical Shooter", link: "https://se7en.ws/arma-3/?lang=en" },
