@@ -53,7 +53,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
         }
 
         body {
@@ -63,6 +63,12 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            opacity: 0;
+            animation: bodyFadeIn 0.6s forwards ease-in-out;
+        }
+
+        @keyframes bodyFadeIn {
+            to { opacity: 1; }
         }
 
         /* --- PRE-AUTH GUARD LOADER SCREEN --- */
@@ -197,9 +203,9 @@
         .header-btn:hover {
             background: var(--bg-input);
             border-color: var(--text-muted);
+            transform: translateY(-2px);
         }
         
-        /* Updated Profile Avatar Layout to host images smoothly */
         .profile-avatar-trigger {
             width: 38px; height: 38px;
             border-radius: 10px;
@@ -232,6 +238,7 @@
 
         .page-header {
             margin-bottom: 32px;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .page-header h1 {
             font-size: 1.75rem;
@@ -244,13 +251,14 @@
             font-size: 0.95rem;
         }
 
-        /* --- HERO BANNER --- */
+        /* --- HERO BANNER & PROMOTIONS --- */
         #hero-banner-slot {
             margin-bottom: 32px;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .hero-banner {
             border-radius: 16px;
-            padding: 32px;
+            padding: 34px;
             border: 1px solid var(--border-primary);
             box-shadow: var(--shadow-subtle);
             display: flex;
@@ -258,23 +266,43 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 24px;
+            position: relative;
+            overflow: hidden;
         }
         .hero-banner.locked {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(139, 92, 246, 0.03) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.25);
         }
         .hero-banner.unlocked {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
         }
         .hero-content h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             margin-bottom: 8px;
             letter-spacing: -0.01em;
         }
         .hero-content p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+            color: var(--text-main);
+            font-size: 1rem;
             margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .highlight-badge-offer {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            animation: pulseState 2s infinite ease-in-out;
+        }
+        @keyframes pulseState {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
         }
         .trust-row {
             display: flex;
@@ -292,22 +320,24 @@
         .trust-row i { color: #10b981; }
         
         .btn-upgrade {
-            padding: 12px 24px;
-            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            padding: 14px 28px;
+            background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
+            background-size: 200% auto;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.35);
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            animation: continuousShine 3s linear infinite;
         }
         .btn-upgrade:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
         }
 
         /* --- STATS SECTION --- */
@@ -316,6 +346,7 @@
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 40px;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .stat-card {
             background: var(--bg-card);
@@ -326,6 +357,10 @@
             display: flex;
             align-items: center;
             gap: 16px;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-brand);
         }
         .stat-icon {
             width: 44px; height: 44px;
@@ -359,6 +394,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 24px;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .category-card {
             background: var(--bg-card);
@@ -370,11 +406,11 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
         }
         .category-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
             border-color: var(--accent-brand);
+            box-shadow: 0 12px 24px -10px rgba(59, 130, 246, 0.15);
         }
         .card-top {
             display: flex;
@@ -401,7 +437,6 @@
             letter-spacing: 0.02em;
         }
         .status-chip.unlocked { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .status-chip.locked { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
         .category-card h3 {
             font-size: 1.1rem;
@@ -444,15 +479,6 @@
             background: var(--accent-brand);
             color: white;
             border-color: var(--accent-brand);
-        }
-
-        .category-card.is-locked::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.02);
-            z-index: 2;
-            pointer-events: none;
         }
 
         /* --- PREMIUM MEMBER TIERS BADGES --- */
@@ -526,7 +552,6 @@
             margin-bottom: 24px;
         }
         
-        /* Interactive Camera Hover Effect for Image Selection */
         .drawer-avatar-large {
             position: relative;
             width: 64px; height: 64px;
@@ -656,6 +681,99 @@
             gap: 6px;
         }
         .btn-logout:hover { background: #dc2626; }
+
+        /* --- 24/7 SUPPORT FLOATING POPUP SYSTEM --- */
+        .support-floating-wrapper {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+        .support-toggle-trigger {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            cursor: pointer;
+            font-size: 1.4rem;
+            animation: pulseState 2s infinite ease-in-out;
+        }
+        .support-toggle-trigger:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        .support-popup-box {
+            width: 320px;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-primary);
+            border-radius: 16px;
+            box-shadow: var(--shadow-subtle);
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .support-popup-box.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .support-popup-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-primary);
+            padding-bottom: 10px;
+        }
+        .support-popup-header h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .support-online-dot {
+            width: 8px; height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .support-popup-body p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .btn-support-action {
+            width: 100%;
+            padding: 10px;
+            background: var(--accent-brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-support-action:hover {
+            background: var(--accent-brand-hover);
+        }
+
+        /* --- ANIMS ENGINE ATOMS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* --- PREMIUM TOAST INFRASTRUCTURE --- */
         #toast-box-mount {
@@ -850,14 +968,12 @@
 
         <div class="drawer-body">
             <div class="drawer-profile-summary">
-                <!-- Interactive Profile Area Linked with File Upload -->
                 <div class="drawer-avatar-large" id="drawer-avatar-label">
                     <span id="avatar-initials-fallback">-</span>
                     <div class="avatar-upload-overlay">
                         <i class="fa-solid fa-camera"></i>
                     </div>
                 </div>
-                <!-- Hidden file input node -->
                 <input type="file" id="hidden-avatar-input" accept="image/*">
 
                 <div class="drawer-email" id="drawer-email-label">Syncing user...</div>
@@ -939,6 +1055,23 @@
     <!-- Global Application Toast Container System -->
     <div id="toast-box-mount"></div>
 
+    <!-- 24/7 SUPPORT INTERACTIVE POPUP LAYER -->
+    <div class="support-floating-wrapper">
+        <div class="support-popup-box" id="support-popup">
+            <div class="support-popup-header">
+                <div class="support-online-dot"></div>
+                <h4>24/7 Live Support Desk</h4>
+            </div>
+            <div class="support-popup-body">
+                <p>Hello! If you are facing any payment issues or need asset-related queries resolved instantly, reach out below.</p>
+            </div>
+            <a href="support.html" class="btn-support-action"><i class="fa-solid fa-headset"></i> Open Support Panel</a>
+        </div>
+        <div class="support-toggle-trigger" id="support-trigger" title="Connect to Support">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+    </div>
+
     <!-- Complete Clean Enterprise Footprint Section -->
     <footer class="premium-footer">
         <div class="footer-grid">
@@ -963,7 +1096,6 @@
             <div class="footer-col">
                 <h5>Legal Terms</h5>
                 <ul>
-                    <!-- Activated exact file mappings for compliance standard pages -->
                     <li><a href="terms.html">Terms of Use</a></li>
                     <li><a href="privacy.html">Privacy Policy</a></li>
                     <li><a href="refund.html">Refund Policy</a></li>
@@ -983,7 +1115,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        // Firebase Storage infrastructure modules imported
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -999,7 +1130,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app); // Storage initialize kela
+        const storage = getStorage(app);
 
         let currentAuthenticatedUser = null;
         let activeUserWorkspaceRecord = null;
@@ -1054,6 +1185,21 @@
             targetNode.classList.remove('show');
             targetNode.addEventListener('transitionend', () => targetNode.remove());
         }
+
+        /* --- 24/7 SUPPORT INTERACTIVE POPUP TRIGGER LOGIC --- */
+        const supportTrigger = document.getElementById('support-trigger');
+        const supportPopup = document.getElementById('support-popup');
+        
+        supportTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            supportPopup.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!supportPopup.contains(e.target) && e.target !== supportTrigger) {
+                supportPopup.classList.remove('active');
+            }
+        });
 
         /* --- VISUAL INTERFACE CORE STATE MANIPULATIONS --- */
         const mainThemeTrigger = document.getElementById('theme-toggle-btn');
@@ -1126,20 +1272,13 @@
             spawnPremiumToast('Uploading Image', 'Connecting with cluster storage engines...', 'info');
 
             try {
-                // 1. Firebase Storage bucket paths mapped uniquely by UID
                 const storageBucketRef = ref(storage, `user_avatars/${currentAuthenticatedUser.uid}/avatar.jpg`);
                 await uploadBytes(storageBucketRef, profileFile);
-
-                // 2. Fetch runtime explicit public access URL string
                 const targetPublicDownloadURL = await getDownloadURL(storageBucketRef);
 
-                // 3. Keep Firestore users configuration node permanently mapped
                 const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
-                await updateDoc(userDocRef, {
-                    photoURL: targetPublicDownloadURL
-                });
+                await updateDoc(userDocRef, { photoURL: targetPublicDownloadURL });
 
-                // Update runtime current memory metrics
                 if (activeUserWorkspaceRecord) {
                     activeUserWorkspaceRecord.photoURL = targetPublicDownloadURL;
                     manifestDashboardLayoutData(activeUserWorkspaceRecord);
@@ -1147,8 +1286,8 @@
 
                 spawnPremiumToast('Profile Updated', 'Your profile presentation element synchronized successfully.', 'success');
             } catch (storageFaultLogs) {
-                console.error("Storage transactional processing pipeline crashed:", storageFaultLogs);
-                spawnPremiumToast('Upload Refused', 'Storage system denied permissions kiva configuration missing.', 'error');
+                console.error(storageFaultLogs);
+                spawnPremiumToast('Upload Refused', 'Storage system denied permissions.', 'error');
             }
         });
 
@@ -1164,12 +1303,12 @@
             
             trackingNotificationChannelMap[keyID].addEventListener('change', (e) => {
                 localStorage.setItem(`cv_notif_pipeline_${keyID}`, e.target.checked);
-                spawnPremiumToast('Configuration Synchronized', 'Your tracking preference vector state update was applied successfully.', 'success');
+                spawnPremiumToast('Configuration Synchronized', 'Your preference vector update was applied successfully.', 'success');
             });
         });
 
         document.getElementById('bell-notification-mock').addEventListener('click', () => {
-            spawnPremiumToast('System Pipeline Active', 'No critical infrastructure alert notifications are pending in your account queue.', 'info');
+            spawnPremiumToast('System Pipeline Active', 'No critical infrastructure alerts are pending in your account queue.', 'info');
         });
 
         /* --- LIVE RAZORPAY PAYMENT SYSTEM INTEGRATION --- */
@@ -1181,13 +1320,13 @@
 
             const paymentOptions = {
                 "key": "rzp_live_T4fJA5NyF26FgY", 
-                "amount": 19900, // INR 199.00 (represented in paise)
+                "amount": 19900, // ₹199.00
                 "currency": "INR",
                 "name": "Creators Vault",
                 "description": "Lifetime Vault Pro Access Purchase Bundle",
                 "image": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/shield-halved.svg",
                 "handler": async function (paymentResponse) {
-                    spawnPremiumToast('Payment Success', 'Verification received! Synchronizing secure database nodes...', 'success');
+                    spawnPremiumToast('Payment Success', 'Verification received! Updating configurations...', 'success');
                     
                     try {
                         const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
@@ -1198,7 +1337,7 @@
                             razorpayPaymentId: paymentResponse.razorpay_payment_id
                         });
                         
-                        spawnPremiumToast('Account Upgraded', 'Your lifetime premium environment matrix has been successfully unlocked!', 'success');
+                        spawnPremiumToast('Account Upgraded', 'Your lifetime premium matrix has been successfully unlocked!', 'success');
                         
                         if (activeUserWorkspaceRecord) {
                             activeUserWorkspaceRecord.paid = true;
@@ -1206,8 +1345,8 @@
                             manifestDashboardLayoutData(activeUserWorkspaceRecord);
                         }
                     } catch (dbUpdateError) {
-                        console.error("Firestore database status tier updates failure logs:", dbUpdateError);
-                        spawnPremiumToast('Database Sync Error', 'Payment confirmed but profile updating step failed. Contact operations team.', 'error');
+                        console.error(dbUpdateError);
+                        spawnPremiumToast('Database Sync Error', 'Payment confirmed but profile upgrade step failed. Contact support.', 'error');
                     }
                 },
                 "prefill": {
@@ -1221,12 +1360,12 @@
             try {
                 const razorpayPaymentGatewayObject = new Razorpay(paymentOptions);
                 razorpayPaymentGatewayObject.on('payment.failed', function (failedResponse) {
-                    spawnPremiumToast('Transaction Aborted', failedResponse.error.description || 'The secure asset payment process was cancelled or refused.', 'error');
+                    spawnPremiumToast('Transaction Aborted', failedResponse.error.description || 'The security asset process was cancelled.', 'error');
                 });
                 razorpayPaymentGatewayObject.open();
             } catch (checkoutInitializationFault) {
-                console.error("Razorpay SDK launch breakdown tracking logic errors:", checkoutInitializationFault);
-                spawnPremiumToast('Gateway Framework Defect', 'Unable to resolve external payment scripts module components.', 'error');
+                console.error(checkoutInitializationFault);
+                spawnPremiumToast('Gateway Error', 'Unable to resolve external payment scripts components.', 'error');
             }
         };
 
@@ -1240,16 +1379,17 @@
                 heroContainerTarget.innerHTML = `
                     <div class="hero-banner locked">
                         <div class="hero-content">
-                            <h2>Premium Vault Locked</h2>
-                            <p>Unlock lifetime access to all digital product categories for only ₹199.</p>
+                            <span class="highlight-badge-offer"><i class="fa-solid fa-bolt"></i> LIMITED TIME OFFER </span>
+                            <h2>Unlock Premium Vault Access</h2>
+                            <p>Get immediate lifetime access to all categories, high-res packs, assets & rare tools configurations.</p>
                             <div class="trust-row">
-                                <span><i class="fa-solid fa-circle-check"></i> Secure payment</span>
-                                <span><i class="fa-solid fa-circle-check"></i> Instant access</span>
-                                <span><i class="fa-solid fa-circle-check"></i> Lifetime validity</span>
+                                <span><i class="fa-solid fa-circle-check"></i> Secure encrypted checkout</span>
+                                <span><i class="fa-solid fa-circle-check"></i> Instant access setup</span>
+                                <span><i class="fa-solid fa-circle-check"></i> Non-recurring lifetime validity</span>
                             </div>
                         </div>
                         <button class="btn-upgrade" onclick="startPayment()">
-                            <i class="fa-solid fa-crown"></i> Buy Lifetime Access
+                            <i class="fa-solid fa-crown"></i> Buy Lifetime Access @ ₹199
                         </button>
                     </div>
                 `;
@@ -1260,7 +1400,7 @@
                             <h2>Lifetime Access Active</h2>
                             <p>Welcome back to your premium digital vault ecosystem environment hub.</p>
                             <div class="trust-row">
-                                <span style="color:#10b981;"><i class="fa-solid fa-shield-checkmark"></i> Fully Verified Secure Environment Core</span>
+                                <span style="color:#10b981;"><i class="fa-solid fa-shield-checkmark"></i> Fully Verified Secure Environment Core Active</span>
                             </div>
                         </div>
                         <span class="badge-ui premium"><i class="fa-solid fa-circle-check"></i> Active Lifetime Profile</span>
@@ -1271,18 +1411,16 @@
             categoriesInjectionTarget.innerHTML = '';
             staticCategoryConfigurations.forEach(categoryNode => {
                 const functionalCardWrapper = document.createElement('div');
-                functionalCardWrapper.className = `category-card ${!isPremiumVerifiedUser ? 'is-locked' : ''}`;
+                functionalCardWrapper.className = `category-card`;
                 
+                // Categories unlocked completely for new users as requested
                 let navigationDirectiveMarkup = `href="${categoryNode.target}"`;
-                if (!isPremiumVerifiedUser) {
-                    navigationDirectiveMarkup = `onclick="spawnPremiumToast('Upgrade Required', 'The category requested demands an active verified digital account authorization tier state.', 'error'); event.preventDefault();" href="#"`;
-                }
 
                 functionalCardWrapper.innerHTML = `
                     <div class="card-top">
                         <div class="cat-icon-box"><i class="fa-solid ${categoryNode.icon}"></i></div>
-                        <span class="status-chip ${isPremiumVerifiedUser ? 'unlocked' : 'locked'}">
-                            ${isPremiumVerifiedUser ? '<i class="fa-solid fa-lock-open"></i> Unlocked' : '<i class="fa-solid fa-lock"></i> Locked'}
+                        <span class="status-chip unlocked">
+                            <i class="fa-solid fa-lock-open"></i> Unlocked
                         </span>
                     </div>
                     <h3>${categoryNode.title}</h3>
@@ -1300,7 +1438,6 @@
             document.getElementById('drawer-email-label').textContent = userRecord.email;
             document.getElementById('drawer-membership-label').textContent = userRecord.membershipName;
             
-            // Dynamic Image Rendering Engine for Header & Drawer Profile elements
             const standardFallbackLetter = userRecord.email ? userRecord.email.charAt(0).toUpperCase() : 'U';
             
             if (userRecord.photoURL) {
@@ -1374,15 +1511,15 @@
                 setTimeout(() => globalAuthenticationGuardShield.style.display = 'none', 350);
 
             } catch (cloudDataClusterFailure) {
-                console.error("Infrastructure Firestore operational read-write fault tracking log:", cloudDataClusterFailure);
-                spawnPremiumToast('Cloud Synchronization Failure', 'Failed to retrieve cloud data. Activating transient secure offline read-only fallback mode.', 'error');
+                console.error(cloudDataClusterFailure);
+                spawnPremiumToast('Cloud Sync Failure', 'Retrieving dynamic live updates from framework core failed.', 'error');
                 
                 activeUserWorkspaceRecord = {
                     uid: networkUserContext.uid,
                     email: networkUserContext.email,
                     paid: false,
                     role: "user",
-                    membershipName: "Explorer Access (Fallback State)"
+                    membershipName: "Explorer Access (Fallback Mode)"
                 };
                 manifestDashboardLayoutData(activeUserWorkspaceRecord);
                 globalAuthenticationGuardShield.style.display = 'none';
@@ -1394,10 +1531,10 @@
             if (!currentAuthenticatedUser || !currentAuthenticatedUser.email) return;
             try {
                 await sendPasswordResetEmail(auth, currentAuthenticatedUser.email);
-                spawnPremiumToast('Security Reset Payload Outbound', 'A secure instruction validation link has been directed to your email address channel inbox.', 'success');
+                spawnPremiumToast('Outbound Security link dispatched', 'An instruction configuration reset link has been directed to your email address.', 'success');
             } catch (resetExecutionFault) {
                 console.error(resetExecutionFault);
-                spawnPremiumToast('Security Payload Aborted', 'Cloud core validation engines refused to transmit configuration strings to target profile.', 'error');
+                spawnPremiumToast('Process Aborted', 'Cloud servers rejected operation execution requests.', 'error');
             }
         });
 
@@ -1409,7 +1546,7 @@
             } catch (logoutOperationFault) {
                 console.error(logoutOperationFault);
                 globalAuthenticationGuardShield.style.display = 'none';
-                spawnPremiumToast('Logout Transaction Failed', 'The terminal execution framework rejected user disconnection notification commands.', 'error');
+                spawnPremiumToast('Operation Failed', 'Disconnection framework rejected terminal command requests.', 'error');
             }
         });
     </script>
