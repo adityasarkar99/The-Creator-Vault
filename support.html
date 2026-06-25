@@ -2,41 +2,57 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Center | Creators Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root, [data-theme="light"] {
-            --bg-main: #f8fafc; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #0f172a; --text-muted: #64748b;
-            --accent-brand: #e11d48; --border-primary: rgba(226, 232, 240, 0.8); --bg-input: #f1f5f9;
-        }
-        [data-theme="dark"] {
-            --bg-main: #060814; --bg-card: rgba(15, 23, 42, 0.6); --text-main: #f8fafc; --text-muted: #94a3b8;
-            --accent-brand: #f43f5e; --border-primary: rgba(255, 255, 255, 0.05); --bg-input: #1e293b;
+        :root {
+            --bg-main: #060814;
+            --bg-card: rgba(15, 23, 42, 0.7);
+            --accent-brand: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-primary: rgba(255, 255, 255, 0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; user-select: none; }
-        
-        .header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-primary); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; background: var(--bg-card); }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent-brand); text-decoration: none; }
-        .hero { padding: 60px 20px; text-align: center; }
-        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .card { background: var(--bg-card); border: 1px solid var(--border-primary); padding: 30px; border-radius: 16px; text-align: center; transition: 0.3s; }
-        .card i { font-size: 2rem; color: var(--accent-brand); margin-bottom: 15px; }
-        
-        .form-container { max-width: 600px; margin: 40px auto; padding: 40px; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-primary); }
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-primary); background: var(--bg-input); color: var(--text-main); outline: none; }
-        button { width: 100%; padding: 12px; background: var(--accent-brand); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        
-        .faq { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        .faq-item { margin-bottom: 15px; background: var(--bg-card); padding: 15px; border-radius: 8px; border: 1px solid var(--border-primary); cursor: pointer; }
-        
-        footer { text-align: center; padding: 40px; color: var(--text-muted); border-top: 1px solid var(--border-primary); }
-        
-        #toast { position: fixed; top: 20px; right: 20px; padding: 15px; border-radius: 8px; color: white; display: none; z-index: 1000; }
+        body { background: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
+
+        /* Premium Glass Header */
+        .header { 
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border-primary); background: rgba(6, 8, 20, 0.8); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent-brand); letter-spacing: -1px; }
+
+        /* Hero Section */
+        .hero { padding: 80px 20px; text-align: center; }
+        .hero h1 { font-size: 3.5rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Contact Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto 60px; padding: 0 20px; }
+        .card { 
+            background: var(--bg-card); border: 1px solid var(--border-primary); padding: 30px; border-radius: 20px; 
+            text-align: center; transition: 0.4s; backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: var(--accent-brand); transform: translateY(-5px); }
+        .card i { font-size: 2.5rem; color: var(--accent-brand); margin-bottom: 20px; }
+
+        /* Form Styling */
+        .form-section { max-width: 700px; margin: 0 auto 80px; padding: 50px; background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-primary); }
+        input, select, textarea { 
+            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-primary); 
+            background: #0f172a; color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent-brand); }
+        button { 
+            width: 100%; padding: 16px; background: var(--accent-brand); color: white; border: none; border-radius: 12px; 
+            font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        button:hover { filter: brightness(1.2); }
+
+        /* Toast */
+        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 10px; background: #f43f5e; color: white; display: none; z-index: 1000; font-weight: 600; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -44,78 +60,53 @@
     <div id="toast"></div>
 
     <header class="header">
-        <a href="#" class="logo">Creators Vault</a>
-        <div>
-            <button onclick="toggleTheme()" style="background:none; border:none; color:var(--text-main); cursor:pointer;"><i class="fas fa-adjust"></i></button>
-            <a href="dashboard.html" style="margin-left:15px; color:var(--text-main); text-decoration:none;">Dashboard</a>
-        </div>
+        <a href="#" class="logo"><i class="fas fa-gamepad"></i> CREATORS VAULT</a>
+        <a href="dashboard.html" style="color:var(--text-main); text-decoration:none; font-weight:600;"><i class="fas fa-gauge"></i> Dashboard</a>
     </header>
 
     <section class="hero">
-        <h1>Need Help?</h1>
-        <p>Get help with downloads, payments, and account issues.</p>
+        <h1>Support Center</h1>
+        <p style="color:var(--text-muted); font-size: 1.2rem;">24/7 Priority Assistance for Premium Members</p>
     </section>
 
     <div class="grid">
-        <div class="card"><i class="fab fa-telegram"></i><h3>Telegram</h3><a href="https://t.me/@nextgenadi_4u" target="_blank">Contact Support</a></div>
-        <div class="card"><i class="fab fa-discord"></i><h3>Discord</h3><a href="#DISCORD_LINK">Join Community</a></div>
-        <div class="card"><i class="fab fa-instagram"></i><h3>Instagram</h3><a href="https://instagram.com/YOUR_USERNAME">Message Us</a></div>
-        <div class="card"><i class="fas fa-envelope"></i><h3>Email</h3><p>support@creatorsvault.com</p></div>
+        <div class="card"><i class="fab fa-telegram"></i><h3>Telegram</h3><p style="color:var(--text-muted); margin: 10px 0;">Priority Support</p></div>
+        <div class="card"><i class="fab fa-discord"></i><h3>Discord</h3><p style="color:var(--text-muted); margin: 10px 0;">Community Hub</p></div>
+        <div class="card"><i class="fab fa-instagram"></i><h3>Instagram</h3><p style="color:var(--text-muted); margin: 10px 0;">Direct DM</p></div>
+        <div class="card"><i class="fas fa-envelope"></i><h3>Email</h3><p style="color:var(--text-muted); margin: 10px 0;">support@creatorsvault.com</p></div>
     </div>
 
-    <div class="form-container">
-        <h2 style="margin-bottom:20px;">Submit a Report</h2>
+    <div class="form-section">
+        <h2 style="margin-bottom:30px; text-align:center;">Open a Support Ticket</h2>
         <form id="supportForm">
             <input type="text" id="name" placeholder="Full Name" required>
-            <input type="email" id="email" placeholder="Email" required>
+            <input type="email" id="email" placeholder="Email Address" required>
             <select id="issueType">
                 <option>Payment Issue</option><option>Premium Activation</option>
-                <option>Download Not Working</option><option>Other</option>
+                <option>Download Issue</option><option>Other</option>
             </select>
-            <input type="text" id="subject" placeholder="Subject" required>
-            <textarea id="message" rows="4" placeholder="Message" required></textarea>
-            <input type="text" id="orderId" placeholder="Order/Payment ID (Optional)">
-            <button type="submit">Send Request</button>
+            <textarea id="message" rows="5" placeholder="Explain your issue in detail..." required></textarea>
+            <button type="submit">Send Secure Message</button>
         </form>
     </div>
 
-    <footer>&copy; 2026 Creators Vault. All Rights Reserved.</footer>
-
     <script>
-        // Security Note: Frontend Telegram token is visible in browser. Use backend for production.
-        const TELEGRAM_BOT_TOKEN = "8910704005:AAFoisXlUD-qzh0hpdEISOdHRIv6of4CPTQ";
-        const TELEGRAM_CHAT_ID = "8255824096";
-
-        function toggleTheme() {
-            const body = document.documentElement;
-            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        }
-
-        function showToast(msg, color) {
-            const t = document.getElementById('toast');
-            t.style.display = 'block'; t.style.background = color; t.innerText = msg;
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
+        const BOT_TOKEN = "8910704005:AAFoisXlUD-qzh0hpdEISOdHRIv6of4CPTQ";
+        const CHAT_ID = "8255824096";
 
         document.getElementById('supportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const text = `🚨 New Creators Vault Support Request\n\n👤 Name: ${document.getElementById('name').value}\n📧 Email: ${document.getElementById('email').value}\n📌 Issue: ${document.getElementById('issueType').value}\n🧾 Subject: ${document.getElementById('subject').value}\n💳 Order: ${document.getElementById('orderId').value || 'N/A'}\n💬 Msg: ${document.getElementById('message').value}\n🌐 URL: ${window.location.href}\n⏰ Time: ${new Date().toLocaleString()}`;
+            const msg = `🚨 New Support Ticket\n👤 Name: ${document.getElementById('name').value}\n📧 Email: ${document.getElementById('email').value}\n📌 Type: ${document.getElementById('issueType').value}\n💬 Msg: ${document.getElementById('message').value}`;
             
             try {
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text })
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
                 });
-                showToast("Support request sent successfully.", "#10b981");
+                const t = document.getElementById('toast');
+                t.style.display = 'block'; t.innerText = "Request Sent Successfully!"; t.style.background = "#10b981";
                 document.getElementById('supportForm').reset();
-            } catch (err) {
-                showToast("Error! Contact us directly on Telegram/Instagram.", "#ef4444");
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) e.preventDefault();
-            if (e.key === 'F12') e.preventDefault();
+            } catch(e) { alert("Error sending request."); }
         });
     </script>
 </body>
