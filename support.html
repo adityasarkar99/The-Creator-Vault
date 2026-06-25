@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Center | Creators Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root, [data-theme="light"] {
@@ -16,27 +16,17 @@
             --accent-brand: #f43f5e; --border-primary: rgba(255, 255, 255, 0.05); --bg-input: #1e293b;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
-        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        body { background-color: var(--bg-main); color: var(--text-main); }
 
-        /* Header */
         .header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-primary); background: var(--bg-card); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent-brand); text-decoration: none; }
-
-        /* Hero */
         .hero { padding: 60px 20px; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto 40px; padding: 0 20px; }
-        
-        /* Cards */
         .card { background: var(--bg-card); border: 1px solid var(--border-primary); padding: 25px; border-radius: 16px; text-align: center; backdrop-filter: blur(10px); }
         .card i { font-size: 2rem; color: var(--accent-brand); margin-bottom: 15px; }
-        .card a { color: var(--text-main); text-decoration: none; font-weight: 600; display: block; margin-top: 10px; }
-
-        /* Form */
         .form-box { max-width: 600px; margin: 0 auto 60px; padding: 40px; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-primary); }
         input, select, textarea { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border-primary); background: var(--bg-input); color: var(--text-main); outline: none; }
         button { width: 100%; padding: 14px; background: var(--accent-brand); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        
-        /* Toast */
         #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; color: white; display: none; z-index: 1000; font-weight: 600; }
     </style>
 </head>
@@ -46,33 +36,26 @@
 
     <header class="header">
         <a href="#" class="logo">CREATORS VAULT</a>
-        <div>
-            <button onclick="toggleTheme()" style="background:none; border:none; cursor:pointer; color:var(--text-main); margin-right:20px;"><i class="fas fa-adjust"></i></button>
-            <a href="dashboard.html" style="color:var(--text-main); text-decoration:none; font-weight:600;"><i class="fas fa-gauge"></i> Dashboard</a>
-        </div>
+        <button onclick="toggleTheme()" style="background:none; border:none; cursor:pointer; color:var(--text-main);"><i class="fas fa-adjust"></i> Theme</button>
     </header>
 
     <section class="hero">
         <h1>Support Center</h1>
-        <p style="color:var(--text-muted);">Get priority help with your premium account.</p>
+        <p style="color:var(--text-muted);">24/7 Priority Assistance</p>
     </section>
 
     <div class="grid">
-        <div class="card"><i class="fab fa-telegram"></i><h3>Telegram</h3><a href="https://t.me/@nextgenadi_4u" target="_blank">Message Support</a></div>
-        <div class="card"><i class="fab fa-discord"></i><h3>Discord</h3><a href="#DISCORD_LINK">Join Server</a></div>
-        <div class="card"><i class="fab fa-instagram"></i><h3>Instagram</h3><a href="https://instagram.com/YOUR_USERNAME" target="_blank">DM Us</a></div>
-        <div class="card"><i class="fas fa-envelope"></i><h3>Email</h3><a href="mailto:support@creatorsvault.com">support@creatorsvault.com</a></div>
+        <div class="card"><i class="fab fa-telegram"></i><h3>Telegram</h3><a href="https://t.me/@nextgenadi_4u" style="color:var(--text-main); text-decoration:none;">Message Support</a></div>
+        <div class="card"><i class="fab fa-discord"></i><h3>Discord</h3><a href="#DISCORD_LINK" style="color:var(--text-main); text-decoration:none;">Join Server</a></div>
+        <div class="card"><i class="fab fa-instagram"></i><h3>Instagram</h3><a href="https://instagram.com/YOUR_USERNAME" style="color:var(--text-main); text-decoration:none;">DM Us</a></div>
+        <div class="card"><i class="fas fa-envelope"></i><h3>Email</h3><a href="mailto:support@creatorsvault.com" style="color:var(--text-main); text-decoration:none;">support@creatorsvault.com</a></div>
     </div>
 
     <div class="form-box">
-        <h2 style="margin-bottom:20px;">Support Ticket</h2>
         <form id="supportForm">
             <input type="text" id="name" placeholder="Full Name" required>
             <input type="email" id="email" placeholder="Email Address" required>
-            <select id="issueType">
-                <option>Payment Issue</option><option>Premium Activation</option>
-                <option>Download Not Working</option><option>Broken Link</option><option>Other</option>
-            </select>
+            <select id="issueType"><option>Payment Issue</option><option>Premium Activation</option><option>Download Issue</option><option>Other</option></select>
             <input type="text" id="subject" placeholder="Subject" required>
             <textarea id="message" rows="4" placeholder="Describe your issue..." required></textarea>
             <input type="text" id="orderId" placeholder="Order ID (Optional)">
@@ -86,23 +69,37 @@
 
         function toggleTheme() {
             const d = document.documentElement;
-            d.setAttribute('data-theme', d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            const newTheme = d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            d.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
         }
+
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
 
         document.getElementById('supportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const msg = `🚨 NEW TICKET\nName: ${document.getElementById('name').value}\nEmail: ${document.getElementById('email').value}\nIssue: ${document.getElementById('issueType').value}\nSubject: ${document.getElementById('subject').value}\nMessage: ${document.getElementById('message').value}`;
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+            const msg = `🚨 *NEW SUPPORT TICKET*\n\n` +
+                        `👤 *Name:* ${document.getElementById('name').value}\n` +
+                        `📧 *Email:* ${document.getElementById('email').value}\n` +
+                        `📌 *Issue:* ${document.getElementById('issueType').value}\n` +
+                        `📝 *Subject:* ${document.getElementById('subject').value}\n` +
+                        `💳 *Order ID:* ${document.getElementById('orderId').value || 'N/A'}\n` +
+                        `💬 *Message:* ${document.getElementById('message').value}\n` +
+                        `⏰ *Time:* ${timestamp}\n` +
+                        `🌐 *Page:* ${window.location.href}`;
             
             try {
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
                 });
                 const t = document.getElementById('toast');
-                t.style.display = 'block'; t.style.background = "#10b981"; t.innerText = "Request Sent Successfully!";
+                t.style.display = 'block'; t.style.background = "#10b981"; t.innerText = "Ticket Sent Successfully!";
                 setTimeout(() => t.style.display = 'none', 3000);
                 document.getElementById('supportForm').reset();
-            } catch(e) { alert("Error! Please contact us via Telegram directly."); }
+            } catch(e) { alert("Error! Contact us via Telegram."); }
         });
 
         document.addEventListener('keydown', (e) => {
