@@ -4,110 +4,818 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout - The Creators Vault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
   <style>
-    body{margin:0;font-family:Arial,sans-serif;background:#090d16;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .card{width:90%;max-width:430px;background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-    h1{margin:0 0 8px;font-size:28px}
-    p{color:#94a3b8}
-    .price{font-size:48px;font-weight:900;margin:20px 0}
-    button,a{width:100%;padding:15px;border-radius:14px;border:0;font-weight:800;cursor:pointer;text-decoration:none;display:block;box-sizing:border-box}
-    button{background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    a{background:#1f2937;color:#fff;margin-top:12px}
-    #status{font-size:14px;margin-top:16px}
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>The Creators Vault</h1>
-    <p>Lifetime Premium Access</p>
-    <div class="price">₹1</div>
-    <button id="payBtn">Pay ₹1</button>
-    <a href="dashboard.html">Back to Dashboard</a>
-    <p id="status">Secure checkout powered by Cashfree</p>
-  </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
-  authDomain: "creators-vaults.firebaseapp.com",
-  projectId: "creators-vaults",
-  storageBucket: "creators-vaults.firebasestorage.app",
-  messagingSenderId: "739165070040",
-  appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
-  measurementId: "G-MM742MSP09"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-let currentUser = null;
-const payBtn = document.getElementById("payBtn");
-const statusEl = document.getElementById("status");
-
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
-  currentUser = user;
-});
-
-payBtn.addEventListener("click", async () => {
-  if (!currentUser) return;
-
-  payBtn.disabled = true;
-  payBtn.textContent = "Creating Order...";
-  statusEl.textContent = "Creating secure Cashfree order...";
-
-  try {
-    const response = await fetch("/api/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        uid: currentUser.uid,
-        email: currentUser.email,
-        name: currentUser.displayName || currentUser.email || "Creator Vault User",
-        phone: "9999999999"
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.payment_session_id || !data.order_id) {
-      console.error("Create order failed:", data);
-      alert(data.error || "Unable to create payment order");
-      payBtn.disabled = false;
-      payBtn.textContent = "Pay ₹1";
-      statusEl.textContent = "Payment order failed.";
-      return;
+    :root, [data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: rgba(255,255,255,0.75);
+      --bg-card-solid: #ffffff;
+      --bg-input: #f1f5f9;
+      --border-primary: rgba(226,232,240,0.8);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-brand: #2563eb;
+      --accent-brand-hover: #1d4ed8;
+      --shadow-subtle: 0 4px 20px -2px rgba(15,23,42,0.04), 0 2px 8px -1px rgba(15,23,42,0.02);
+      --glass-blur: blur(12px);
     }
 
-    localStorage.setItem("cv_last_order_id", data.order_id);
+    [data-theme="dark"] {
+      --bg-main: #090d16;
+      --bg-card: rgba(17,24,39,0.6);
+      --bg-card-solid: #111827;
+      --bg-input: #1f2937;
+      --border-primary: rgba(255,255,255,0.05);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-brand: #3b82f6;
+      --accent-brand-hover: #60a5fa;
+      --shadow-subtle: 0 10px 30px -10px rgba(0,0,0,0.5);
+      --glass-blur: blur(16px);
+    }
 
-    const cashfree = Cashfree({ mode: "production" });
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      transition: background-color .3s ease, border-color .3s ease, transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
+    }
 
-    statusEl.textContent = "Opening Cashfree checkout...";
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(124,58,237,.16), transparent 32%),
+        var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
 
-    await cashfree.checkout({
-      paymentSessionId: data.payment_session_id,
-      redirectTarget: "_modal"
+    #auth-guard-screen {
+      position: fixed;
+      inset: 0;
+      background: #090d16;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(59,130,246,.1);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .guard-text {
+      color: #94a3b8;
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .premium-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 14px 40px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      font-size: 1.25rem;
+      color: var(--accent-brand);
+    }
+
+    .brand-container:hover .brand-icon {
+      transform: scale(1.1) rotate(-5deg);
+    }
+
+    .brand-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine { to { background-position: 200% center; } }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border-primary);
+      background: transparent;
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: .95rem;
+    }
+
+    .header-btn:hover {
+      background: var(--bg-input);
+      border-color: var(--text-muted);
+      transform: translateY(-2px);
+    }
+
+    .checkout-viewport {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 48px 24px;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .checkout-hero {
+      animation: fadeInUp .5s ease forwards;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(59,130,246,.12);
+      color: var(--accent-brand-hover);
+      border: 1px solid rgba(59,130,246,.18);
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 18px;
+    }
+
+    .checkout-hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -.06em;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .checkout-hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      font-size: .82rem;
+      font-weight: 800;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .trust-badge i {
+      color: #10b981;
+    }
+
+    .checkout-card {
+      background: linear-gradient(135deg, rgba(37,99,235,.12), rgba(124,58,237,.08)), var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-primary);
+      border-radius: 24px;
+      box-shadow: var(--shadow-subtle);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp .65s ease forwards;
+    }
+
+    .checkout-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -80px;
+      top: -80px;
+      background: radial-gradient(circle, rgba(59,130,246,.24), transparent 68%);
+      pointer-events: none;
+    }
+
+    .plan-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.55rem;
+      box-shadow: 0 10px 30px rgba(37,99,235,.32);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .checkout-card h2 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .plan-desc {
+      color: var(--text-muted);
+      font-size: .92rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .price-box {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .price-label {
+      color: var(--text-muted);
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+
+    .price {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -.06em;
+      line-height: 1;
+    }
+
+    .features {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .feature i {
+      color: #10b981;
+    }
+
+    .button-stack {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pay-btn,
+    .back-btn {
+      width: 100%;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: .95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      text-decoration: none;
+    }
+
+    .pay-btn {
+      border: none;
+      background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
+      background-size: 200% auto;
+      color: #fff;
+      animation: shine 3s linear infinite;
+      box-shadow: 0 10px 28px rgba(124,58,237,.32);
+    }
+
+    .pay-btn:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 14px 36px rgba(124,58,237,.42);
+    }
+
+    .pay-btn:disabled {
+      opacity: .72;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .back-btn {
+      border: 1px solid var(--border-primary);
+      background: var(--bg-input);
+      color: var(--text-main);
+    }
+
+    .back-btn:hover {
+      border-color: var(--accent-brand);
+      transform: translateY(-2px);
+    }
+
+    #checkout-loader {
+      display: none;
+      margin-top: 18px;
+      color: var(--text-muted);
+      font-size: .84rem;
+      line-height: 1.5;
+      text-align: center;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .secure-note {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-primary);
+      color: var(--text-muted);
+      font-size: .78rem;
+      line-height: 1.5;
+      display: flex;
+      gap: 9px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .secure-note i {
+      color: var(--accent-brand);
+      margin-top: 2px;
+    }
+
+    #toast-box-mount {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+      width: calc(100% - 40px);
+    }
+
+    .toast-item {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(110%);
+      opacity: 0;
+      transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s;
+    }
+
+    .toast-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+
+    .toast-body h5 {
+      font-size: .88rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .toast-body p {
+      font-size: .8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      padding-right: 18px;
+    }
+
+    .toast-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      transform-origin: left;
+    }
+
+    .toast-item.success .toast-icon { color: #10b981; }
+    .toast-item.success .toast-progress { background: #10b981; }
+    .toast-item.error .toast-icon { color: #ef4444; }
+    .toast-item.error .toast-progress { background: #ef4444; }
+    .toast-item.warning .toast-icon { color: #f59e0b; }
+    .toast-item.warning .toast-progress { background: #f59e0b; }
+    .toast-item.info .toast-icon { color: #3b82f6; }
+    .toast-item.info .toast-progress { background: #3b82f6; }
+
+    .premium-footer {
+      background: var(--bg-card-solid);
+      border-top: 1px solid var(--border-primary);
+      padding: 22px 40px;
+      color: var(--text-muted);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .footer-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .checkout-viewport {
+        grid-template-columns: 1fr;
+        padding: 34px 16px;
+      }
+
+      .premium-header {
+        padding: 14px 18px;
+      }
+
+      .brand-text {
+        font-size: 1.05rem;
+      }
+
+      .checkout-card {
+        padding: 24px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="auth-guard-screen">
+    <div class="spinner"></div>
+    <div class="guard-text">Verifying Checkout Session...</div>
+  </div>
+
+  <header class="premium-header">
+    <div class="header-inner">
+      <a class="brand-container" href="dashboard.html">
+        <i class="fa-solid fa-shield-halved brand-icon"></i>
+        <span class="brand-text">The Creators Vault</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="dashboard.html" class="header-btn" title="Back to Dashboard">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme" type="button">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="checkout-viewport">
+    <section class="checkout-hero">
+      <div class="hero-badge">
+        <i class="fa-solid fa-lock"></i>
+        Secure Cashfree Checkout
+      </div>
+
+      <h1>The Creators Vault</h1>
+      <p>
+        Complete your secure checkout and unlock Lifetime Premium Access with instant activation after payment verification.
+      </p>
+
+      <div class="trust-row">
+        <span class="trust-badge"><i class="fa-solid fa-circle-check"></i> Secure Payment</span>
+        <span class="trust-badge"><i class="fa-solid fa-bolt"></i> Instant Activation</span>
+        <span class="trust-badge"><i class="fa-solid fa-crown"></i> Lifetime Access</span>
+        <span class="trust-badge"><i class="fa-solid fa-headset"></i> Premium Support</span>
+      </div>
+    </section>
+
+    <section class="checkout-card">
+      <div class="plan-icon">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+
+      <h2>Lifetime Premium Access</h2>
+      <p class="plan-desc">Current Price</p>
+
+      <div class="price-box">
+        <div class="price-label">Current Price</div>
+        <div class="price">₹99</div>
+      </div>
+
+      <div class="features">
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Lifetime Access</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Instant Activation</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Unlimited Downloads</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Premium Support</div>
+      </div>
+
+      <div class="button-stack">
+        <button id="payBtn" class="pay-btn" type="button">
+          <i class="fa-solid fa-credit-card"></i>
+          Pay ₹99
+        </button>
+
+        <a href="dashboard.html" class="back-btn">
+          <i class="fa-solid fa-arrow-left"></i>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <div id="checkout-loader">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Creating Secure Payment Session...
+      </div>
+
+      <div class="secure-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Do not close this page while Cashfree checkout is opening.</span>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast-box-mount"></div>
+
+  <footer class="premium-footer">
+    <div class="footer-inner">
+      <div>&copy; 2026 The Creators Vault. All systems operational.</div>
+      <div>https://thecreatorsvault.in</div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+      authDomain: "creators-vaults.firebaseapp.com",
+      projectId: "creators-vaults",
+      storageBucket: "creators-vaults.firebasestorage.app",
+      messagingSenderId: "739165070040",
+      appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+      measurementId: "G-MM742MSP09"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+
+    const authGuardScreen = document.getElementById("auth-guard-screen");
+    const payBtn = document.getElementById("payBtn");
+    const checkoutLoader = document.getElementById("checkout-loader");
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const rootElement = document.documentElement;
+
+    function applyInterfaceTheme(targetMode) {
+      rootElement.setAttribute("data-theme", targetMode);
+      localStorage.setItem("cv_saved_theme", targetMode);
+      themeToggleBtn.innerHTML = targetMode === "dark"
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    applyInterfaceTheme(localStorage.getItem("cv_saved_theme") || "dark");
+
+    themeToggleBtn.addEventListener("click", () => {
+      const nextTheme = rootElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyInterfaceTheme(nextTheme);
     });
 
-    window.location.href = `success.html?order_id=${encodeURIComponent(data.order_id)}`;
+    const toastMountNode = document.getElementById("toast-box-mount");
 
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong while starting payment.");
-    payBtn.disabled = false;
-    payBtn.textContent = "Pay ₹1";
-    statusEl.textContent = "Payment failed to start.";
-  }
-});
-</script>
+    function spawnPremiumToast(titleString, textBody, statusType = "info") {
+      const toastFrame = document.createElement("div");
+      toastFrame.className = `toast-item ${statusType}`;
+
+      let descriptiveIcon = "fa-circle-info";
+      if (statusType === "success") descriptiveIcon = "fa-circle-check";
+      if (statusType === "error") descriptiveIcon = "fa-circle-exclamation";
+      if (statusType === "warning") descriptiveIcon = "fa-triangle-exclamation";
+
+      toastFrame.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+        <div class="toast-body">
+          <h5>${titleString}</h5>
+          <p>${textBody}</p>
+        </div>
+        <button class="toast-close" type="button"><i class="fa-solid fa-xmark"></i></button>
+        <div class="toast-progress"></div>
+      `;
+
+      toastMountNode.appendChild(toastFrame);
+      setTimeout(() => toastFrame.classList.add("show"), 20);
+
+      const dynamicProgressNode = toastFrame.querySelector(".toast-progress");
+      dynamicProgressNode.style.transform = "scaleX(1)";
+      dynamicProgressNode.style.transition = "transform 4000ms linear";
+      setTimeout(() => { dynamicProgressNode.style.transform = "scaleX(0)"; }, 30);
+
+      const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+
+      toastFrame.querySelector(".toast-close").addEventListener("click", () => {
+        clearTimeout(decayTimerReference);
+        clearToastInstance(toastFrame);
+      });
+    }
+
+    function clearToastInstance(targetNode) {
+      targetNode.classList.remove("show");
+      targetNode.addEventListener("transitionend", () => targetNode.remove(), { once: true });
+    }
+
+    function setPaymentLoading(isLoading) {
+      payBtn.disabled = isLoading;
+      checkoutLoader.style.display = isLoading ? "block" : "none";
+      payBtn.innerHTML = isLoading
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> Creating Order...'
+        : '<i class="fa-solid fa-credit-card"></i> Pay ₹99';
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      currentUser = user;
+
+      authGuardScreen.style.transition = "opacity .35s ease";
+      authGuardScreen.style.opacity = "0";
+      setTimeout(() => {
+        authGuardScreen.style.display = "none";
+      }, 350);
+    });
+
+    payBtn.addEventListener("click", async () => {
+      if (!currentUser) {
+        spawnPremiumToast("Authentication Error", "Please login before checkout.", "error");
+        return;
+      }
+
+      setPaymentLoading(true);
+
+      try {
+        const response = await fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            name: currentUser.displayName || currentUser.email || "Creator Vault User",
+            phone: "9999999999"
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.payment_session_id || !data.order_id) {
+          console.error("Create order failed:", data);
+          spawnPremiumToast("Payment Error", data.error || "Unable to create payment order", "error");
+          setPaymentLoading(false);
+          return;
+        }
+
+        localStorage.setItem("cv_last_order_id", data.order_id);
+
+        const cashfree = Cashfree({
+          mode: "production"
+        });
+
+        spawnPremiumToast("Opening Checkout", "Opening secure Cashfree payment popup.", "info");
+
+        const checkoutResult = await cashfree.checkout({
+          paymentSessionId: data.payment_session_id,
+          redirectTarget: "_modal"
+        });
+
+        if (checkoutResult && checkoutResult.error) {
+          spawnPremiumToast("Payment Cancelled", "Payment Cancelled", "warning");
+          setPaymentLoading(false);
+          return;
+        }
+
+        window.location.href = `success.html?order_id=${encodeURIComponent(data.order_id)}`;
+
+      } catch (err) {
+        console.error(err);
+        spawnPremiumToast("Payment Error", "Something went wrong while starting payment.", "error");
+        setPaymentLoading(false);
+      }
+    });
+  </script>
 </body>
 </html>
