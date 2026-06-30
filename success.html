@@ -1,68 +1,677 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payment Success - The Creators Vault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root, [data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: rgba(255, 255, 255, 0.75);
+      --bg-card-solid: #ffffff;
+      --bg-input: #f1f5f9;
+      --border-primary: rgba(226, 232, 240, 0.8);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-brand: #2563eb;
+      --accent-brand-hover: #1d4ed8;
+      --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
+      --glass-blur: blur(12px);
+    }
+
+    [data-theme="dark"] {
+      --bg-main: #090d16;
+      --bg-card: rgba(17, 24, 39, 0.6);
+      --bg-card-solid: #111827;
+      --bg-input: #1f2937;
+      --border-primary: rgba(255, 255, 255, 0.05);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-brand: #3b82f6;
+      --accent-brand-hover: #60a5fa;
+      --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      --glass-blur: blur(16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      transition: background-color .3s ease, border-color .3s ease, transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, .18), transparent 34%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, .16), transparent 32%),
+        var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .premium-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 14px 32px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      font-size: 1.25rem;
+      color: var(--accent-brand);
+    }
+
+    .brand-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      border: 1px solid var(--border-primary);
+      background: var(--bg-input);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .header-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-brand);
+    }
+
+    .success-wrap {
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 54px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-card {
+      width: 100%;
+      max-width: 560px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, .12), rgba(124, 58, 237, .08)), var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-primary);
+      border-radius: 24px;
+      box-shadow: var(--shadow-subtle);
+      padding: 34px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp .55s ease forwards;
+    }
+
+    .success-card::after {
+      content: "";
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      right: -90px;
+      top: -90px;
+      background: radial-gradient(circle, rgba(59, 130, 246, .24), transparent 68%);
+      pointer-events: none;
+    }
+
+    .status-icon {
+      width: 74px;
+      height: 74px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, .32);
+    }
+
+    .status-icon.success {
+      background: linear-gradient(135deg, #10b981, #2563eb);
+    }
+
+    .status-icon.error {
+      background: linear-gradient(135deg, #ef4444, #7c3aed);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.7rem);
+      line-height: 1.05;
+      letter-spacing: -.05em;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    #status {
+      color: var(--text-muted);
+      font-size: .96rem;
+      line-height: 1.7;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .details-box {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 18px;
+      padding: 16px;
+      margin: 22px 0;
+      text-align: left;
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: .84rem;
+      font-weight: 700;
+    }
+
+    .detail-row strong {
+      color: var(--text-main);
+      text-align: right;
+      word-break: break-all;
+    }
+
+    .action-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 22px;
+      background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
+      background-size: 200% auto;
+      color: #fff;
+      font-size: .92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      animation: shine 3s linear infinite;
+      box-shadow: 0 10px 28px rgba(124, 58, 237, .32);
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 14px 36px rgba(124, 58, 237, .42);
+    }
+
+    .loader {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 3px solid rgba(59, 130, 246, .15);
+      border-top-color: var(--accent-brand);
+      animation: spin 1s linear infinite;
+      margin: 18px auto 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #toast-box-mount {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+      width: calc(100% - 40px);
+    }
+
+    .toast-item {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(110%);
+      opacity: 0;
+      transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s;
+    }
+
+    .toast-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+
+    .toast-body h5 {
+      font-size: .88rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .toast-body p {
+      font-size: .8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      padding-right: 18px;
+    }
+
+    .toast-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      transform-origin: left;
+    }
+
+    .toast-item.success .toast-icon { color: #10b981; }
+    .toast-item.success .toast-progress { background: #10b981; }
+    .toast-item.error .toast-icon { color: #ef4444; }
+    .toast-item.error .toast-progress { background: #ef4444; }
+    .toast-item.warning .toast-icon { color: #f59e0b; }
+    .toast-item.warning .toast-progress { background: #f59e0b; }
+    .toast-item.info .toast-icon { color: #3b82f6; }
+    .toast-item.info .toast-progress { background: #3b82f6; }
+
+    .premium-footer {
+      background: var(--bg-card-solid);
+      border-top: 1px solid var(--border-primary);
+      padding: 22px 32px;
+      color: var(--text-muted);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .premium-header {
+        padding: 14px 18px;
+      }
+
+      .brand-text {
+        font-size: 1.05rem;
+      }
+
+      .success-wrap {
+        padding: 34px 16px;
+      }
+
+      .success-card {
+        padding: 26px 20px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
-<body style="font-family:Arial;background:#090d16;color:white;display:flex;align-items:center;justify-content:center;height:100vh;">
-  <div style="max-width:420px;background:#111827;padding:28px;border-radius:18px;text-align:center;">
-    <h1>Verifying Payment...</h1>
-    <p id="status">Please wait.</p>
-  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<body>
+  <header class="premium-header">
+    <div class="header-inner">
+      <a class="brand-container" href="dashboard.html">
+        <i class="fa-solid fa-shield-halved brand-icon"></i>
+        <span class="brand-text">The Creators Vault</span>
+      </a>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
-  authDomain: "creators-vaults.firebaseapp.com",
-  projectId: "creators-vaults",
-  storageBucket: "creators-vaults.firebasestorage.app",
-  messagingSenderId: "739165070040",
-  appId: "1:739165070040:web:8d2e72b8f8fad441df2dad"
-};
+      <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+    </div>
+  </header>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  <main class="success-wrap">
+    <section class="success-card">
+      <div class="status-icon" id="status-icon">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+      </div>
 
-const statusEl = document.getElementById("status");
-const orderId = new URLSearchParams(window.location.search).get("order_id") || localStorage.getItem("cv_last_order_id");
+      <h1 id="main-title">Verifying Payment...</h1>
+      <p id="status">Please wait while we verify your secure Cashfree payment.</p>
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
+      <div class="details-box">
+        <div class="detail-row">
+          <span>Order ID</span>
+          <strong id="order-id-label">Checking...</strong>
+        </div>
+        <div class="detail-row">
+          <span>Amount</span>
+          <strong id="amount-label">₹1</strong>
+        </div>
+        <div class="detail-row">
+          <span>Status</span>
+          <strong id="payment-status-label">Verifying</strong>
+        </div>
+      </div>
 
-  if (!orderId) {
-    statusEl.textContent = "Order ID missing.";
-    return;
-  }
+      <div class="loader" id="loader"></div>
 
-  const res = await fetch("/api/verify-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ order_id: orderId })
-  });
+      <a href="dashboard.html" class="action-btn" id="dashboard-btn" style="display:none;">
+        <i class="fa-solid fa-gauge-high"></i>
+        Go to Dashboard
+      </a>
+    </section>
+  </main>
 
-  const data = await res.json();
+  <div id="toast-box-mount"></div>
 
-  if (data.paid === true) {
-    await updateDoc(doc(db, "users", user.uid), {
-      paid: true,
-      membershipName: "Vault Pro Lifetime",
-      premiumActivationTimestamp: serverTimestamp(),
-      cashfreeOrderId: orderId
+  <footer class="premium-footer">
+    <div class="footer-inner">
+      <div>&copy; 2026 The Creators Vault. All systems operational.</div>
+      <div>https://thecreatorsvault.in</div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+      authDomain: "creators-vaults.firebaseapp.com",
+      projectId: "creators-vaults",
+      storageBucket: "creators-vaults.firebasestorage.app",
+      messagingSenderId: "739165070040",
+      appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+      measurementId: "G-MM742MSP09"
+    };
+
+    const TELEGRAM_BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE";
+    const TELEGRAM_CHAT_ID = "PASTE_YOUR_CHAT_ID_HERE";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const statusEl = document.getElementById("status");
+    const mainTitle = document.getElementById("main-title");
+    const statusIcon = document.getElementById("status-icon");
+    const loader = document.getElementById("loader");
+    const dashboardBtn = document.getElementById("dashboard-btn");
+    const orderIdLabel = document.getElementById("order-id-label");
+    const amountLabel = document.getElementById("amount-label");
+    const paymentStatusLabel = document.getElementById("payment-status-label");
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const rootElement = document.documentElement;
+
+    const orderId = new URLSearchParams(window.location.search).get("order_id") || localStorage.getItem("cv_last_order_id");
+
+    function applyInterfaceTheme(targetMode) {
+      rootElement.setAttribute("data-theme", targetMode);
+      localStorage.setItem("cv_saved_theme", targetMode);
+      themeToggleBtn.innerHTML = targetMode === "dark"
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    applyInterfaceTheme(localStorage.getItem("cv_saved_theme") || "dark");
+
+    themeToggleBtn.addEventListener("click", () => {
+      const nextTheme = rootElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyInterfaceTheme(nextTheme);
     });
 
-    statusEl.textContent = "Premium activated successfully!";
-    setTimeout(() => window.location.href = "dashboard.html", 1500);
-  } else {
-    statusEl.textContent = "Payment not completed yet.";
-  }
-});
-</script>
+    const toastMountNode = document.getElementById("toast-box-mount");
+
+    function spawnPremiumToast(titleString, textBody, statusType = "info") {
+      const toastFrame = document.createElement("div");
+      toastFrame.className = `toast-item ${statusType}`;
+
+      let descriptiveIcon = "fa-circle-info";
+      if (statusType === "success") descriptiveIcon = "fa-circle-check";
+      if (statusType === "error") descriptiveIcon = "fa-circle-exclamation";
+      if (statusType === "warning") descriptiveIcon = "fa-triangle-exclamation";
+
+      toastFrame.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+        <div class="toast-body">
+          <h5>${titleString}</h5>
+          <p>${textBody}</p>
+        </div>
+        <button class="toast-close" type="button"><i class="fa-solid fa-xmark"></i></button>
+        <div class="toast-progress"></div>
+      `;
+
+      toastMountNode.appendChild(toastFrame);
+      setTimeout(() => toastFrame.classList.add("show"), 20);
+
+      const dynamicProgressNode = toastFrame.querySelector(".toast-progress");
+      dynamicProgressNode.style.transform = "scaleX(1)";
+      dynamicProgressNode.style.transition = "transform 4000ms linear";
+      setTimeout(() => { dynamicProgressNode.style.transform = "scaleX(0)"; }, 30);
+
+      const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+
+      toastFrame.querySelector(".toast-close").addEventListener("click", () => {
+        clearTimeout(decayTimerReference);
+        clearToastInstance(toastFrame);
+      });
+    }
+
+    function clearToastInstance(targetNode) {
+      targetNode.classList.remove("show");
+      targetNode.addEventListener("transitionend", () => targetNode.remove(), { once: true });
+    }
+
+    function sanitizeText(value) {
+      return String(value || "Not available").replace(/[<>]/g, "");
+    }
+
+    async function sendTelegramSaleAlert({ user, orderId, amount, paymentStatus }) {
+      if (
+        TELEGRAM_BOT_TOKEN === "8875485258:AAHOgR0vyYSD9tZ6qNbhA_aMC-6K73XpomY" ||
+        TELEGRAM_CHAT_ID === "8255824096"
+      ) {
+        console.warn("Telegram bot token/chat id not configured.");
+        return;
+      }
+
+      const timeNow = new Date().toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        dateStyle: "medium",
+        timeStyle: "medium"
+      });
+
+      const telegramMessage = `
+💰 NEW PAYMENT SUCCESS
+The Creators Vault
+
+👤 Buyer Email: ${sanitizeText(user.email)}
+🧑‍💻 User UID: ${sanitizeText(user.uid)}
+🧾 Order ID: ${sanitizeText(orderId)}
+💳 Payment Gateway: Cashfree
+💵 Amount Paid: ${sanitizeText(amount)}
+✅ Payment Status: ${sanitizeText(paymentStatus)}
+🌐 Page URL: ${sanitizeText(window.location.href)}
+⏰ Time: ${sanitizeText(timeNow)}
+      `.trim();
+
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: telegramMessage
+        })
+      });
+    }
+
+    function setSuccessUI() {
+      mainTitle.textContent = "Payment Successful!";
+      statusEl.textContent = "Premium activated successfully. Redirecting you to dashboard...";
+      statusIcon.className = "status-icon success";
+      statusIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+      paymentStatusLabel.textContent = "Paid";
+      loader.style.display = "none";
+      dashboardBtn.style.display = "inline-flex";
+      spawnPremiumToast("Premium Activated", "Your lifetime access is active now.", "success");
+    }
+
+    function setErrorUI(message) {
+      mainTitle.textContent = "Payment Verification Failed";
+      statusEl.textContent = message;
+      statusIcon.className = "status-icon error";
+      statusIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+      paymentStatusLabel.textContent = "Failed / Pending";
+      loader.style.display = "none";
+      dashboardBtn.style.display = "inline-flex";
+      spawnPremiumToast("Verification Failed", message, "error");
+    }
+
+    orderIdLabel.textContent = orderId || "Missing";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      if (!orderId) {
+        setErrorUI("Order ID missing. Please contact support if payment was deducted.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order_id: orderId })
+        });
+
+        const data = await res.json();
+
+        const paidAmount =
+          data.amount ||
+          data.order_amount ||
+          data.payment_amount ||
+          "₹1";
+
+        amountLabel.textContent = typeof paidAmount === "number" ? `₹${paidAmount}` : paidAmount;
+
+        if (data.paid === true) {
+          await updateDoc(doc(db, "users", user.uid), {
+            paid: true,
+            membershipName: "Vault Pro Lifetime",
+            premiumActivationTimestamp: serverTimestamp(),
+            cashfreeOrderId: orderId,
+            cashfreePaymentAmount: paidAmount
+          });
+
+          try {
+            await sendTelegramSaleAlert({
+              user,
+              orderId,
+              amount: typeof paidAmount === "number" ? `₹${paidAmount}` : paidAmount,
+              paymentStatus: "PAID"
+            });
+          } catch (telegramError) {
+            console.error("Telegram notification failed:", telegramError);
+          }
+
+          localStorage.removeItem("cv_last_order_id");
+          setSuccessUI();
+
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1800);
+        } else {
+          setErrorUI("Payment not completed yet. If money was deducted, please contact support with your Order ID.");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorUI("Unable to verify payment right now. Please contact support with your Order ID.");
+      }
+    });
+  </script>
 </body>
 </html>
