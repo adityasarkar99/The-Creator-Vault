@@ -1,11 +1,19 @@
+const allowedOrigins = [
+  "https://thecreatorsvault.in",
+  "https://www.thecreatorsvault.in"
+];
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://thecreatorsvault.in");
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method not allowed" });
@@ -15,55 +23,50 @@ export default async function handler(req, res) {
     const { order_id } = req.body || {};
 
     if (!order_id) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing order_id"
-      });
+      return res.status(400).json({ success: false, error: "Missing order_id" });
     }
 
-    if (!process.env.CASHFREE_APP_ID || !process.env.CASHFREE_SECRET_KEY) {
-      return res.status(500).json({
-        success: false,
-        error: "Cashfree environment variables missing"
-      });
+    const appId = process.env.CASHFREE_APP_ID;
+    const secretKey = process.env.CASHFREE_SECRET_KEY;
+
+    if (!appId || !secretKey) {
+      return res.status(500).json({ success: false, error: "Cashfree keys missing in Vercel" });
     }
 
-    const response = await fetch(
+    const cfResponse = await fetch(
       `https://api.cashfree.com/pg/orders/${encodeURIComponent(order_id)}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "x-client-id": process.env.CASHFREE_APP_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-          "x-api-version": "2023-08-01"
+          "x-api-version": "2023-08-01",
+          "x-client-id": appId.trim(),
+          "x-client-secret": secretKey.trim()
         }
       }
     );
 
-    const data = await response.json();
+    const cfData = await cfResponse.json();
 
-    if (!response.ok) {
-      console.error("Cashfree Verify Failed:", data);
-      return res.status(response.status).json({
+    if (!cfResponse.ok) {
+      console.error("Cashfree verify error:", cfData);
+      return res.status(cfResponse.status).json({
         success: false,
-        error: data.message || data.error_description || "Cashfree verification failed",
-        cashfree: data
+        error: cfData.message || cfData.error_description || "Cashfree verification failed",
+        cashfree: cfData
       });
     }
 
-    const isPaid = data.order_status === "PAID";
-
     return res.status(200).json({
       success: true,
-      order_id: data.order_id,
-      order_status: data.order_status,
-      paid: isPaid,
-      cashfree: data
+      order_id: cfData.order_id,
+      order_status: cfData.order_status,
+      paid: cfData.order_status === "PAID",
+      cashfree: cfData
     });
 
   } catch (error) {
-    console.error("Verify Payment Server Error:", error);
+    console.error("Verify payment server error:", error);
     return res.status(500).json({
       success: false,
       error: error.message || "Server error"
