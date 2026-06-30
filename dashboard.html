@@ -11,9 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Razorpay Standard Checkout Script Integration -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
     <style>
         /* --- DESIGN SYSTEM & SYSTEM VARIABLES --- */
         :root, [data-theme="light"] {
@@ -1385,62 +1382,14 @@
             spawnPremiumToast('System Pipeline Active', 'No critical infrastructure alerts are pending in your account queue.', 'info');
         });
 
-        /* --- LIVE RAZORPAY PAYMENT SYSTEM INTEGRATION --- */
+        /* --- CASHFREE CHECKOUT REDIRECT PAYMENT SYSTEM INTEGRATION --- */
         window.startPayment = function() {
             if (!currentAuthenticatedUser) {
-                spawnPremiumToast('Authentication Error', 'You must be signed in to perform this setup transaction.', 'error');
+                spawnPremiumToast("Authentication Error", "Please login before checkout.", "error");
                 return;
             }
 
-            const paymentOptions = {
-                "key": "rzp_live_T4fJA5NyF26FgY", 
-                "amount": 19900, // ₹199.00
-                "currency": "INR",
-                "name": "Creators Vault",
-                "description": "Lifetime Vault Pro Access Purchase Bundle",
-                "image": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/shield-halved.svg",
-                "handler": async function (paymentResponse) {
-                    spawnPremiumToast('Payment Success', 'Verification received! Updating configurations...', 'success');
-                    
-                    try {
-                        const userDocRef = doc(db, "users", currentAuthenticatedUser.uid);
-                        await updateDoc(userDocRef, {
-                            paid: true,
-                            membershipName: "Vault Pro Lifetime",
-                            premiumActivationTimestamp: serverTimestamp(),
-                            razorpayPaymentId: paymentResponse.razorpay_payment_id
-                        });
-                        
-                        spawnPremiumToast('Account Upgraded', 'Your lifetime premium matrix has been successfully unlocked!', 'success');
-                        
-                        if (activeUserWorkspaceRecord) {
-                            activeUserWorkspaceRecord.paid = true;
-                            activeUserWorkspaceRecord.membershipName = "Vault Pro Lifetime";
-                            manifestDashboardLayoutData(activeUserWorkspaceRecord);
-                        }
-                    } catch (dbUpdateError) {
-                        console.error(dbUpdateError);
-                        spawnPremiumToast('Database Sync Error', 'Payment confirmed but profile upgrade step failed. Contact support.', 'error');
-                    }
-                },
-                "prefill": {
-                    "email": currentAuthenticatedUser.email || ""
-                },
-                "theme": {
-                    "color": "#2563eb"
-                }
-            };
-
-            try {
-                const razorpayPaymentGatewayObject = new Razorpay(paymentOptions);
-                razorpayPaymentGatewayObject.on('payment.failed', function (failedResponse) {
-                    spawnPremiumToast('Transaction Aborted', failedResponse.error.description || 'The security asset process was cancelled.', 'error');
-                });
-                razorpayPaymentGatewayObject.open();
-            } catch (checkoutInitializationFault) {
-                console.error(checkoutInitializationFault);
-                spawnPremiumToast('Gateway Error', 'Unable to resolve external payment scripts components.', 'error');
-            }
+            window.location.href = "checkout.html";
         };
 
         /* --- MAIN VIEWPORT INJECTION AND GENERATION --- */
@@ -1463,7 +1412,7 @@
                             </div>
                         </div>
                         <button class="btn-upgrade" onclick="startPayment()">
-                            <i class="fa-solid fa-crown"></i> Buy Lifetime Access @ ₹199
+                            <i class="fa-solid fa-crown"></i> Buy Lifetime Access @ ₹1
                         </button>
                     </div>
                 `;
