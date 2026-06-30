@@ -108,6 +108,12 @@
       to { background-position: 200% center; }
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .header-btn {
       width: 40px;
       height: 40px;
@@ -177,6 +183,8 @@
       font-size: 2rem;
       margin: 0 auto 20px;
       box-shadow: 0 10px 30px rgba(37, 99, 235, .32);
+      position: relative;
+      z-index: 1;
     }
 
     .status-icon.success {
@@ -193,6 +201,8 @@
       letter-spacing: -.05em;
       font-weight: 800;
       margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
     }
 
     #status {
@@ -201,6 +211,8 @@
       line-height: 1.7;
       font-weight: 600;
       margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .details-box {
@@ -212,6 +224,8 @@
       text-align: left;
       display: grid;
       gap: 12px;
+      position: relative;
+      z-index: 1;
     }
 
     .detail-row {
@@ -246,6 +260,8 @@
       animation: shine 3s linear infinite;
       box-shadow: 0 10px 28px rgba(124, 58, 237, .32);
       text-decoration: none;
+      position: relative;
+      z-index: 1;
     }
 
     .action-btn:hover {
@@ -261,10 +277,8 @@
       border-top-color: var(--accent-brand);
       animation: spin 1s linear infinite;
       margin: 18px auto 0;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      position: relative;
+      z-index: 1;
     }
 
     #toast-box-mount {
@@ -369,26 +383,11 @@
     }
 
     @media (max-width: 768px) {
-      .premium-header {
-        padding: 14px 18px;
-      }
-
-      .brand-text {
-        font-size: 1.05rem;
-      }
-
-      .success-wrap {
-        padding: 34px 16px;
-      }
-
-      .success-card {
-        padding: 26px 20px;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-        text-align: center;
-      }
+      .premium-header { padding: 14px 18px; }
+      .brand-text { font-size: 1.05rem; }
+      .success-wrap { padding: 34px 16px; }
+      .success-card { padding: 26px 20px; }
+      .footer-inner { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
@@ -401,9 +400,14 @@
         <span class="brand-text">The Creators Vault</span>
       </a>
 
-      <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme">
-        <i class="fa-solid fa-sun"></i>
-      </button>
+      <div class="header-actions">
+        <a href="dashboard.html" class="header-btn" title="Dashboard">
+          <i class="fa-solid fa-gauge-high"></i>
+        </a>
+        <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme" type="button">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -423,7 +427,7 @@
         </div>
         <div class="detail-row">
           <span>Amount</span>
-          <strong id="amount-label">₹1</strong>
+          <strong id="amount-label">₹99</strong>
         </div>
         <div class="detail-row">
           <span>Status</span>
@@ -464,8 +468,10 @@
       measurementId: "G-MM742MSP09"
     };
 
-    const TELEGRAM_BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE";
-    const TELEGRAM_CHAT_ID = "PASTE_YOUR_CHAT_ID_HERE";
+    // IMPORTANT: You shared your old token publicly. Revoke it in @BotFather and paste the NEW token here.
+    // Frontend Telegram bot token is visible in browser. For production, use backend API.
+    const TELEGRAM_BOT_TOKEN = "8460638915:AAGvZ92g7rCWwCQjCRuVAsjNryehnt8LWWA";
+    const TELEGRAM_CHAT_ID = "8255824096";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -483,6 +489,7 @@
     const rootElement = document.documentElement;
 
     const orderId = new URLSearchParams(window.location.search).get("order_id") || localStorage.getItem("cv_last_order_id");
+    orderIdLabel.textContent = orderId || "Missing";
 
     function applyInterfaceTheme(targetMode) {
       rootElement.setAttribute("data-theme", targetMode);
@@ -545,11 +552,8 @@
       return String(value || "Not available").replace(/[<>]/g, "");
     }
 
-    async function sendTelegramSaleAlert({ user, orderId, amount, paymentStatus }) {
-      if (
-        TELEGRAM_BOT_TOKEN === "8460638915:AAGvZ92g7rCWwCQjCRuVAsjNryehnt8LWWA" ||
-        TELEGRAM_CHAT_ID === "8255824096" 
-      ) {
+    async function sendTelegramPaymentAlert({ user, orderId, amount, paymentStatus, headline }) {
+      if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes("PASTE_") || !TELEGRAM_CHAT_ID) {
         console.warn("Telegram bot token/chat id not configured.");
         return;
       }
@@ -561,29 +565,32 @@
       });
 
       const telegramMessage = `
-💰 NEW PAYMENT SUCCESS
+${headline}
 The Creators Vault
 
 👤 Buyer Email: ${sanitizeText(user.email)}
 🧑‍💻 User UID: ${sanitizeText(user.uid)}
 🧾 Order ID: ${sanitizeText(orderId)}
 💳 Payment Gateway: Cashfree
-💵 Amount Paid: ${sanitizeText(amount)}
-✅ Payment Status: ${sanitizeText(paymentStatus)}
+💵 Amount: ${sanitizeText(amount)}
+📌 Payment Status: ${sanitizeText(paymentStatus)}
 🌐 Page URL: ${sanitizeText(window.location.href)}
 ⏰ Time: ${sanitizeText(timeNow)}
       `.trim();
 
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      const tgResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
           text: telegramMessage
         })
       });
+
+      const tgData = await tgResponse.json();
+      if (!tgResponse.ok || tgData.ok !== true) {
+        console.error("Telegram notification failed:", tgData);
+      }
     }
 
     function setSuccessUI() {
@@ -597,18 +604,16 @@ The Creators Vault
       spawnPremiumToast("Premium Activated", "Your lifetime access is active now.", "success");
     }
 
-    function setErrorUI(message) {
+    function setErrorUI(message, label = "Failed / Pending") {
       mainTitle.textContent = "Payment Verification Failed";
       statusEl.textContent = message;
       statusIcon.className = "status-icon error";
       statusIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
-      paymentStatusLabel.textContent = "Failed / Pending";
+      paymentStatusLabel.textContent = label;
       loader.style.display = "none";
       dashboardBtn.style.display = "inline-flex";
       spawnPremiumToast("Verification Failed", message, "error");
     }
-
-    orderIdLabel.textContent = orderId || "Missing";
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -617,7 +622,14 @@ The Creators Vault
       }
 
       if (!orderId) {
-        setErrorUI("Order ID missing. Please contact support if payment was deducted.");
+        setErrorUI("Order ID missing. Please contact support if payment was deducted.", "Order Missing");
+        await sendTelegramPaymentAlert({
+          user,
+          orderId: "Missing",
+          amount: "₹99",
+          paymentStatus: "ORDER ID MISSING",
+          headline: "⚠️ PAYMENT VERIFY ISSUE"
+        });
         return;
       }
 
@@ -630,13 +642,9 @@ The Creators Vault
 
         const data = await res.json();
 
-        const paidAmount =
-          data.amount ||
-          data.order_amount ||
-          data.payment_amount ||
-          "₹1";
-
-        amountLabel.textContent = typeof paidAmount === "number" ? `₹${paidAmount}` : paidAmount;
+        const paidAmount = data.amount || data.order_amount || data.payment_amount || "₹99";
+        const amountText = typeof paidAmount === "number" ? `₹${paidAmount}` : paidAmount;
+        amountLabel.textContent = amountText;
 
         if (data.paid === true) {
           await updateDoc(doc(db, "users", user.uid), {
@@ -647,16 +655,13 @@ The Creators Vault
             cashfreePaymentAmount: paidAmount
           });
 
-          try {
-            await sendTelegramSaleAlert({
-              user,
-              orderId,
-              amount: typeof paidAmount === "number" ? `₹${paidAmount}` : paidAmount,
-              paymentStatus: "PAID"
-            });
-          } catch (telegramError) {
-            console.error("Telegram notification failed:", telegramError);
-          }
+          await sendTelegramPaymentAlert({
+            user,
+            orderId,
+            amount: amountText,
+            paymentStatus: "PAID",
+            headline: "💰 NEW PAYMENT SUCCESS"
+          });
 
           localStorage.removeItem("cv_last_order_id");
           setSuccessUI();
@@ -665,11 +670,28 @@ The Creators Vault
             window.location.href = "dashboard.html";
           }, 1800);
         } else {
-          setErrorUI("Payment not completed yet. If money was deducted, please contact support with your Order ID.");
+          await sendTelegramPaymentAlert({
+            user,
+            orderId,
+            amount: amountText,
+            paymentStatus: "FAILED / PENDING",
+            headline: "⚠️ PAYMENT FAILED / PENDING"
+          });
+
+          setErrorUI("Payment not completed yet. If money was deducted, please contact support with your Order ID.", "Failed / Pending");
         }
       } catch (error) {
         console.error(error);
-        setErrorUI("Unable to verify payment right now. Please contact support with your Order ID.");
+
+        await sendTelegramPaymentAlert({
+          user,
+          orderId,
+          amount: "₹99",
+          paymentStatus: "VERIFY API ERROR",
+          headline: "🚨 PAYMENT VERIFY API ERROR"
+        });
+
+        setErrorUI("Unable to verify payment right now. Please contact support with your Order ID.", "Verify Error");
       }
     });
   </script>
