@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       order_note: "The Creators Vault Premium Test Payment"
     };
 
-    const response = await fetch("https://sandbox.cashfree.com/pg/orders", {
+    const response = await fetch("https://api.cashfree.com/pg/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
