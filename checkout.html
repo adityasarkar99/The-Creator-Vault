@@ -45,19 +45,52 @@
       margin: 0;
       padding: 0;
       font-family: "Plus Jakarta Sans", sans-serif;
-      transition: background-color .3s ease, border-color .3s ease, transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
     }
 
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, .18), transparent 34%),
-        radial-gradient(circle at top right, rgba(124, 58, 237, .16), transparent 32%),
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.16), transparent 32%),
         var(--bg-main);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+    }
+
+    #auth-guard-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #090d16;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(59, 130, 246, 0.1);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .guard-text {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .premium-header {
@@ -68,12 +101,12 @@
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border-bottom: 1px solid var(--border-primary);
-      padding: 14px 32px;
+      padding: 14px 40px;
       box-shadow: var(--shadow-subtle);
     }
 
     .header-inner {
-      max-width: 1180px;
+      max-width: 1300px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -94,6 +127,10 @@
       color: var(--accent-brand);
     }
 
+    .brand-container:hover .brand-icon {
+      transform: scale(1.1) rotate(-5deg);
+    }
+
     .brand-text {
       font-size: 1.25rem;
       font-weight: 800;
@@ -102,79 +139,81 @@
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: shine 4s linear infinite;
+      animation: continuousShine 4s linear infinite;
     }
 
-    @keyframes shine {
+    @keyframes continuousShine {
       to { background-position: 200% center; }
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .header-btn {
       width: 40px;
       height: 40px;
-      border-radius: 11px;
+      border-radius: 10px;
       border: 1px solid var(--border-primary);
-      background: var(--bg-input);
+      background: transparent;
       color: var(--text-main);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
+      font-size: 0.95rem;
     }
 
     .header-btn:hover {
+      background: var(--bg-input);
+      border-color: var(--text-muted);
       transform: translateY(-2px);
-      border-color: var(--accent-brand);
     }
 
-    .checkout-wrap {
-      flex: 1;
-      max-width: 1180px;
+    .checkout-viewport {
+      max-width: 1300px;
       width: 100%;
       margin: 0 auto;
-      padding: 54px 24px;
+      padding: 48px 24px;
+      flex: 1;
       display: grid;
-      grid-template-columns: 1.05fr .95fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 28px;
       align-items: center;
     }
 
-    .hero-panel {
-      animation: fadeInUp .5s ease forwards;
+    .checkout-hero {
+      animation: fadeInUp 0.5s ease forwards;
     }
 
-    .kicker {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(59, 130, 246, .12);
+      background: rgba(59, 130, 246, 0.12);
       color: var(--accent-brand-hover);
-      border: 1px solid rgba(59, 130, 246, .18);
-      font-size: .78rem;
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      font-size: 0.78rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .04em;
+      letter-spacing: 0.04em;
       margin-bottom: 18px;
     }
 
-    h1 {
+    .checkout-hero h1 {
       font-size: clamp(2.2rem, 5vw, 4.2rem);
       line-height: 1;
-      letter-spacing: -.06em;
+      letter-spacing: -0.06em;
       font-weight: 800;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
-    .subtitle {
+    .checkout-hero p {
       color: var(--text-muted);
       font-size: 1rem;
       line-height: 1.7;
@@ -197,7 +236,7 @@
       border-radius: 11px;
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
-      font-size: .82rem;
+      font-size: 0.82rem;
       font-weight: 800;
       box-shadow: var(--shadow-subtle);
     }
@@ -207,7 +246,7 @@
     }
 
     .checkout-card {
-      background: linear-gradient(135deg, rgba(37, 99, 235, .12), rgba(124, 58, 237, .08)), var(--bg-card);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.08)), var(--bg-card);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--border-primary);
@@ -216,7 +255,7 @@
       padding: 30px;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp .65s ease forwards;
+      animation: fadeInUp 0.65s ease forwards;
     }
 
     .checkout-card::after {
@@ -226,7 +265,7 @@
       height: 220px;
       right: -80px;
       top: -80px;
-      background: radial-gradient(circle, rgba(59, 130, 246, .24), transparent 68%);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.24), transparent 68%);
       pointer-events: none;
     }
 
@@ -235,27 +274,33 @@
       height: 62px;
       border-radius: 18px;
       background: linear-gradient(135deg, #2563eb, #7c3aed);
-      color: #fff;
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.55rem;
-      box-shadow: 0 10px 30px rgba(37, 99, 235, .32);
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.32);
       margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .checkout-card h2 {
       font-size: 1.65rem;
       font-weight: 800;
-      letter-spacing: -.03em;
+      letter-spacing: -0.03em;
       margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
     }
 
     .plan-desc {
       color: var(--text-muted);
-      font-size: .92rem;
+      font-size: 0.92rem;
       line-height: 1.6;
       margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
     }
 
     .price-box {
@@ -264,34 +309,32 @@
       border-radius: 18px;
       padding: 18px;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
 
     .price-label {
       color: var(--text-muted);
-      font-size: .78rem;
+      font-size: 0.78rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .05em;
+      letter-spacing: 0.05em;
       margin-bottom: 6px;
     }
 
     .price {
       font-size: 3rem;
       font-weight: 800;
-      letter-spacing: -.06em;
+      letter-spacing: -0.06em;
       line-height: 1;
-    }
-
-    .price span {
-      font-size: .9rem;
-      color: var(--text-muted);
-      letter-spacing: 0;
     }
 
     .features {
       display: grid;
       gap: 12px;
       margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
     }
 
     .feature {
@@ -299,7 +342,7 @@
       align-items: center;
       gap: 10px;
       color: var(--text-main);
-      font-size: .9rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
 
@@ -307,43 +350,69 @@
       color: #10b981;
     }
 
-    .pay-btn {
+    .button-stack {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pay-btn,
+    .back-btn {
       width: 100%;
-      border: none;
       border-radius: 14px;
       padding: 15px 22px;
-      background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
-      background-size: 200% auto;
-      color: #fff;
-      font-size: .95rem;
+      font-size: 0.95rem;
       font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 9px;
-      animation: shine 3s linear infinite;
-      box-shadow: 0 10px 28px rgba(124, 58, 237, .32);
+      text-decoration: none;
+    }
+
+    .pay-btn {
+      border: none;
+      background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
+      background-size: 200% auto;
+      color: #ffffff;
+      animation: continuousShine 3s linear infinite;
+      box-shadow: 0 10px 28px rgba(124, 58, 237, 0.32);
     }
 
     .pay-btn:hover {
       transform: translateY(-3px) scale(1.01);
-      box-shadow: 0 14px 36px rgba(124, 58, 237, .42);
+      box-shadow: 0 14px 36px rgba(124, 58, 237, 0.42);
     }
 
     .pay-btn:disabled {
-      opacity: .7;
+      opacity: 0.72;
       cursor: not-allowed;
       transform: none;
     }
 
-    #status {
-      margin-top: 16px;
+    .back-btn {
+      border: 1px solid var(--border-primary);
+      background: var(--bg-input);
+      color: var(--text-main);
+    }
+
+    .back-btn:hover {
+      border-color: var(--accent-brand);
+      transform: translateY(-2px);
+    }
+
+    #checkout-loader {
+      display: none;
+      margin-top: 18px;
       color: var(--text-muted);
-      font-size: .84rem;
+      font-size: 0.84rem;
       line-height: 1.5;
       text-align: center;
-      font-weight: 600;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
     }
 
     .secure-note {
@@ -353,10 +422,12 @@
       background: var(--bg-input);
       border: 1px solid var(--border-primary);
       color: var(--text-muted);
-      font-size: .78rem;
+      font-size: 0.78rem;
       line-height: 1.5;
       display: flex;
       gap: 9px;
+      position: relative;
+      z-index: 1;
     }
 
     .secure-note i {
@@ -368,7 +439,7 @@
       position: fixed;
       top: 20px;
       right: 20px;
-      z-index: 99999;
+      z-index: 100000;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -388,7 +459,7 @@
       overflow: hidden;
       transform: translateX(110%);
       opacity: 0;
-      transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
     }
 
     .toast-item.show {
@@ -402,13 +473,13 @@
     }
 
     .toast-body h5 {
-      font-size: .88rem;
+      font-size: 0.88rem;
       font-weight: 800;
       margin-bottom: 2px;
     }
 
     .toast-body p {
-      font-size: .8rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       line-height: 1.4;
       padding-right: 18px;
@@ -445,14 +516,14 @@
     .premium-footer {
       background: var(--bg-card-solid);
       border-top: 1px solid var(--border-primary);
-      padding: 22px 32px;
+      padding: 22px 40px;
       color: var(--text-muted);
-      font-size: .82rem;
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
     .footer-inner {
-      max-width: 1180px;
+      max-width: 1300px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -466,7 +537,7 @@
     }
 
     @media (max-width: 860px) {
-      .checkout-wrap {
+      .checkout-viewport {
         grid-template-columns: 1fr;
         padding: 34px 16px;
       }
@@ -492,6 +563,11 @@
 </head>
 
 <body>
+  <div id="auth-guard-screen">
+    <div class="spinner"></div>
+    <div class="guard-text">Verifying Checkout Session...</div>
+  </div>
+
   <header class="premium-header">
     <div class="header-inner">
       <a class="brand-container" href="dashboard.html">
@@ -503,30 +579,30 @@
         <a href="dashboard.html" class="header-btn" title="Back to Dashboard">
           <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme">
+        <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme" type="button">
           <i class="fa-solid fa-sun"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="checkout-wrap">
-    <section class="hero-panel">
-      <div class="kicker">
+  <main class="checkout-viewport">
+    <section class="checkout-hero">
+      <div class="hero-badge">
         <i class="fa-solid fa-lock"></i>
         Secure Cashfree Checkout
       </div>
-      <h1>Unlock Lifetime Premium Access</h1>
-      <p class="subtitle">
-        Complete your secure test payment and activate The Creators Vault premium experience.
-        Payment success will verify your order and unlock lifetime access.
+
+      <h1>The Creators Vault</h1>
+      <p>
+        Complete your secure checkout and unlock Lifetime Premium Access with instant activation after payment verification.
       </p>
 
       <div class="trust-row">
         <span class="trust-badge"><i class="fa-solid fa-circle-check"></i> Secure Payment</span>
-        <span class="trust-badge"><i class="fa-solid fa-bolt"></i> Instant Redirect</span>
+        <span class="trust-badge"><i class="fa-solid fa-bolt"></i> Instant Activation</span>
         <span class="trust-badge"><i class="fa-solid fa-crown"></i> Lifetime Access</span>
-        <span class="trust-badge"><i class="fa-solid fa-shield-halved"></i> Firebase Protected</span>
+        <span class="trust-badge"><i class="fa-solid fa-headset"></i> Premium Support</span>
       </div>
     </section>
 
@@ -536,31 +612,40 @@
       </div>
 
       <h2>Lifetime Premium Access</h2>
-      <p class="plan-desc">
-        Test checkout for The Creators Vault premium activation.
-      </p>
+      <p class="plan-desc">Current Price</p>
 
       <div class="price-box">
-        <div class="price-label">Test Payment</div>
-        <div class="price">₹1 <span>only</span></div>
+        <div class="price-label">Current Price</div>
+        <div class="price">₹1</div>
       </div>
 
       <div class="features">
-        <div class="feature"><i class="fa-solid fa-check-circle"></i> Premium vault access flow</div>
-        <div class="feature"><i class="fa-solid fa-check-circle"></i> Cashfree secure modal checkout</div>
-        <div class="feature"><i class="fa-solid fa-check-circle"></i> Firebase user session required</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Lifetime Access</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Instant Activation</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Unlimited Downloads</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Premium Support</div>
       </div>
 
-      <button id="payBtn" class="pay-btn">
-        <i class="fa-solid fa-credit-card"></i>
-        Pay ₹1 Now
-      </button>
+      <div class="button-stack">
+        <button id="payBtn" class="pay-btn" type="button">
+          <i class="fa-solid fa-credit-card"></i>
+          Pay ₹1
+        </button>
 
-      <p id="status">Secure checkout powered by Cashfree</p>
+        <a href="dashboard.html" class="back-btn">
+          <i class="fa-solid fa-arrow-left"></i>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <div id="checkout-loader">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Creating Secure Payment Session...
+      </div>
 
       <div class="secure-note">
         <i class="fa-solid fa-circle-info"></i>
-        <span>Please keep this page open until the payment process finishes.</span>
+        <span>Do not close this page while Cashfree checkout is opening.</span>
       </div>
     </section>
   </main>
@@ -593,8 +678,9 @@
 
     let currentUser = null;
 
-    const statusEl = document.getElementById("status");
+    const authGuardScreen = document.getElementById("auth-guard-screen");
     const payBtn = document.getElementById("payBtn");
+    const checkoutLoader = document.getElementById("checkout-loader");
     const themeToggleBtn = document.getElementById("theme-toggle-btn");
     const rootElement = document.documentElement;
 
@@ -655,6 +741,14 @@
       targetNode.addEventListener("transitionend", () => targetNode.remove(), { once: true });
     }
 
+    function setPaymentLoading(isLoading) {
+      payBtn.disabled = isLoading;
+      checkoutLoader.style.display = isLoading ? "block" : "none";
+      payBtn.innerHTML = isLoading
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> Creating Session...'
+        : '<i class="fa-solid fa-credit-card"></i> Pay ₹1';
+    }
+
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         window.location.href = "index.html";
@@ -662,62 +756,70 @@
       }
 
       currentUser = user;
-      spawnPremiumToast("Session Verified", "Your secure checkout session is ready.", "success");
+
+      authGuardScreen.style.transition = "opacity 0.35s ease";
+      authGuardScreen.style.opacity = "0";
+      setTimeout(() => {
+        authGuardScreen.style.display = "none";
+      }, 350);
     });
 
     payBtn.addEventListener("click", async () => {
       if (!currentUser) {
-        spawnPremiumToast("Authentication Error", "Please login first.", "error");
+        spawnPremiumToast("Authentication Error", "Please login before checkout.", "error");
         return;
       }
 
-      statusEl.textContent = "Creating secure order...";
-      payBtn.disabled = true;
-      payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Order...';
+      setPaymentLoading(true);
 
       try {
-        const res = await fetch("/api/create-order", {
+        const response = await fetch("/api/create-order", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             uid: currentUser.uid,
             email: currentUser.email,
-            name: currentUser.email?.split("@")[0] || "Creator Vault User"
+            name: currentUser.displayName || currentUser.email,
+            phone: "9999999999"
           })
         });
 
-        const data = await res.json();
+        const data = await response.json();
 
-        if (!res.ok || !data.payment_session_id) {
+        const payment_session_id = data.payment_session_id;
+        const order_id = data.order_id;
+
+        if (!response.ok || !payment_session_id || !order_id) {
           console.error(data);
-          statusEl.textContent = "Order creation failed.";
-          spawnPremiumToast("Order Failed", "Payment order failed. Check Vercel logs.", "error");
+          spawnPremiumToast("Payment Error", "Unable to create payment order", "error");
+          setPaymentLoading(false);
           return;
         }
 
-        localStorage.setItem("cv_last_order_id", data.order_id);
+        localStorage.setItem("cv_last_order_id", order_id);
 
-        statusEl.textContent = "Opening Cashfree secure checkout...";
-        payBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Opening Checkout...';
-
-        const cashfree = Cashfree({ mode: "sandbox" });
-
-        cashfree.checkout({
-          paymentSessionId: data.payment_session_id,
-          redirectTarget: "_modal"
-        }).then(() => {
-          window.location.href = `success.html?order_id=${data.order_id}`;
+        const cashfree = Cashfree({
+          mode: "production"
         });
 
+        const checkoutResult = await cashfree.checkout({
+          paymentSessionId: payment_session_id,
+          redirectTarget: "_modal"
+        });
+
+        if (checkoutResult && checkoutResult.error) {
+          spawnPremiumToast("Payment Cancelled", "Payment Cancelled", "warning");
+          setPaymentLoading(false);
+          return;
+        }
+
+        window.location.href = `success.html?order_id=${encodeURIComponent(order_id)}`;
       } catch (error) {
         console.error(error);
-        statusEl.textContent = "Something went wrong.";
-        spawnPremiumToast("Checkout Error", "Unable to start payment. Please try again.", "error");
-      } finally {
-        setTimeout(() => {
-          payBtn.disabled = false;
-          payBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay ₹1 Now';
-        }, 1200);
+        spawnPremiumToast("Payment Error", "Unable to create payment order", "error");
+        setPaymentLoading(false);
       }
     });
   </script>
