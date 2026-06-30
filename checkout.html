@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - The Creators Vault</title>
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+</head>
+<body style="font-family:Arial;background:#090d16;color:white;display:flex;align-items:center;justify-content:center;height:100vh;">
+  <div style="max-width:420px;background:#111827;padding:28px;border-radius:18px;text-align:center;border:1px solid rgba(255,255,255,.08)">
+    <h1>The Creators Vault</h1>
+    <h2>Lifetime Premium Access</h2>
+    <p>Test Payment: ₹1</p>
+    <button id="payBtn" style="padding:14px 24px;border:0;border-radius:12px;background:#2563eb;color:white;font-weight:800;cursor:pointer;">
+      Pay ₹1 Now
+    </button>
+    <p id="status" style="color:#94a3b8;margin-top:18px;">Secure checkout powered by Cashfree</p>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+  authDomain: "creators-vaults.firebaseapp.com",
+  projectId: "creators-vaults",
+  storageBucket: "creators-vaults.firebasestorage.app",
+  messagingSenderId: "739165070040",
+  appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+  measurementId: "G-MM742MSP09"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let currentUser = null;
+const statusEl = document.getElementById("status");
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+  currentUser = user;
+});
+
+document.getElementById("payBtn").addEventListener("click", async () => {
+  if (!currentUser) return alert("Please login first.");
+
+  statusEl.textContent = "Creating secure order...";
+
+  const res = await fetch("/api/create-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      uid: currentUser.uid,
+      email: currentUser.email,
+      name: currentUser.email?.split("@")[0] || "Creator Vault User"
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.payment_session_id) {
+    console.error(data);
+    statusEl.textContent = "Order creation failed.";
+    alert("Payment order failed. Check Vercel logs.");
+    return;
+  }
+
+  localStorage.setItem("cv_last_order_id", data.order_id);
+
+  const cashfree = Cashfree({ mode: "sandbox" });
+
+  cashfree.checkout({
+    paymentSessionId: data.payment_session_id,
+    redirectTarget: "_modal"
+  }).then(() => {
+    window.location.href = `success.html?order_id=${data.order_id}`;
+  });
+});
+</script>
+</body>
+</html>
