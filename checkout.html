@@ -1,85 +1,725 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout - The Creators Vault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+  <style>
+    :root, [data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: rgba(255, 255, 255, 0.75);
+      --bg-card-solid: #ffffff;
+      --bg-input: #f1f5f9;
+      --border-primary: rgba(226, 232, 240, 0.8);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-brand: #2563eb;
+      --accent-brand-hover: #1d4ed8;
+      --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
+      --glass-blur: blur(12px);
+    }
+
+    [data-theme="dark"] {
+      --bg-main: #090d16;
+      --bg-card: rgba(17, 24, 39, 0.6);
+      --bg-card-solid: #111827;
+      --bg-input: #1f2937;
+      --border-primary: rgba(255, 255, 255, 0.05);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-brand: #3b82f6;
+      --accent-brand-hover: #60a5fa;
+      --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      --glass-blur: blur(16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      transition: background-color .3s ease, border-color .3s ease, transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, .18), transparent 34%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, .16), transparent 32%),
+        var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .premium-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 14px 32px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      font-size: 1.25rem;
+      color: var(--accent-brand);
+    }
+
+    .brand-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-brand) 50%, var(--text-main) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      border: 1px solid var(--border-primary);
+      background: var(--bg-input);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .header-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-brand);
+    }
+
+    .checkout-wrap {
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 54px 24px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-panel {
+      animation: fadeInUp .5s ease forwards;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, .12);
+      color: var(--accent-brand-hover);
+      border: 1px solid rgba(59, 130, 246, .18);
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -.06em;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      font-size: .82rem;
+      font-weight: 800;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .trust-badge i {
+      color: #10b981;
+    }
+
+    .checkout-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, .12), rgba(124, 58, 237, .08)), var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-primary);
+      border-radius: 24px;
+      box-shadow: var(--shadow-subtle);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp .65s ease forwards;
+    }
+
+    .checkout-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -80px;
+      top: -80px;
+      background: radial-gradient(circle, rgba(59, 130, 246, .24), transparent 68%);
+      pointer-events: none;
+    }
+
+    .plan-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.55rem;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, .32);
+      margin-bottom: 18px;
+    }
+
+    .checkout-card h2 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      color: var(--text-muted);
+      font-size: .92rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .price-box {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .price-label {
+      color: var(--text-muted);
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+
+    .price {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -.06em;
+      line-height: 1;
+    }
+
+    .price span {
+      font-size: .9rem;
+      color: var(--text-muted);
+      letter-spacing: 0;
+    }
+
+    .features {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .feature i {
+      color: #10b981;
+    }
+
+    .pay-btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      background: linear-gradient(90deg, #ff007f, #7c3aed, #2563eb);
+      background-size: 200% auto;
+      color: #fff;
+      font-size: .95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      animation: shine 3s linear infinite;
+      box-shadow: 0 10px 28px rgba(124, 58, 237, .32);
+    }
+
+    .pay-btn:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 14px 36px rgba(124, 58, 237, .42);
+    }
+
+    .pay-btn:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #status {
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: .84rem;
+      line-height: 1.5;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .secure-note {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-primary);
+      color: var(--text-muted);
+      font-size: .78rem;
+      line-height: 1.5;
+      display: flex;
+      gap: 9px;
+    }
+
+    .secure-note i {
+      color: var(--accent-brand);
+      margin-top: 2px;
+    }
+
+    #toast-box-mount {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+      width: calc(100% - 40px);
+    }
+
+    .toast-item {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(110%);
+      opacity: 0;
+      transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s;
+    }
+
+    .toast-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+
+    .toast-body h5 {
+      font-size: .88rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .toast-body p {
+      font-size: .8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      padding-right: 18px;
+    }
+
+    .toast-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      transform-origin: left;
+    }
+
+    .toast-item.success .toast-icon { color: #10b981; }
+    .toast-item.success .toast-progress { background: #10b981; }
+    .toast-item.error .toast-icon { color: #ef4444; }
+    .toast-item.error .toast-progress { background: #ef4444; }
+    .toast-item.warning .toast-icon { color: #f59e0b; }
+    .toast-item.warning .toast-progress { background: #f59e0b; }
+    .toast-item.info .toast-icon { color: #3b82f6; }
+    .toast-item.info .toast-progress { background: #3b82f6; }
+
+    .premium-footer {
+      background: var(--bg-card-solid);
+      border-top: 1px solid var(--border-primary);
+      padding: 22px 32px;
+      color: var(--text-muted);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .checkout-wrap {
+        grid-template-columns: 1fr;
+        padding: 34px 16px;
+      }
+
+      .premium-header {
+        padding: 14px 18px;
+      }
+
+      .brand-text {
+        font-size: 1.05rem;
+      }
+
+      .checkout-card {
+        padding: 24px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
-<body style="font-family:Arial;background:#090d16;color:white;display:flex;align-items:center;justify-content:center;height:100vh;">
-  <div style="max-width:420px;background:#111827;padding:28px;border-radius:18px;text-align:center;border:1px solid rgba(255,255,255,.08)">
-    <h1>The Creators Vault</h1>
-    <h2>Lifetime Premium Access</h2>
-    <p>Test Payment: ₹1</p>
-    <button id="payBtn" style="padding:14px 24px;border:0;border-radius:12px;background:#2563eb;color:white;font-weight:800;cursor:pointer;">
-      Pay ₹1 Now
-    </button>
-    <p id="status" style="color:#94a3b8;margin-top:18px;">Secure checkout powered by Cashfree</p>
-  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+<body>
+  <header class="premium-header">
+    <div class="header-inner">
+      <a class="brand-container" href="dashboard.html">
+        <i class="fa-solid fa-shield-halved brand-icon"></i>
+        <span class="brand-text">The Creators Vault</span>
+      </a>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
-  authDomain: "creators-vaults.firebaseapp.com",
-  projectId: "creators-vaults",
-  storageBucket: "creators-vaults.firebasestorage.app",
-  messagingSenderId: "739165070040",
-  appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
-  measurementId: "G-MM742MSP09"
-};
+      <div class="header-actions">
+        <a href="dashboard.html" class="header-btn" title="Back to Dashboard">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  <main class="checkout-wrap">
+    <section class="hero-panel">
+      <div class="kicker">
+        <i class="fa-solid fa-lock"></i>
+        Secure Cashfree Checkout
+      </div>
+      <h1>Unlock Lifetime Premium Access</h1>
+      <p class="subtitle">
+        Complete your secure test payment and activate The Creators Vault premium experience.
+        Payment success will verify your order and unlock lifetime access.
+      </p>
 
-let currentUser = null;
-const statusEl = document.getElementById("status");
+      <div class="trust-row">
+        <span class="trust-badge"><i class="fa-solid fa-circle-check"></i> Secure Payment</span>
+        <span class="trust-badge"><i class="fa-solid fa-bolt"></i> Instant Redirect</span>
+        <span class="trust-badge"><i class="fa-solid fa-crown"></i> Lifetime Access</span>
+        <span class="trust-badge"><i class="fa-solid fa-shield-halved"></i> Firebase Protected</span>
+      </div>
+    </section>
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
-  currentUser = user;
-});
+    <section class="checkout-card">
+      <div class="plan-icon">
+        <i class="fa-solid fa-crown"></i>
+      </div>
 
-document.getElementById("payBtn").addEventListener("click", async () => {
-  if (!currentUser) return alert("Please login first.");
+      <h2>Lifetime Premium Access</h2>
+      <p class="plan-desc">
+        Test checkout for The Creators Vault premium activation.
+      </p>
 
-  statusEl.textContent = "Creating secure order...";
+      <div class="price-box">
+        <div class="price-label">Test Payment</div>
+        <div class="price">₹1 <span>only</span></div>
+      </div>
 
-  const res = await fetch("/api/create-order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      uid: currentUser.uid,
-      email: currentUser.email,
-      name: currentUser.email?.split("@")[0] || "Creator Vault User"
-    })
-  });
+      <div class="features">
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Premium vault access flow</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Cashfree secure modal checkout</div>
+        <div class="feature"><i class="fa-solid fa-check-circle"></i> Firebase user session required</div>
+      </div>
 
-  const data = await res.json();
+      <button id="payBtn" class="pay-btn">
+        <i class="fa-solid fa-credit-card"></i>
+        Pay ₹1 Now
+      </button>
 
-  if (!res.ok || !data.payment_session_id) {
-    console.error(data);
-    statusEl.textContent = "Order creation failed.";
-    alert("Payment order failed. Check Vercel logs.");
-    return;
-  }
+      <p id="status">Secure checkout powered by Cashfree</p>
 
-  localStorage.setItem("cv_last_order_id", data.order_id);
+      <div class="secure-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Please keep this page open until the payment process finishes.</span>
+      </div>
+    </section>
+  </main>
 
-  const cashfree = Cashfree({ mode: "sandbox" });
+  <div id="toast-box-mount"></div>
 
-  cashfree.checkout({
-    paymentSessionId: data.payment_session_id,
-    redirectTarget: "_modal"
-  }).then(() => {
-    window.location.href = `success.html?order_id=${data.order_id}`;
-  });
-});
-</script>
+  <footer class="premium-footer">
+    <div class="footer-inner">
+      <div>&copy; 2026 The Creators Vault. All systems operational.</div>
+      <div>https://thecreatorsvault.in</div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq8m41bhoWk3cMEkqqUXvik_iZA6DDMHM",
+      authDomain: "creators-vaults.firebaseapp.com",
+      projectId: "creators-vaults",
+      storageBucket: "creators-vaults.firebasestorage.app",
+      messagingSenderId: "739165070040",
+      appId: "1:739165070040:web:8d2e72b8f8fad441df2dad",
+      measurementId: "G-MM742MSP09"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+
+    const statusEl = document.getElementById("status");
+    const payBtn = document.getElementById("payBtn");
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const rootElement = document.documentElement;
+
+    function applyInterfaceTheme(targetMode) {
+      rootElement.setAttribute("data-theme", targetMode);
+      localStorage.setItem("cv_saved_theme", targetMode);
+      themeToggleBtn.innerHTML = targetMode === "dark"
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    applyInterfaceTheme(localStorage.getItem("cv_saved_theme") || "dark");
+
+    themeToggleBtn.addEventListener("click", () => {
+      const nextTheme = rootElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyInterfaceTheme(nextTheme);
+    });
+
+    const toastMountNode = document.getElementById("toast-box-mount");
+
+    function spawnPremiumToast(titleString, textBody, statusType = "info") {
+      const toastFrame = document.createElement("div");
+      toastFrame.className = `toast-item ${statusType}`;
+
+      let descriptiveIcon = "fa-circle-info";
+      if (statusType === "success") descriptiveIcon = "fa-circle-check";
+      if (statusType === "error") descriptiveIcon = "fa-circle-exclamation";
+      if (statusType === "warning") descriptiveIcon = "fa-triangle-exclamation";
+
+      toastFrame.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${descriptiveIcon}"></i></div>
+        <div class="toast-body">
+          <h5>${titleString}</h5>
+          <p>${textBody}</p>
+        </div>
+        <button class="toast-close" type="button"><i class="fa-solid fa-xmark"></i></button>
+        <div class="toast-progress"></div>
+      `;
+
+      toastMountNode.appendChild(toastFrame);
+      setTimeout(() => toastFrame.classList.add("show"), 20);
+
+      const dynamicProgressNode = toastFrame.querySelector(".toast-progress");
+      dynamicProgressNode.style.transform = "scaleX(1)";
+      dynamicProgressNode.style.transition = "transform 4000ms linear";
+      setTimeout(() => { dynamicProgressNode.style.transform = "scaleX(0)"; }, 30);
+
+      const decayTimerReference = setTimeout(() => clearToastInstance(toastFrame), 4000);
+
+      toastFrame.querySelector(".toast-close").addEventListener("click", () => {
+        clearTimeout(decayTimerReference);
+        clearToastInstance(toastFrame);
+      });
+    }
+
+    function clearToastInstance(targetNode) {
+      targetNode.classList.remove("show");
+      targetNode.addEventListener("transitionend", () => targetNode.remove(), { once: true });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      currentUser = user;
+      spawnPremiumToast("Session Verified", "Your secure checkout session is ready.", "success");
+    });
+
+    payBtn.addEventListener("click", async () => {
+      if (!currentUser) {
+        spawnPremiumToast("Authentication Error", "Please login first.", "error");
+        return;
+      }
+
+      statusEl.textContent = "Creating secure order...";
+      payBtn.disabled = true;
+      payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Order...';
+
+      try {
+        const res = await fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            name: currentUser.email?.split("@")[0] || "Creator Vault User"
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.payment_session_id) {
+          console.error(data);
+          statusEl.textContent = "Order creation failed.";
+          spawnPremiumToast("Order Failed", "Payment order failed. Check Vercel logs.", "error");
+          return;
+        }
+
+        localStorage.setItem("cv_last_order_id", data.order_id);
+
+        statusEl.textContent = "Opening Cashfree secure checkout...";
+        payBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Opening Checkout...';
+
+        const cashfree = Cashfree({ mode: "sandbox" });
+
+        cashfree.checkout({
+          paymentSessionId: data.payment_session_id,
+          redirectTarget: "_modal"
+        }).then(() => {
+          window.location.href = `success.html?order_id=${data.order_id}`;
+        });
+
+      } catch (error) {
+        console.error(error);
+        statusEl.textContent = "Something went wrong.";
+        spawnPremiumToast("Checkout Error", "Unable to start payment. Please try again.", "error");
+      } finally {
+        setTimeout(() => {
+          payBtn.disabled = false;
+          payBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay ₹1 Now';
+        }, 1200);
+      }
+    });
+  </script>
 </body>
 </html>
