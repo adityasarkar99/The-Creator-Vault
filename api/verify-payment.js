@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing order_id" });
     }
 
-    const response = await fetch(`https://sandbox.cashfree.com/pg/orders/${order_id}`, {
+    const response = await fetch(`https://api.cashfree.com/pg/orders/${order_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
