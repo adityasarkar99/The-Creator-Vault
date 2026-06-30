@@ -1,11 +1,19 @@
+const allowedOrigins = [
+  "https://thecreatorsvault.in",
+  "https://www.thecreatorsvault.in"
+];
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://thecreatorsvault.in");
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method not allowed" });
@@ -15,29 +23,27 @@ export default async function handler(req, res) {
     const { uid, email, name, phone } = req.body || {};
 
     if (!uid || !email) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing uid or email"
-      });
+      return res.status(400).json({ success: false, error: "Missing uid or email" });
     }
 
-    if (!process.env.CASHFREE_APP_ID || !process.env.CASHFREE_SECRET_KEY) {
-      return res.status(500).json({
-        success: false,
-        error: "Cashfree environment variables missing"
-      });
+    const appId = process.env.CASHFREE_APP_ID;
+    const secretKey = process.env.CASHFREE_SECRET_KEY;
+
+    if (!appId || !secretKey) {
+      return res.status(500).json({ success: false, error: "Cashfree keys missing in Vercel" });
     }
 
     const orderId = `TCV_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const cleanPhone = String(phone || "9999999999").replace(/\D/g, "").slice(-10);
 
     const payload = {
       order_id: orderId,
-      order_amount: 1.00,
+      order_amount: 1,
       order_currency: "INR",
       customer_details: {
         customer_id: String(uid),
         customer_email: String(email),
-        customer_phone: String(phone || "9999999999").replace(/\D/g, "").slice(-10),
+        customer_phone: cleanPhone || "9999999999",
         customer_name: String(name || "The Creators Vault User").slice(0, 50)
       },
       order_meta: {
@@ -46,36 +52,36 @@ export default async function handler(req, res) {
       order_note: "The Creators Vault Lifetime Premium Access"
     };
 
-    const response = await fetch("https://api.cashfree.com/pg/orders", {
+    const cfResponse = await fetch("https://api.cashfree.com/pg/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-client-id": process.env.CASHFREE_APP_ID,
-        "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-        "x-api-version": "2023-08-01"
+        "x-api-version": "2023-08-01",
+        "x-client-id": appId.trim(),
+        "x-client-secret": secretKey.trim()
       },
       body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const cfData = await cfResponse.json();
 
-    if (!response.ok || !data.payment_session_id) {
-      console.error("Cashfree Create Order Failed:", data);
-      return res.status(response.status || 500).json({
+    if (!cfResponse.ok || !cfData.payment_session_id) {
+      console.error("Cashfree order error:", cfData);
+      return res.status(cfResponse.status || 500).json({
         success: false,
-        error: data.message || data.error_description || "Cashfree order creation failed",
-        cashfree: data
+        error: cfData.message || cfData.error_description || "Cashfree order creation failed",
+        cashfree: cfData
       });
     }
 
     return res.status(200).json({
       success: true,
-      order_id: data.order_id,
-      payment_session_id: data.payment_session_id
+      order_id: cfData.order_id,
+      payment_session_id: cfData.payment_session_id
     });
 
   } catch (error) {
-    console.error("Create Order Server Error:", error);
+    console.error("Create order server error:", error);
     return res.status(500).json({
       success: false,
       error: error.message || "Server error"
