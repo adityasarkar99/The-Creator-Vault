@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | The Creators Vault</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --accent: #4f46e5;
+            --accent-grad: linear-gradient(135deg, #4f46e5, #9333ea);
+            --text: #ffffff;
+            --text-muted: #a3a3a3;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; user-select: none; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        /* Header */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 800; font-size: 1.5rem; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; font-weight: 600; }
 
+        /* Hero */
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; }
+        .hero { text-align: center; margin-bottom: 50px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid #333; text-align: center; }
+
+        /* Form */
+        .form-box { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid #333; }
+        input, select, textarea { width: 100%; padding: 15px; margin: 10px 0; background: #111; border: 1px solid #333; border-radius: 10px; color: white; }
+        button[type="submit"] { width: 100%; padding: 15px; background: var(--accent-grad); border: none; color: white; border-radius: 10px; cursor: pointer; font-size: 1rem; }
+
+        /* FAQ */
+        .faq { margin-top: 50px; }
+        .accordion { background: #111; padding: 20px; margin: 10px 0; border-radius: 10px; cursor: pointer; border: 1px solid #333; }
+
+        /* Toast */
+        #toast { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; background: #22c55e; border-radius: 8px; display: none; }
+
+        /* Floating Button */
+        .float-btn { position: fixed; bottom: 30px; right: 30px; background: var(--accent); padding: 20px; border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">The Creators Vault</div>
+        <a href="dashboard.html" class="btn">Dashboard</a>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Need Help?</h1>
+            <p>Get fast support for downloads, premium access, and account questions.</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">Priority Support</div>
+            <div class="stat-card">Fast Response</div>
+            <div class="stat-card">Secure Help</div>
+        </div>
+
+        <div class="form-box" id="formContainer">
+            <form id="supportForm">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email Address" required>
+                <select id="issue">
+                    <option>Payment Issue</option>
+                    <option>Premium Activation</option>
+                    <option>Download Not Working</option>
+                    <option>Other</option>
+                </select>
+                <input type="text" id="subject" placeholder="Subject" required>
+                <input type="text" id="orderId" placeholder="Order ID (Optional)">
+                <textarea id="message" rows="5" placeholder="Message" required></textarea>
+                <button type="submit">Submit Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast">Support request sent successfully.</div>
+
+    <script>
+        /* Frontend Telegram bot token is visible in browser. For production, use backend API. */
+        const TELEGRAM_BOT_TOKEN = "8910704005:AAFoisXlUD-qzh0hpdEISOdHRIv6of4CPTQ";
+        const TELEGRAM_CHAT_ID = "8255824096";
+
+        document.getElementById('supportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = `🚨 New Support Request - The Creators Vault\n\n👤 Name: ${document.getElementById('name').value}\n📧 Email: ${document.getElementById('email').value}\n📌 Issue: ${document.getElementById('issue').value}\n🧾 Subject: ${document.getElementById('subject').value}\n💳 Order ID: ${document.getElementById('orderId').value}\n💬 Message: ${document.getElementById('message').value}\n⏰ Time: ${new Date().toLocaleString()}`;
+            
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: msg })
+                });
+                if(res.ok) {
+                    document.getElementById('toast').style.display = 'block';
+                    document.getElementById('supportForm').reset();
+                } else throw new Error();
+            } catch {
+                alert("Unable to send request. Please contact us on Telegram.");
+            }
+        });
+
+        // Security Protections
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && ['u', 's', 'i', 'j'].includes(e.key.toLowerCase()))) e.preventDefault();
+        });
+    </script>
+</body>
+</html>
