@@ -1,11 +1,12 @@
-const allowedOrigins = [
-  "https://thecreatorsvault.in",
-  "https://www.thecreatorsvault.in"
-];
+// api/create-order.js
 
 export default async function handler(req, res) {
-  const origin = req.headers.origin;
+  const allowedOrigins = [
+    "https://thecreatorsvault.in",
+    "https://www.thecreatorsvault.in"
+  ];
 
+  const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
@@ -13,35 +14,49 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
   if (req.method !== "POST") {
-    return res.status(405).json({ success: false, error: "Method not allowed" });
+    return res.status(405).json({
+      success: false,
+      error: "Method not allowed"
+    });
   }
 
   try {
     const { uid, email, name, phone } = req.body || {};
 
     if (!uid || !email) {
-      return res.status(400).json({ success: false, error: "Missing uid or email" });
+      return res.status(400).json({
+        success: false,
+        error: "Missing uid or email"
+      });
     }
 
-    const appId = process.env.CASHFREE_APP_ID;
-    const secretKey = process.env.CASHFREE_SECRET_KEY;
+    const appId = (process.env.CASHFREE_APP_ID || "").trim();
+    const secretKey = (process.env.CASHFREE_SECRET_KEY || "").trim();
 
     if (!appId || !secretKey) {
-      return res.status(500).json({ success: false, error: "Cashfree keys missing in Vercel" });
+      return res.status(500).json({
+        success: false,
+        error: "Cashfree environment variables missing"
+      });
     }
 
+    const cleanPhone = String(phone || "9999999999")
+      .replace(/\D/g, "")
+      .slice(-10);
+
     const orderId = `TCV_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-    const cleanPhone = String(phone || "9999999999").replace(/\D/g, "").slice(-10);
 
     const payload = {
       order_id: orderId,
       order_amount: 1,
       order_currency: "INR",
       customer_details: {
-        customer_id: String(uid),
+        customer_id: String(uid).slice(0, 50),
         customer_email: String(email),
         customer_phone: cleanPhone || "9999999999",
         customer_name: String(name || "The Creators Vault User").slice(0, 50)
@@ -52,36 +67,48 @@ export default async function handler(req, res) {
       order_note: "The Creators Vault Lifetime Premium Access"
     };
 
-    const cfResponse = await fetch("https://api.cashfree.com/pg/orders", {
+    const cashfreeResponse = await fetch("https://api.cashfree.com/pg/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-version": "2023-08-01",
-        "x-client-id": appId.trim(),
-        "x-client-secret": secretKey.trim()
+        "x-client-id": appId,
+        "x-client-secret": secretKey
       },
       body: JSON.stringify(payload)
     });
 
-    const cfData = await cfResponse.json();
+    const cashfreeData = await cashfreeResponse.json();
 
-    if (!cfResponse.ok || !cfData.payment_session_id) {
-      console.error("Cashfree order error:", cfData);
-      return res.status(cfResponse.status || 500).json({
+    if (!cashfreeResponse.ok) {
+      console.error("Cashfree Create Order Failed:", cashfreeData);
+
+      return res.status(cashfreeResponse.status).json({
         success: false,
-        error: cfData.message || cfData.error_description || "Cashfree order creation failed",
-        cashfree: cfData
+        error:
+          cashfreeData.message ||
+          cashfreeData.error_description ||
+          "Cashfree order creation failed",
+        cashfree: cashfreeData
+      });
+    }
+
+    if (!cashfreeData.payment_session_id) {
+      return res.status(500).json({
+        success: false,
+        error: "Payment session ID missing from Cashfree response",
+        cashfree: cashfreeData
       });
     }
 
     return res.status(200).json({
       success: true,
-      order_id: cfData.order_id,
-      payment_session_id: cfData.payment_session_id
+      order_id: cashfreeData.order_id,
+      payment_session_id: cashfreeData.payment_session_id
     });
-
   } catch (error) {
-    console.error("Create order server error:", error);
+    console.error("Create Order Server Error:", error);
+
     return res.status(500).json({
       success: false,
       error: error.message || "Server error"
