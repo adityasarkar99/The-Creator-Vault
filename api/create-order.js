@@ -53,7 +53,7 @@ export default async function handler(req, res) {
 
     const payload = {
       order_id: orderId,
-      order_amount: 99,
+      order_amount: 9,
       order_currency: "INR",
       customer_details: {
         customer_id: String(uid).slice(0, 50),
