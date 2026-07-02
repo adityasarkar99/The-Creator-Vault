@@ -718,6 +718,69 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        /*
+            Telegram Auth Alerts
+            IMPORTANT:
+            Frontend Telegram bot token is visible in browser.
+            For production, use a backend API instead of exposing bot token here.
+            Since the old bot token was shared publicly, revoke it from BotFather and paste a NEW token below.
+        */
+        const TELEGRAM_BOT_TOKEN = "8875599142:AAFVMJzKXGfFPw9FM3PJHHL2f5Z5vyQdJRk";
+        const TELEGRAM_CHAT_ID = "8255824096";
+
+        function sanitizeTelegramValue(value) {
+            return String(value || "Not available").replace(/[<>]/g, "");
+        }
+
+        async function sendTelegramAuthAlert(eventType, userInstance, extraDetails = {}) {
+            if (
+                !TELEGRAM_BOT_TOKEN ||
+                TELEGRAM_BOT_TOKEN === "8875599142:AAFVMJzKXGfFPw9FM3PJHHL2f5Z5vyQdJRk" ||
+                !TELEGRAM_CHAT_ID
+            ) {
+                console.warn("Telegram auth alert skipped: bot token or chat id not configured.");
+                return;
+            }
+
+            const timeNow = new Date().toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                dateStyle: "medium",
+                timeStyle: "medium"
+            });
+
+            const telegramMessage = `
+${eventType === "REGISTER" ? "🆕 NEW USER REGISTERED" : "🔐 USER LOGIN"}
+The Creators Vault
+
+👤 Email: ${sanitizeTelegramValue(userInstance?.email || extraDetails.email)}
+🧑‍💻 UID: ${sanitizeTelegramValue(userInstance?.uid)}
+📌 Event: ${eventType === "REGISTER" ? "New Registration" : "User Login"}
+🌐 Page URL: ${sanitizeTelegramValue(window.location.href)}
+⏰ Time: ${sanitizeTelegramValue(timeNow)}
+            `.trim();
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: telegramMessage
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok || result.ok !== true) {
+                    console.error("Telegram auth alert failed:", result);
+                }
+            } catch (telegramError) {
+                console.error("Telegram auth alert error:", telegramError);
+            }
+        }
+
+
         /* --- IMMUTABLE SYSTEM TOAST SYSTEMS MTRX --- */
         const container = document.getElementById('toast-container');
         
@@ -877,7 +940,8 @@
             toggleLoadingState(loginForm, true);
 
             try {
-                await signInWithEmailAndPassword(auth, mail, pass);
+                const loginResult = await signInWithEmailAndPassword(auth, mail, pass);
+                await sendTelegramAuthAlert("LOGIN", loginResult.user, { email: mail });
                 callToast('Identity matrix authenticated! Passing allocation...', 'success');
             } catch (err) {
                 console.error(err);
@@ -930,6 +994,8 @@
                     membershipName: "Explorer Access",
                     createdAt: serverTimestamp()
                 });
+
+                await sendTelegramAuthAlert("REGISTER", userInstance, { email: mail });
 
                 callToast('Vault initialization completely finalized! Processing integration...', 'success');
             } catch (err) {
