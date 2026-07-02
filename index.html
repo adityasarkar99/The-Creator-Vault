@@ -63,6 +63,24 @@
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
+
+
+        /* --- FRONTEND INTERACTION HARDENING LAYER --- */
+        html, body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
         body {
             background-color: var(--bg-page);
             color: var(--text-main);
@@ -1043,6 +1061,61 @@ The Creators Vault
                 toggleLoadingState(forgotForm, false);
             }
         });
+
+
+        /* --- FRONTEND INTERACTION HARDENING LAYER --- */
+        (function enforceFrontendInteractionGuard() {
+            const blockedShortcutKeys = new Set(['F12', 'I', 'J', 'C', 'U', 'S', 'P']);
+
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                if (typeof callToast === 'function') {
+                    callToast('Right click access is restricted on this secure page.', 'warning');
+                }
+                return false;
+            }, true);
+
+            document.addEventListener('dragstart', function(event) {
+                event.preventDefault();
+                return false;
+            }, true);
+
+            document.addEventListener('selectstart', function(event) {
+                const editableTargets = ['INPUT', 'TEXTAREA'];
+                if (!editableTargets.includes(event.target.tagName) && !event.target.isContentEditable) {
+                    event.preventDefault();
+                    return false;
+                }
+            }, true);
+
+            document.addEventListener('keydown', function(event) {
+                const keyValue = event.key.toUpperCase();
+                const isDeveloperShortcut =
+                    event.key === 'F12' ||
+                    (event.ctrlKey && event.shiftKey && blockedShortcutKeys.has(keyValue)) ||
+                    ((event.ctrlKey || event.metaKey) && blockedShortcutKeys.has(keyValue));
+
+                if (isDeveloperShortcut) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (typeof callToast === 'function') {
+                        callToast('Developer inspection shortcuts are disabled on this page.', 'warning');
+                    }
+                    return false;
+                }
+            }, true);
+
+            setInterval(function() {
+                const widthDelta = window.outerWidth - window.innerWidth;
+                const heightDelta = window.outerHeight - window.innerHeight;
+                if (widthDelta > 160 || heightDelta > 160) {
+                    document.body.style.filter = 'blur(8px)';
+                } else {
+                    document.body.style.filter = '';
+                }
+            }, 800);
+        })();
+
 
     </script>
 </body>
